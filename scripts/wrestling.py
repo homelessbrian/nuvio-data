@@ -193,11 +193,19 @@ def main():
                        "To add one, set the WRESTLING_LEAGUES variable, e.g. aew=1234." % (", ".join(missing), "; ".join(FIGHTING_NAMES) or "none listed"))
 
     # One entry per show, in start order.
-    seen, unique = set(), []
+    # TheSportsDB sometimes lists one show twice, a day apart ("Dynamite #369" on two dates):
+    # the same name in the same league within two days counts once (the earlier listing).
+    seen, unique, last_seen = set(), [], {}
     for ev in sorted(events, key=lambda x: (x["start"], x["league"], x["name"])):
         if ev["id"] in seen:
             continue
         seen.add(ev["id"])
+        when = dt.datetime.strptime(ev["start"], "%Y-%m-%dT%H:%M:%SZ")
+        key = (ev["league"], " ".join(ev["name"].lower().split()))
+        prev = last_seen.get(key)
+        if prev is not None and (when - prev) <= dt.timedelta(days=2):
+            continue
+        last_seen[key] = when
         unique.append(ev)
 
     old = None
