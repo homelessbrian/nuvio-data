@@ -1,1 +1,81 @@
+name: Nuvio data
 
+# One workflow for the nuvio-data repo:
+#  - Upload nuvio-data.zip to the repo: it's unpacked (scripts, README), the zip is deleted,
+#    and the wrestling schedule is made straight away.
+#  - Every day (and when you press Run workflow): the wrestling schedule is updated from
+#    TheSportsDB and saved to wrestling.json when it changed.
+on:
+  push:
+    paths:
+      - "nuvio-data.zip"
+  schedule:
+    - cron: "17 9 * * *"   # 9:17 UTC every day (about 5 AM in New York)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nuvio-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unpack nuvio-data.zip (when one was uploaded)
+        id: unpack
+        run: |
+          if [ ! -f nuvio-data.zip ]; then
+            echo "No zip to unpack."
+            echo "unpacked=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Workflow files can't be changed by a workflow, so anything under .github is skipped
+          # (this file is the only one the repo needs).
+          unzip -o nuvio-data.zip -x ".github/*" "__MACOSX/*" "*.DS_Store"
+          git rm -q --cached nuvio-data.zip || true
+          rm -f nuvio-data.zip
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Unpack nuvio-data.zip"
+          git push
+          echo "unpacked=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-python@v5
+        if: github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true'
+        with:
+          python-version: "3.12"
+
+      - name: Read the wrestling schedule from TheSportsDB
+        if: github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true'
+        env:
+          # Optional: a paid TheSportsDB key (Settings > Secrets and variables > Actions > Secrets).
+          TSDB_KEY: ${{ secrets.TSDB_KEY }}
+          # Optional: leagues whose logo licence you've checked, e.g. "wwe,aew" (… > Variables).
+          WRESTLING_LOGOS: ${{ vars.WRESTLING_LOGOS }}
+        run: |
+          if [ ! -f scripts/wrestling.py ]; then
+            echo "scripts/wrestling.py is missing: upload nuvio-data.zip first."
+            exit 1
+          fi
+          python scripts/wrestling.py
+
+      - name: Save the schedule if it changed
+        if: github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true'
+        run: |
+          if git diff --quiet -- wrestling.json && git ls-files --error-unmatch wrestling.json >/dev/null 2>&1; then
+            echo "No changes to save."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add wrestling.json
+          git commit -m "Wrestling schedule update"
+          git pull --rebase -q || true
+          git push
