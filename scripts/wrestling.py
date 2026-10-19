@@ -72,11 +72,15 @@ def get(path):
     return None
 
 
+FIGHTING_NAMES = []
+
+
 def find_leagues():
-    """League key -> TheSportsDB league id."""
+    """League key -> TheSportsDB league id. WRESTLING_LEAGUES ("aew=1234,tna=5678") overrides."""
     found = dict(KNOWN)
     data = get("search_all_leagues.php?s=Fighting") or {}
     rows = data.get("countries") or data.get("leagues") or []
+    FIGHTING_NAMES[:] = ["%s (%s)" % (r.get("strLeague"), r.get("idLeague")) for r in rows]
     for key, names in FIND.items():
         for row in rows:
             name = (row.get("strLeague") or "").lower()
@@ -84,6 +88,11 @@ def find_leagues():
             if any(n == name or n in alt.split(",") or name.startswith(n + " ") or name == n for n in names):
                 found[key] = row.get("idLeague")
                 break
+    for part in (os.environ.get("WRESTLING_LEAGUES") or "").split(","):
+        if "=" in part:
+            k, v = part.split("=", 1)
+            if k.strip() and v.strip().isdigit():
+                found[k.strip().lower()] = v.strip()
     return {k: v for k, v in found.items() if v}
 
 
@@ -140,7 +149,11 @@ def main():
 
     leagues = find_leagues()
     print("Leagues: %s (%s key)" % (leagues, "free" if FREE else "paid"))
-    summary = ["## Wrestling schedule", "", "| League | Shows | Logo |", "|---|---|---|"]
+    summary = [
+        "## Wrestling schedule", "",
+        "WRESTLING_LOGOS setting seen by this run: %s" % (", ".join(sorted(approved)) or "**none** (add it under Settings > Secrets and variables > Actions > Variables)"),
+        "", "| League | Shows | Logo |", "|---|---|---|",
+    ]
     out_leagues, events = [], []
     for key, lid in leagues.items():
         info = ((get("lookupleague.php?id=%s" % lid) or {}).get("leagues") or [{}])[0] or {}
@@ -172,6 +185,12 @@ def main():
                 events.append(ev)
                 n += 1
         summary.append("| %s | %d | %s |" % (key.upper(), n, logo_note))
+
+    missing = [k for k in FIND if k not in leagues]
+    if missing:
+        summary.append("")
+        summary.append("Not found on TheSportsDB by name: %s. Fighting leagues there: %s. "
+                       "To add one, set the WRESTLING_LEAGUES variable, e.g. aew=1234." % (", ".join(missing), "; ".join(FIGHTING_NAMES) or "none listed"))
 
     # One entry per show, in start order.
     seen, unique = set(), []
