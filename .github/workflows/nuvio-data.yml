@@ -2,15 +2,18 @@ name: Nuvio data
 
 # One workflow for the nuvio-data repo:
 #  - Upload nuvio-data.zip to the repo: it's unpacked (scripts, README), the zip is deleted,
-#    and the wrestling schedule is made straight away.
-#  - Every day (and when you press Run workflow): the wrestling schedule is updated from
-#    TheSportsDB and saved to wrestling.json when it changed.
+#    and everything is updated straight away.
+#  - Every day (and when you press Run workflow): the full update. The wrestling schedule and
+#    the non-league football leagues (fixtures, results, teams) from TheSportsDB.
+#  - Every 15 minutes at UK match times: scores for non-league games that are on.
 on:
   push:
     paths:
       - "nuvio-data.zip"
   schedule:
-    - cron: "17 9 * * *"   # 9:17 UTC every day (about 5 AM in New York)
+    - cron: "17 9 * * *"           # full update: 9:17 UTC every day
+    - cron: "*/15 11-22 * * 0,6"   # scores: weekends, 11:00-22:45 UTC
+    - cron: "*/15 18-22 * * 1-5"   # scores: weekday evenings, 18:00-22:45 UTC
   workflow_dispatch:
 
 permissions:
@@ -24,6 +27,9 @@ jobs:
   update:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      # Scheduled runs other than the daily one only update scores.
+      MODE: ${{ (github.event_name == 'schedule' && github.event.schedule != '17 9 * * *') && 'scores' || 'full' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,7 +59,7 @@ jobs:
           python-version: "3.12"
 
       - name: Read the wrestling schedule from TheSportsDB
-        if: github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true'
+        if: env.MODE == 'full' && (github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true')
         env:
           # Optional: a paid TheSportsDB key (Settings > Secrets and variables > Actions > Secrets).
           TSDB_KEY: ${{ secrets.TSDB_KEY }}
@@ -68,16 +74,31 @@ jobs:
           fi
           python scripts/wrestling.py
 
-      - name: Save the schedule if it changed
+      - name: Non-league football from TheSportsDB
+        if: github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true'
+        env:
+          TSDB_KEY: ${{ secrets.TSDB_KEY }}
+          # Optional: extra or skipped league ids, and leagues whose club badges you've checked.
+          FOOTBALL_LEAGUES: ${{ vars.FOOTBALL_LEAGUES }}
+          FOOTBALL_SKIP: ${{ vars.FOOTBALL_SKIP }}
+          FOOTBALL_LOGOS: ${{ vars.FOOTBALL_LOGOS }}
+        run: |
+          if [ ! -f scripts/football.py ]; then
+            echo "scripts/football.py is missing: upload nuvio-data.zip first."
+            exit 0
+          fi
+          if [ "$MODE" = "scores" ]; then python scripts/football.py --scores; else python scripts/football.py; fi
+
+      - name: Save what changed
         if: github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true'
         run: |
-          if git diff --quiet -- wrestling.json && git ls-files --error-unmatch wrestling.json >/dev/null 2>&1; then
+          for p in wrestling.json football; do if [ -e "$p" ]; then git add -A "$p"; fi; done
+          if git diff --cached --quiet; then
             echo "No changes to save."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add wrestling.json
-          git commit -m "Wrestling schedule update"
+          if [ "$MODE" = "scores" ]; then git commit -q -m "Football scores"; else git commit -q -m "Schedule update"; fi
           git pull --rebase -q || true
           git push
