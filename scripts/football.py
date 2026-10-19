@@ -257,14 +257,19 @@ def full_run():
         team_list = [dict({"id": tid, "name": tn}, **({"badge": badges[tid]} if tid in badges else {}))
                      for tid, tn in sorted(teams.items(), key=lambda kv: kv[1].lower())]
         league_badge = (info.get("strBadge") or "").strip() if use_logos else ""
-        write_if_changed(os.path.join(OUT_DIR, "%s.json" % lid), {"league": lid, "events": events})
         upcoming = sum(1 for e in events if e["state"] == "pre")
+        summary.insert(-6, "| %s | %s | %d | %d | %d | %s |" % (clean_name(name), lid, len(events), upcoming, len(teams),
+                                                               "yes" if use_logos else "no"))
+        # No games on TheSportsDB for this one: left out of the app (it would be an empty league).
+        if not events:
+            continue
+        write_if_changed(os.path.join(OUT_DIR, "%s.json" % lid), {"league": lid, "events": events})
         index.append({
             "id": lid, "name": clean_name(name), "short": short_name(name), "season": season,
             "badge": league_badge or None, "teams": team_list, "games": len(events), "upcoming": upcoming,
         })
-        summary.insert(-6, "| %s | %s | %d | %d | %d | %s |" % (clean_name(name), lid, len(events), upcoming, len(team_list),
-                                                               "yes" if use_logos else "no"))
+    summary.insert(-6, "")
+    summary.insert(-6, "Leagues with no games on TheSportsDB are left out of the app.")
     if index:
         write_if_changed(os.path.join(OUT_DIR, "index.json"), {"source": "TheSportsDB (thesportsdb.com)", "leagues": index})
     else:

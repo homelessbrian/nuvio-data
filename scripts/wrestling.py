@@ -55,14 +55,18 @@ FIND = {
 _last = [0.0]
 
 
-def get(path):
+def get(path, v2=False, quiet404=False):
     """One API request, spaced out, retried on rate limits and server trouble. None on failure."""
+    url = ("https://www.thesportsdb.com/api/v2/json/" + path) if v2 else BASE + path
+    headers = {"User-Agent": "nuvio-data/1.0 (GitHub Actions)"}
+    if v2:
+        headers["X-API-KEY"] = KEY
     for attempt in range(4):
         wait = GAP[0] - (time.time() - _last[0])
         if wait > 0:
             time.sleep(wait)
         _last[0] = time.time()
-        req = urllib.request.Request(BASE + path, headers={"User-Agent": "nuvio-data/1.0 (GitHub Actions)"})
+        req = urllib.request.Request(url, headers=headers)
         try:
             with urllib.request.urlopen(req, timeout=30) as r:
                 body = r.read().decode("utf-8").strip()
@@ -76,7 +80,8 @@ def get(path):
             if e.code >= 500:
                 time.sleep(10)
                 continue
-            print("  %s: HTTP %s" % (path.split("?")[0], e.code), file=sys.stderr)
+            if not (quiet404 and e.code == 404):
+                print("  %s: HTTP %s" % (path.split("?")[0], e.code), file=sys.stderr)
             return None
         except (urllib.error.URLError, TimeoutError, ValueError) as e:
             print("  %s: %s" % (path.split("?")[0], e), file=sys.stderr)
@@ -127,7 +132,13 @@ def find_brands(key, lid, league):
     TheSportsDB lists a promotion's brands as its teams. Only used for leagues whose own logo
     is already approved (same owner, same licence check). Men's teams win over women's.
     """
-    rows = (get("lookup_all_teams.php?id=%s" % lid) or {}).get("teams") or []
+    # Three ways to ask, newest first (not every one is open to every key).
+    rows = []
+    if not FREE:
+        data = get("list/teams/%s" % lid, v2=True, quiet404=True) or {}
+        rows = data.get("list") or data.get("teams") or []
+    if not rows:
+        rows = (get("lookup_all_teams.php?id=%s" % lid, quiet404=True) or {}).get("teams") or []
     if not rows:
         rows = (get("search_all_teams.php?l=%s" % urllib.parse.quote(league.get("strLeague") or key)) or {}).get("teams") or []
     league_words = {key.lower()} | {w.lower() for w in (league.get("strLeague") or "").split()}
@@ -255,30 +266,6 @@ def main():
             continue
         last_seen[key] = when
         unique.append(ev)
-
-    # TV channels for each show (a test for now: the app doesn't use them yet). The free key
-    # gives up to 2 channels per show; the run summary lists what came back.
-    tv_lines = []
-    for ev in unique[:15]:
-        if not str(ev["id"]).isdigit():
-            continue
-        if time_left() < 0:
-            tv_lines.append("| | (TV channel test stopped early to stay inside GitHub's time limit) | |")
-            break
-        data = get("lookuptv.php?id=%s" % ev["id"]) or {}
-        rows = data.get("tvevent") or data.get("tvevents") or data.get("events") or []
-        tv = []
-        for r in rows:
-            ch = (r.get("strChannel") or "").strip()
-            if ch:
-                tv.append({"channel": ch, "country": (r.get("strCountry") or "").strip() or None})
-        if tv:
-            ev["tv"] = tv
-        tv_lines.append("| %s | %s | %s |" % (
-            ev["start"][:10], ev["name"],
-            ", ".join("%s (%s)" % (t["channel"], t["country"] or "?") for t in tv) or "none"))
-    if tv_lines:
-        summary += ["", "### TV channels (test)", "", "| Date | Show | Channels |", "|---|---|---|"] + tv_lines
 
     old = None
     if os.path.exists(OUT):
