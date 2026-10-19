@@ -59,6 +59,8 @@ jobs:
           TSDB_KEY: ${{ secrets.TSDB_KEY }}
           # Optional: leagues whose logo licence you've checked, e.g. "wwe,aew" (… > Variables).
           WRESTLING_LOGOS: ${{ vars.WRESTLING_LOGOS }}
+          # Optional: league ids to add, e.g. "aew=1234,tna=5678" (… > Variables).
+          WRESTLING_LEAGUES: ${{ vars.WRESTLING_LEAGUES }}
         run: |
           if [ ! -f scripts/wrestling.py ]; then
             echo "scripts/wrestling.py is missing: upload nuvio-data.zip first."
