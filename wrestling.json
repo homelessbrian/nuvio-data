@@ -163,7 +163,17 @@
    "hasTime": true,
    "venue": "Chaifetz Arena",
    "city": "St. Louis, MO",
-   "country": "United States"
+   "country": "United States",
+   "tv": [
+    {
+     "channel": "TNT",
+     "country": "United States"
+    },
+    {
+     "channel": "Max US",
+     "country": "United States"
+    }
+   ]
   },
   {
    "id": "2599794",
@@ -176,5 +186,5 @@
    "country": "United States"
   }
  ],
- "generated": "2026-10-19T15:07:10Z"
+ "generated": "2026-10-19T15:33:09Z"
 }
