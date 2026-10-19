@@ -208,6 +208,27 @@ def main():
         last_seen[key] = when
         unique.append(ev)
 
+    # TV channels for each show (a test for now: the app doesn't use them yet). The free key
+    # gives up to 2 channels per show; the run summary lists what came back.
+    tv_lines = []
+    for ev in unique[:40]:
+        if not str(ev["id"]).isdigit():
+            continue
+        data = get("lookuptv.php?id=%s" % ev["id"]) or {}
+        rows = data.get("tvevent") or data.get("tvevents") or data.get("events") or []
+        tv = []
+        for r in rows:
+            ch = (r.get("strChannel") or "").strip()
+            if ch:
+                tv.append({"channel": ch, "country": (r.get("strCountry") or "").strip() or None})
+        if tv:
+            ev["tv"] = tv
+        tv_lines.append("| %s | %s | %s |" % (
+            ev["start"][:10], ev["name"],
+            ", ".join("%s (%s)" % (t["channel"], t["country"] or "?") for t in tv) or "none"))
+    if tv_lines:
+        summary += ["", "### TV channels (test)", "", "| Date | Show | Channels |", "|---|---|---|"] + tv_lines
+
     old = None
     if os.path.exists(OUT):
         try:
