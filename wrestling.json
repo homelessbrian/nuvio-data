@@ -9,19 +9,38 @@
    "key": "wwe",
    "id": "4444",
    "name": "WWE",
-   "badge": "https://r2.thesportsdb.com/images/media/league/badge/ywtxyv1453504109.png"
+   "badge": "https://r2.thesportsdb.com/images/media/league/badge/ywtxyv1453504109.png",
+   "brands": [
+    {
+     "word": "nxt",
+     "name": "NXT Mens",
+     "badge": "https://r2.thesportsdb.com/images/media/team/badge/mfpfvk1713942140.png"
+    },
+    {
+     "word": "raw",
+     "name": "Raw Mens",
+     "badge": "https://r2.thesportsdb.com/images/media/team/badge/ox86ox1574886156.png"
+    },
+    {
+     "word": "smackdown",
+     "name": "Smackdown Mens",
+     "badge": "https://r2.thesportsdb.com/images/media/team/badge/ie1a2m1726646039.png"
+    }
+   ]
   },
   {
    "key": "aew",
    "id": "4563",
    "name": "AEW",
-   "badge": null
+   "badge": null,
+   "brands": []
   },
   {
    "key": "tna",
    "id": "4455",
    "name": "TNA Wrestling",
-   "badge": null
+   "badge": null,
+   "brands": []
   }
  ],
  "events": [
@@ -32,7 +51,7 @@
    "start": "2026-10-20T00:00:00Z",
    "hasTime": true,
    "venue": "WWE Performance Center",
-   "city": "Orlando, Florida",
+   "city": null,
    "country": "United States"
   },
   {
@@ -42,7 +61,7 @@
    "start": "2026-10-20T00:00:00Z",
    "hasTime": true,
    "venue": "Pechanga Arena",
-   "city": "San Diego, California",
+   "city": null,
    "country": "United States"
   },
   {
@@ -52,7 +71,7 @@
    "start": "2026-10-22T00:00:00Z",
    "hasTime": true,
    "venue": "Watsco Center",
-   "city": "Coral Gables, Florida",
+   "city": null,
    "country": "United States"
   },
   {
@@ -62,7 +81,7 @@
    "start": "2026-10-22T00:00:00Z",
    "hasTime": true,
    "venue": null,
-   "city": "Dothan, Alabama",
+   "city": null,
    "country": "United States"
   },
   {
@@ -72,7 +91,7 @@
    "start": "2026-10-23T00:00:00Z",
    "hasTime": true,
    "venue": "Toyota Arena",
-   "city": "Ontario, California",
+   "city": null,
    "country": "United States"
   },
   {
@@ -82,7 +101,7 @@
    "start": "2026-10-24T00:00:00Z",
    "hasTime": true,
    "venue": "Lawrence Joel Veterans Memorial Coliseum",
-   "city": "Winston-Salem, North Carolina",
+   "city": null,
    "country": "United States"
   },
   {
@@ -92,7 +111,7 @@
    "start": "2026-10-25T00:00:00Z",
    "hasTime": true,
    "venue": "Lawrence Joel Veterans Memorial Coliseum",
-   "city": "Winston-Salem, NC",
+   "city": null,
    "country": "United States"
   },
   {
@@ -102,7 +121,7 @@
    "start": "2026-10-25T00:00:00Z",
    "hasTime": true,
    "venue": null,
-   "city": "Prescott Valley, Arizona",
+   "city": null,
    "country": "United States"
   },
   {
@@ -112,7 +131,7 @@
    "start": "2026-10-26T00:00:00Z",
    "hasTime": true,
    "venue": null,
-   "city": "Fresno, California",
+   "city": null,
    "country": "United States"
   },
   {
@@ -122,7 +141,7 @@
    "start": "2026-10-28T00:00:00Z",
    "hasTime": true,
    "venue": "Chaifetz Arena",
-   "city": "St. Louis, Missouri",
+   "city": null,
    "country": "United States"
   },
   {
@@ -132,7 +151,7 @@
    "start": "2026-10-30T00:00:00Z",
    "hasTime": true,
    "venue": "Charleston Coliseum",
-   "city": "Charleston, West Virginia",
+   "city": null,
    "country": "United States"
   },
   {
@@ -142,7 +161,7 @@
    "start": "2026-10-31T00:00:00Z",
    "hasTime": true,
    "venue": "Chaifetz Arena",
-   "city": "St. Louis, Missouri",
+   "city": null,
    "country": "United States"
   },
   {
@@ -152,7 +171,7 @@
    "start": "2026-10-31T00:00:00Z",
    "hasTime": true,
    "venue": "WWE Performance Center",
-   "city": "Orlando, Florida",
+   "city": null,
    "country": "United States"
   },
   {
@@ -162,7 +181,7 @@
    "start": "2026-11-01T00:00:00Z",
    "hasTime": true,
    "venue": "Chaifetz Arena",
-   "city": "St. Louis, MO",
+   "city": null,
    "country": "United States",
    "tv": [
     {
@@ -182,9 +201,9 @@
    "start": "2026-11-02T00:00:00Z",
    "hasTime": true,
    "venue": "Barclays Center",
-   "city": "New York City, New York",
+   "city": null,
    "country": "United States"
   }
  ],
- "generated": "2026-10-19T15:33:09Z"
+ "generated": "2026-10-19T16:29:18Z"
 }
