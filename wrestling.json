@@ -1,0 +1,98 @@
+{
+ "source": "TheSportsDB (thesportsdb.com)",
+ "window": {
+  "from": "2026-10-18",
+  "to": "2026-11-02"
+ },
+ "leagues": [
+  {
+   "key": "wwe",
+   "id": "4444",
+   "name": "WWE",
+   "badge": null
+  }
+ ],
+ "events": [
+  {
+   "id": "2618985",
+   "league": "wwe",
+   "name": "NXT #860",
+   "start": "2026-10-20T00:00:00Z",
+   "hasTime": true,
+   "venue": "WWE Performance Center",
+   "city": "Orlando, Florida",
+   "country": "United States"
+  },
+  {
+   "id": "2599789",
+   "league": "wwe",
+   "name": "RAW #1743",
+   "start": "2026-10-20T00:00:00Z",
+   "hasTime": true,
+   "venue": "Pechanga Arena",
+   "city": "San Diego, California",
+   "country": "United States"
+  },
+  {
+   "id": "2599790",
+   "league": "wwe",
+   "name": "SmackDown #1418",
+   "start": "2026-10-23T00:00:00Z",
+   "hasTime": true,
+   "venue": "Toyota Arena",
+   "city": "Ontario, California",
+   "country": "United States"
+  },
+  {
+   "id": "2355269",
+   "league": "wwe",
+   "name": "Halloween Havoc",
+   "start": "2026-10-25T00:00:00Z",
+   "hasTime": true,
+   "venue": null,
+   "city": "Prescott Valley, Arizona",
+   "country": "United States"
+  },
+  {
+   "id": "2599791",
+   "league": "wwe",
+   "name": "RAW #1744",
+   "start": "2026-10-26T00:00:00Z",
+   "hasTime": true,
+   "venue": null,
+   "city": "Fresno, California",
+   "country": "United States"
+  },
+  {
+   "id": "2599792",
+   "league": "wwe",
+   "name": "SmackDown #1419",
+   "start": "2026-10-30T00:00:00Z",
+   "hasTime": true,
+   "venue": "Charleston Coliseum",
+   "city": "Charleston, West Virginia",
+   "country": "United States"
+  },
+  {
+   "id": "2599793",
+   "league": "wwe",
+   "name": "NXT Halloween Havoc",
+   "start": "2026-10-31T00:00:00Z",
+   "hasTime": true,
+   "venue": "WWE Performance Center",
+   "city": "Orlando, Florida",
+   "country": "United States"
+  },
+  {
+   "id": "2599794",
+   "league": "wwe",
+   "name": "RAW #1745",
+   "start": "2026-11-02T00:00:00Z",
+   "hasTime": true,
+   "venue": "Barclays Center",
+   "city": "New York City, New York",
+   "country": "United States"
+  }
+ ],
+ "generated": "2026-10-19T03:25:02Z"
+}
