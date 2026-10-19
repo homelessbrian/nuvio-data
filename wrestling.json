@@ -10,6 +10,18 @@
    "id": "4444",
    "name": "WWE",
    "badge": "https://r2.thesportsdb.com/images/media/league/badge/ywtxyv1453504109.png"
+  },
+  {
+   "key": "aew",
+   "id": "4563",
+   "name": "AEW",
+   "badge": null
+  },
+  {
+   "key": "tna",
+   "id": "4455",
+   "name": "TNA Wrestling",
+   "badge": null
   }
  ],
  "events": [
@@ -34,6 +46,26 @@
    "country": "United States"
   },
   {
+   "id": "2615936",
+   "league": "aew",
+   "name": "Dynamite #368",
+   "start": "2026-10-22T00:00:00Z",
+   "hasTime": true,
+   "venue": "Watsco Center",
+   "city": "Coral Gables, Florida",
+   "country": "United States"
+  },
+  {
+   "id": "2618956",
+   "league": "tna",
+   "name": "TNA iMPACT #1161",
+   "start": "2026-10-22T00:00:00Z",
+   "hasTime": true,
+   "venue": null,
+   "city": "Dothan, Alabama",
+   "country": "United States"
+  },
+  {
    "id": "2599790",
    "league": "wwe",
    "name": "SmackDown #1418",
@@ -41,6 +73,26 @@
    "hasTime": true,
    "venue": "Toyota Arena",
    "city": "Ontario, California",
+   "country": "United States"
+  },
+  {
+   "id": "2618988",
+   "league": "aew",
+   "name": "Collision #167",
+   "start": "2026-10-24T00:00:00Z",
+   "hasTime": true,
+   "venue": "Lawrence Joel Veterans Memorial Coliseum",
+   "city": "Winston-Salem, North Carolina",
+   "country": "United States"
+  },
+  {
+   "id": "2600288",
+   "league": "aew",
+   "name": "Collision #166",
+   "start": "2026-10-25T00:00:00Z",
+   "hasTime": true,
+   "venue": "Lawrence Joel Veterans Memorial Coliseum",
+   "city": "Winston-Salem, NC",
    "country": "United States"
   },
   {
@@ -64,6 +116,26 @@
    "country": "United States"
   },
   {
+   "id": "2618994",
+   "league": "aew",
+   "name": "Dynamite #369 Fright Night Dynamite",
+   "start": "2026-10-28T00:00:00Z",
+   "hasTime": true,
+   "venue": "Chaifetz Arena",
+   "city": "St. Louis, Missouri",
+   "country": "United States"
+  },
+  {
+   "id": "2600289",
+   "league": "aew",
+   "name": "Dynamite #369 Fright Night Dynamite",
+   "start": "2026-10-29T00:00:00Z",
+   "hasTime": true,
+   "venue": "Chaifetz Arena",
+   "city": "St. Louis, MO",
+   "country": "United States"
+  },
+  {
    "id": "2599792",
    "league": "wwe",
    "name": "SmackDown #1419",
@@ -71,6 +143,16 @@
    "hasTime": true,
    "venue": "Charleston Coliseum",
    "city": "Charleston, West Virginia",
+   "country": "United States"
+  },
+  {
+   "id": "2618995",
+   "league": "aew",
+   "name": "Collision #168 Fright Night Collision",
+   "start": "2026-10-31T00:00:00Z",
+   "hasTime": true,
+   "venue": "Chaifetz Arena",
+   "city": "St. Louis, Missouri",
    "country": "United States"
   },
   {
@@ -84,6 +166,16 @@
    "country": "United States"
   },
   {
+   "id": "2600290",
+   "league": "aew",
+   "name": "Collision #167 Fright Night Collision",
+   "start": "2026-11-01T00:00:00Z",
+   "hasTime": true,
+   "venue": "Chaifetz Arena",
+   "city": "St. Louis, MO",
+   "country": "United States"
+  },
+  {
    "id": "2599794",
    "league": "wwe",
    "name": "RAW #1745",
@@ -94,5 +186,5 @@
    "country": "United States"
   }
  ],
- "generated": "2026-10-19T13:54:24Z"
+ "generated": "2026-10-19T14:19:28Z"
 }
