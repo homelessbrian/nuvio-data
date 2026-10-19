@@ -126,16 +126,6 @@
    "country": "United States"
   },
   {
-   "id": "2600289",
-   "league": "aew",
-   "name": "Dynamite #369 Fright Night Dynamite",
-   "start": "2026-10-29T00:00:00Z",
-   "hasTime": true,
-   "venue": "Chaifetz Arena",
-   "city": "St. Louis, MO",
-   "country": "United States"
-  },
-  {
    "id": "2599792",
    "league": "wwe",
    "name": "SmackDown #1419",
@@ -186,5 +176,5 @@
    "country": "United States"
   }
  ],
- "generated": "2026-10-19T14:19:28Z"
+ "generated": "2026-10-19T15:07:10Z"
 }
