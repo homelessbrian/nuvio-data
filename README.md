@@ -2,7 +2,7 @@
 
 Data files for the Nuvio + IPTV app, kept up to date by GitHub Actions.
 
-## wrestling.json
+## wrestling.json (wrestling and boxing)
 
 WWE, AEW and TNA shows from yesterday to two weeks ahead, read once a day from
 [TheSportsDB](https://www.thesportsdb.com) by `.github/workflows/nuvio-data.yml`. The app reads this

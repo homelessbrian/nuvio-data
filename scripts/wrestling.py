@@ -32,6 +32,10 @@ BASE = "https://www.thesportsdb.com/api/v1/json/%s/" % KEY
 OUT = "wrestling.json"
 DAYS_BACK = 1
 DAYS_AHEAD = 14
+# With the paid key (whole seasons in one request): further ahead. Big wrestling events and
+# boxing cards are announced weeks or months out.
+AHEAD_PAID = {"boxing": 120}
+AHEAD_PAID_DEFAULT = 45
 # The free key allows about 30 requests a minute, but GitHub's machines share addresses, so the
 # limit is often hit sooner: start at 3.5 seconds apart and slow down further after each "too
 # many requests" answer.
@@ -50,6 +54,7 @@ KNOWN = {"wwe": "4444"}
 FIND = {
     "aew": ["all elite wrestling", "aew"],
     "tna": ["tna wrestling", "tna", "impact wrestling"],
+    "boxing": ["boxing"],
 }
 
 _last = [0.0]
@@ -204,7 +209,7 @@ def main():
     leagues = find_leagues()
     print("Leagues: %s (%s key)" % (leagues, "free" if FREE else "paid"))
     summary = [
-        "## Wrestling schedule", "",
+        "## Wrestling and boxing schedule", "",
         "WRESTLING_LOGOS setting seen by this run: %s" % (", ".join(sorted(approved)) or "**none** (add it under Settings > Secrets and variables > Actions > Variables)"),
         "", "| League | Shows | Logo |", "|---|---|---|",
     ]
@@ -220,13 +225,14 @@ def main():
                 logo_note = "included"
             else:
                 logo_note = "left out (licence not checked: add '%s' to WRESTLING_LOGOS once checked)" % key
-        brands = find_brands(key, lid, info) if use_badge else []
+        brands = find_brands(key, lid, info) if use_badge and key != "boxing" else []
         if brands:
             logo_note += "; show logos: " + ", ".join(b["name"] for b in brands)
         out_leagues.append({"key": key, "id": lid, "name": info.get("strLeague") or key.upper(),
                             "badge": use_badge, "brands": brands})
 
         found = []
+        last_k = last if FREE else today + dt.timedelta(days=AHEAD_PAID.get(key, AHEAD_PAID_DEFAULT))
         if FREE:
             day = first
             print("Reading %s (%s days)..." % (key.upper(), (last - first).days + 1))
@@ -235,12 +241,17 @@ def main():
                 found += rows
                 day += dt.timedelta(days=1)
         else:
-            for season in sorted({str(first.year), str(last.year)}):
-                found += (get("eventsseason.php?id=%s&s=%s" % (lid, season)) or {}).get("events") or []
+            print("Reading %s..." % key.upper())
+            for year in sorted({first.year, last_k.year}):
+                rows = (get("eventsseason.php?id=%s&s=%s" % (lid, year)) or {}).get("events") or []
+                if not rows:
+                    # Some leagues name seasons "2026-2027".
+                    rows = (get("eventsseason.php?id=%s&s=%d-%d" % (lid, year, year + 1)) or {}).get("events") or []
+                found += rows
         n = 0
         for e in found:
             ev = to_event(key, e)
-            if ev and first.isoformat() <= ev["start"][:10] <= last.isoformat():
+            if ev and first.isoformat() <= ev["start"][:10] <= last_k.isoformat():
                 events.append(ev)
                 n += 1
         summary.append("| %s | %d | %s |" % (key.upper(), n, logo_note))
