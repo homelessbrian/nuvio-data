@@ -16,3 +16,18 @@ file (it never contacts TheSportsDB itself).
   per league instead of day by day.
 
 Wrestling schedule data: TheSportsDB.
+
+## football/
+
+Non-league English football (the National League and the leagues below it, which ESPN doesn't
+cover), from TheSportsDB. Needs the paid key in the `TSDB_KEY` secret.
+
+- `football/index.json`: the leagues and their teams (the app's Pick Your Teams reads it).
+- `football/<league id>.json`: each league's games, from six weeks ago to the end of the season.
+- Full update once a day; scores every 15 minutes at UK match times (weekends 11:00 to 22:45 UTC,
+  weekday evenings 18:00 to 22:45 UTC), only for leagues with a game on.
+- Optional variables: `FOOTBALL_LEAGUES` (extra league ids), `FOOTBALL_SKIP` (ids to leave out),
+  `FOOTBALL_LOGOS` (league ids whose club badges you've checked the licence of, or `all`).
+  The run summary lists every English league on TheSportsDB with its id.
+
+Football data: TheSportsDB.
