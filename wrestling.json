@@ -9,7 +9,7 @@
    "key": "wwe",
    "id": "4444",
    "name": "WWE",
-   "badge": null
+   "badge": "https://r2.thesportsdb.com/images/media/league/badge/ywtxyv1453504109.png"
   }
  ],
  "events": [
@@ -94,5 +94,5 @@
    "country": "United States"
   }
  ],
- "generated": "2026-10-19T03:25:02Z"
+ "generated": "2026-10-19T13:54:24Z"
 }
