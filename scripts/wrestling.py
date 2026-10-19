@@ -23,6 +23,7 @@ import os
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 
 KEY = (os.environ.get("TSDB_KEY") or "").strip() or "123"
@@ -31,8 +32,18 @@ BASE = "https://www.thesportsdb.com/api/v1/json/%s/" % KEY
 OUT = "wrestling.json"
 DAYS_BACK = 1
 DAYS_AHEAD = 14
-# 30 requests a minute on the free key: a little over 2 seconds apart stays under it.
-GAP_SECONDS = 2.3 if FREE else 0.7
+# The free key allows about 30 requests a minute, but GitHub's machines share addresses, so the
+# limit is often hit sooner: start at 3.5 seconds apart and slow down further after each "too
+# many requests" answer.
+GAP = [3.5 if FREE else 0.7]
+# The job is stopped by GitHub after 20 minutes: optional extras (the TV channel test) are
+# skipped once this many seconds have gone by, so the schedule is always saved.
+BUDGET_SECONDS = 11 * 60
+STARTED = time.time()
+
+
+def time_left():
+    return BUDGET_SECONDS - (time.time() - STARTED)
 
 # WWE's league on TheSportsDB. The others are looked up by name (their ids aren't fixed here).
 KNOWN = {"wwe": "4444"}
@@ -47,7 +58,7 @@ _last = [0.0]
 def get(path):
     """One API request, spaced out, retried on rate limits and server trouble. None on failure."""
     for attempt in range(4):
-        wait = GAP_SECONDS - (time.time() - _last[0])
+        wait = GAP[0] - (time.time() - _last[0])
         if wait > 0:
             time.sleep(wait)
         _last[0] = time.time()
@@ -58,7 +69,8 @@ def get(path):
                 return json.loads(body) if body else {}
         except urllib.error.HTTPError as e:
             if e.code == 429:
-                print("  rate limited, waiting a minute", file=sys.stderr)
+                GAP[0] = min(GAP[0] + 1.5, 8.0)
+                print("  rate limited: waiting a minute, then %.1f seconds between requests" % GAP[0], flush=True)
                 time.sleep(65)
                 continue
             if e.code >= 500:
@@ -106,6 +118,35 @@ def licence_ok(league):
     return False
 
 
+BRAND_DROP = {"mens", "men", "womens", "women", "wrestling", "tag", "team", "division", "brand", "the"}
+
+
+def find_brands(key, lid, league):
+    """
+    Show brands inside a league and their logos, e.g. WWE's "NXT Mens" team -> {"word": "nxt"}.
+    TheSportsDB lists a promotion's brands as its teams. Only used for leagues whose own logo
+    is already approved (same owner, same licence check). Men's teams win over women's.
+    """
+    rows = (get("lookup_all_teams.php?id=%s" % lid) or {}).get("teams") or []
+    if not rows:
+        rows = (get("search_all_teams.php?l=%s" % urllib.parse.quote(league.get("strLeague") or key)) or {}).get("teams") or []
+    league_words = {key.lower()} | {w.lower() for w in (league.get("strLeague") or "").split()}
+    best = {}
+    for t in rows:
+        badge = (t.get("strBadge") or t.get("strTeamBadge") or "").strip()
+        name = (t.get("strTeam") or "").strip()
+        if not badge.startswith("https://") or not name:
+            continue
+        words = [w for w in name.lower().replace("'", "").split() if w not in BRAND_DROP]
+        if not words or words[0] in league_words:
+            continue
+        word = words[0]
+        womens = "women" in name.lower()
+        if word not in best or (best[word][0] and not womens):
+            best[word] = (womens, {"word": word, "name": name, "badge": badge})
+    return [v[1] for _, v in sorted(best.items())]
+
+
 def to_event(key, e):
     if (e.get("strStatus") or "").lower() in ("cancelled", "canceled", "postponed"):
         return None
@@ -142,6 +183,8 @@ def to_event(key, e):
 
 
 def main():
+    # Show progress in the GitHub log as it happens (not all at the end).
+    sys.stdout.reconfigure(line_buffering=True)
     today = dt.datetime.now(dt.timezone.utc).date()
     first = today - dt.timedelta(days=DAYS_BACK)
     last = today + dt.timedelta(days=DAYS_AHEAD)
@@ -166,11 +209,16 @@ def main():
                 logo_note = "included"
             else:
                 logo_note = "left out (licence not checked: add '%s' to WRESTLING_LOGOS once checked)" % key
-        out_leagues.append({"key": key, "id": lid, "name": info.get("strLeague") or key.upper(), "badge": use_badge})
+        brands = find_brands(key, lid, info) if use_badge else []
+        if brands:
+            logo_note += "; show logos: " + ", ".join(b["name"] for b in brands)
+        out_leagues.append({"key": key, "id": lid, "name": info.get("strLeague") or key.upper(),
+                            "badge": use_badge, "brands": brands})
 
         found = []
         if FREE:
             day = first
+            print("Reading %s (%s days)..." % (key.upper(), (last - first).days + 1))
             while day <= last:
                 rows = (get("eventsday.php?d=%s&l=%s" % (day.isoformat(), lid)) or {}).get("events") or []
                 found += rows
@@ -211,9 +259,12 @@ def main():
     # TV channels for each show (a test for now: the app doesn't use them yet). The free key
     # gives up to 2 channels per show; the run summary lists what came back.
     tv_lines = []
-    for ev in unique[:40]:
+    for ev in unique[:15]:
         if not str(ev["id"]).isdigit():
             continue
+        if time_left() < 0:
+            tv_lines.append("| | (TV channel test stopped early to stay inside GitHub's time limit) | |")
+            break
         data = get("lookuptv.php?id=%s" % ev["id"]) or {}
         rows = data.get("tvevent") or data.get("tvevents") or data.get("events") or []
         tv = []
