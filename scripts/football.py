@@ -95,9 +95,10 @@ def log(msg):
     print(msg, flush=True)
 
 
-def get(path, v2=False):
-    """One request, spaced out and retried. None on failure. The key never appears in output."""
-    url = LIVE_URL if v2 else BASE + path
+def get(path, v2=False, quiet404=False):
+    """One request, spaced out and retried. None on failure. The key never appears in output.
+    v2 with no path: the live scores; with a path: that v2 address."""
+    url = ("https://www.thesportsdb.com/api/v2/json/" + path) if (v2 and path) else LIVE_URL if v2 else BASE + path
     headers = {"User-Agent": "nuvio-data/1.0 (GitHub Actions)"}
     if v2:
         headers["X-API-KEY"] = KEY
@@ -119,7 +120,8 @@ def get(path, v2=False):
             if e.code >= 500:
                 time.sleep(10)
                 continue
-            log("  %s: HTTP %s" % ("livescore" if v2 else path.split("?")[0], e.code))
+            if not (quiet404 and e.code == 404):
+                log("  %s: HTTP %s" % ((path or "livescore") if v2 else path.split("?")[0], e.code))
             return None
         except (urllib.error.URLError, TimeoutError, ValueError) as e:
             log("  %s: %s" % ("livescore" if v2 else path.split("?")[0], type(e).__name__))
@@ -362,7 +364,12 @@ def full_run():
         badges = {}
         use_logos = "all" in logos or lid in logos
         if use_logos:
-            for t in (get("lookup_all_teams.php?id=%s" % lid) or {}).get("teams") or []:
+            # v2's team list (v1's lookup_all_teams answers 404 with this key), then v1's search.
+            data = get("list/teams/%s" % lid, v2=True, quiet404=True) or {}
+            rows = data.get("list") or data.get("teams") or []
+            if not rows:
+                rows = (get("search_all_teams.php?l=%s" % urllib.parse.quote(info.get("strLeague") or name), quiet404=True) or {}).get("teams") or []
+            for t in rows:
                 b = (t.get("strBadge") or t.get("strTeamBadge") or "").strip()
                 if b.startswith("https://") and t.get("idTeam"):
                     badges[str(t["idTeam"])] = b

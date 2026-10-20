@@ -233,7 +233,7 @@ def main():
         logo_note = "none on TheSportsDB"
         use_badge = None
         if badge.startswith("https://"):
-            if key in approved or licence_ok(info):
+            if key in approved or "all" in approved or licence_ok(info):
                 use_badge = badge
                 logo_note = "included"
             else:
