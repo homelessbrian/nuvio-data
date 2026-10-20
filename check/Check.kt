@@ -208,6 +208,131 @@ fun main(args: Array<String>) {
     md.appendLine()
     if (flagged.isEmpty()) md.appendLine("Nothing: every league's feed read as expected.")
     flagged.forEach { r -> md.appendLine("- **${r.league.name}**: " + r.problems.joinToString("; ")) }
+    md.appendLine()
+    // Done last, so a slow listing never gets in the way of the checks above.
+    runCatching { coverage(md, now) }.onFailure { md.appendLine("Coverage: couldn't finish (${it.message}).") }
     out.writeText(md.toString())
     println("Report written to ${out.path}")
+}
+
+
+// ------------------------------------------------------------------ coverage
+
+/** ESPN's sports, as its own listing names them (site paths start with the same word). */
+private val COVER_SPORTS = listOf(
+    "football", "basketball", "baseball", "hockey", "soccer", "rugby", "rugby-league",
+    "australian-football", "cricket", "lacrosse", "volleyball", "field-hockey", "mma", "golf", "tennis", "racing"
+)
+
+private const val CORE = "http://sports.core.api.espn.com/v2/sports/"
+
+/** Like [fetch], but follows ESPN's https-to-http redirects (Java won't on its own). */
+private fun fetchFollow(start: String): String? {
+    var url = start
+    repeat(4) {
+        val r = runCatching {
+            val c = URL(url).openConnection() as HttpURLConnection
+            c.instanceFollowRedirects = false
+            c.connectTimeout = 15_000
+            c.readTimeout = 30_000
+            c.setRequestProperty("User-Agent", "Mozilla/5.0 (nuvio-data ESPN check)")
+            c.setRequestProperty("Accept", "application/json")
+            val code = c.responseCode
+            when {
+                code in 300..399 -> { url = c.getHeaderField("Location") ?: return null; null }
+                code != 200 -> { lastError = "HTTP $code"; return null }
+                else -> c.inputStream.bufferedReader().readText()
+            }
+        }.onFailure { lastError = it.javaClass.simpleName + ": " + it.message }.also { Thread.sleep(150) }
+        if (r.isFailure) return null
+        r.getOrNull()?.let { return it }
+    }
+    return null
+}
+
+private class Found(val sport: String, val path: String, val name: String, val games: Int, val withTeams: Int)
+
+/**
+ * Every league ESPN lists, against the app's own list: the ones the app doesn't have, busiest
+ * first (games this month and next), so a missing league (or a missing sport) shows up here
+ * before someone goes looking for their team and can't find it.
+ */
+private fun coverage(md: StringBuilder, now: Long) {
+    println("Coverage: listing ESPN's leagues…")
+    val have = SportsCatalog.leagues.mapNotNull { it.espnPath }.toSet()
+    val months = SimpleDateFormat("yyyyMM", Locale.US).apply { timeZone = TimeZone.getTimeZone("America/New_York") }
+    val thisMonth = months.format(Date(now))
+    val nextMonth = months.format(Date(now + 31 * DAY))
+    val missing = ArrayList<Found>()
+    val listed = HashSet<String>()
+    val couldnt = ArrayList<String>()
+    for (sport in COVER_SPORTS) {
+        val keys = ArrayList<String>()
+        var page = 1
+        while (page <= 10) {
+            val raw = fetchFollow("${CORE}$sport/leagues?limit=500&page=$page") ?: break
+            val o = runCatching { JSONObject(raw) }.getOrNull() ?: break
+            val items = o.optJSONArray("items") ?: break
+            for (i in 0 until items.length()) {
+                val ref = items.optJSONObject(i)?.optString("\$ref").orEmpty()
+                ref.substringBefore("?").substringAfter("/leagues/", "").takeIf { it.isNotBlank() }?.let { keys += it }
+            }
+            if (page >= o.optInt("pageCount", 1)) break
+            page++
+        }
+        if (keys.isEmpty()) { couldnt += "$sport ($lastError)"; continue }
+        println("  $sport: ${keys.size} leagues")
+        for (key in keys) {
+            // The league's own record: its name, and the slug the scoreboard takes (eng.1, nfl…).
+            val info = fetchFollow("${CORE}$sport/leagues/$key")?.let { runCatching { JSONObject(it) }.getOrNull() }
+            val slug = info?.optString("slug").orEmpty().ifBlank { key }
+            val paths = listOf("$sport/$slug", "$sport/$key").distinct()
+            paths.forEach { listed += it }
+            if (paths.any { it in have }) continue
+            val name = info?.optString("name").orEmpty().ifBlank { info?.optString("abbreviation").orEmpty() }.ifBlank { slug }
+            var games = 0
+            var withTeams = 0
+            for (m in listOf(thisMonth, nextMonth)) {
+                val sb = fetch("$ESPN${paths.first()}/scoreboard?dates=$m&limit=1000")?.let { runCatching { JSONObject(it) }.getOrNull() } ?: continue
+                val evs = sb.optJSONArray("events") ?: continue
+                for (i in 0 until evs.length()) {
+                    games++
+                    val comp = evs.optJSONObject(i)?.optJSONArray("competitions")?.optJSONObject(0)
+                    if ((comp?.optJSONArray("competitors")?.length() ?: 0) == 2) withTeams++
+                }
+            }
+            missing += Found(sport, paths.first(), name, games, withTeams)
+        }
+    }
+
+    md.appendLine("### Coverage: leagues ESPN has that the app doesn't")
+    md.appendLine()
+    md.appendLine("Every league in ESPN's own listing, against the app's list. Busiest first (games this month and next). A league here can't be followed, and its teams can't be found in search.")
+    md.appendLine()
+    if (couldnt.isNotEmpty()) { md.appendLine("Couldn't list: " + couldnt.joinToString(", ")); md.appendLine() }
+    val sportsInApp = have.map { it.substringBefore("/") }.toSet()
+    val newSports = missing.map { it.sport }.distinct().filter { it !in sportsInApp }
+    if (newSports.isNotEmpty()) { md.appendLine("**Sports the app has nothing from ESPN for:** " + newSports.joinToString(", ")); md.appendLine() }
+    val busy = missing.filter { it.games > 0 }.sortedByDescending { it.games }
+    md.appendLine("| Sport | League | ESPN path | Games (this month + next) | With two teams |")
+    md.appendLine("|---|---|---|---|---|")
+    busy.forEach { f -> md.appendLine("| ${f.sport} | ${f.name.replace("|", "/")} | `${f.path}` | ${f.games} | ${f.withTeams} |") }
+    if (busy.isEmpty()) md.appendLine("| – | nothing with games coming up | | | |")
+    md.appendLine()
+    val quiet = missing.filter { it.games == 0 }
+    if (quiet.isNotEmpty()) {
+        md.appendLine("<details><summary>${quiet.size} more with no games this month or next (off season, or finished)</summary>")
+        md.appendLine()
+        quiet.groupBy { it.sport }.forEach { (sp, l) -> md.appendLine("- **$sp**: " + l.joinToString(", ") { "${it.name} (`${it.path}`)" }) }
+        md.appendLine()
+        md.appendLine("</details>")
+        md.appendLine()
+    }
+    // And the other way round: a league in the app that ESPN no longer lists.
+    val gone = SportsCatalog.leagues.filter { l -> l.espnPath != null && l.espnPath!!.substringBefore("/") in COVER_SPORTS && l.espnPath!!.substringBefore("/") !in couldnt.map { it.substringBefore(" ") } && l.espnPath !in listed }
+    if (gone.isNotEmpty()) {
+        md.appendLine("**In the app but not in ESPN's listing** (may have moved): " + gone.joinToString(", ") { "${it.name} (`${it.espnPath}`)" })
+        md.appendLine()
+    }
+    println("Coverage: ${missing.size} leagues the app doesn't have (${busy.size} with games coming up)")
 }
