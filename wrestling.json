@@ -52,23 +52,23 @@
  ],
  "events": [
   {
-   "id": "2618985",
-   "league": "wwe",
-   "name": "NXT #860",
-   "start": "2026-10-20T00:00:00Z",
-   "hasTime": true,
-   "venue": "WWE Performance Center",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2599789",
    "league": "wwe",
    "name": "RAW #1743",
    "start": "2026-10-20T00:00:00Z",
    "hasTime": true,
    "venue": "Pechanga Arena",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2618985",
+   "league": "wwe",
+   "name": "NXT #860",
+   "start": "2026-10-21T00:00:00Z",
+   "hasTime": true,
+   "venue": "WWE Performance Center",
    "city": null,
    "country": "United States",
    "about": null
@@ -437,5 +437,5 @@
    "about": null
   }
  ],
- "generated": "2026-10-20T03:28:52Z"
+ "generated": "2026-10-20T14:09:33Z"
 }
