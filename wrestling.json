@@ -59,7 +59,8 @@
    "hasTime": true,
    "venue": "WWE Performance Center",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2599789",
@@ -69,7 +70,8 @@
    "hasTime": true,
    "venue": "Pechanga Arena",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2615936",
@@ -79,7 +81,8 @@
    "hasTime": true,
    "venue": "Watsco Center",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2618956",
@@ -89,7 +92,8 @@
    "hasTime": true,
    "venue": null,
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2599790",
@@ -99,7 +103,8 @@
    "hasTime": true,
    "venue": "Toyota Arena",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2618988",
@@ -109,7 +114,8 @@
    "hasTime": true,
    "venue": "Lawrence Joel Veterans Memorial Coliseum",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2548281",
@@ -119,7 +125,8 @@
    "hasTime": true,
    "venue": "Sheffield Arena",
    "city": null,
-   "country": "United Kingdom"
+   "country": "United Kingdom",
+   "about": null
   },
   {
    "id": "2607372",
@@ -129,7 +136,8 @@
    "hasTime": true,
    "venue": "Frost Bank Center",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2600288",
@@ -139,7 +147,8 @@
    "hasTime": true,
    "venue": "Lawrence Joel Veterans Memorial Coliseum",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2355269",
@@ -149,7 +158,8 @@
    "hasTime": true,
    "venue": null,
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2599791",
@@ -159,7 +169,8 @@
    "hasTime": true,
    "venue": null,
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2618994",
@@ -169,7 +180,8 @@
    "hasTime": true,
    "venue": "Chaifetz Arena",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2599792",
@@ -179,7 +191,8 @@
    "hasTime": true,
    "venue": "Charleston Coliseum",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2618995",
@@ -189,7 +202,8 @@
    "hasTime": true,
    "venue": "Chaifetz Arena",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2577181",
@@ -199,7 +213,8 @@
    "hasTime": true,
    "venue": null,
    "city": null,
-   "country": "Saudi Arabia"
+   "country": "Saudi Arabia",
+   "about": null
   },
   {
    "id": "2599793",
@@ -209,7 +224,8 @@
    "hasTime": true,
    "venue": "WWE Performance Center",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2600290",
@@ -219,7 +235,8 @@
    "hasTime": true,
    "venue": "Chaifetz Arena",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2599794",
@@ -229,7 +246,8 @@
    "hasTime": true,
    "venue": "Barclays Center",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2607375",
@@ -239,7 +257,8 @@
    "hasTime": true,
    "venue": "AO Arena",
    "city": null,
-   "country": "United Kingdom"
+   "country": "United Kingdom",
+   "about": null
   },
   {
    "id": "2619161",
@@ -249,7 +268,8 @@
    "hasTime": true,
    "venue": "Copper Box Arena",
    "city": null,
-   "country": "United Kingdom"
+   "country": "United Kingdom",
+   "about": null
   },
   {
    "id": "2599795",
@@ -259,7 +279,8 @@
    "hasTime": true,
    "venue": null,
    "city": null,
-   "country": "Saudi Arabia"
+   "country": "Saudi Arabia",
+   "about": null
   },
   {
    "id": "2607376",
@@ -269,7 +290,8 @@
    "hasTime": true,
    "venue": "College Park Center",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2619162",
@@ -279,7 +301,8 @@
    "hasTime": true,
    "venue": "County Coliseum",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2606669",
@@ -289,7 +312,8 @@
    "hasTime": true,
    "venue": "Edmonton Expo Centre",
    "city": null,
-   "country": "Canada"
+   "country": "Canada",
+   "about": null
   },
   {
    "id": "2579124",
@@ -299,7 +323,8 @@
    "hasTime": true,
    "venue": null,
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2619163",
@@ -309,7 +334,8 @@
    "hasTime": true,
    "venue": "Ebara Wave Arena",
    "city": null,
-   "country": "Japan"
+   "country": "Japan",
+   "about": null
   },
   {
    "id": "2619164",
@@ -319,7 +345,8 @@
    "hasTime": true,
    "venue": "Merkur Speil Arena",
    "city": null,
-   "country": "Germany"
+   "country": "Germany",
+   "about": null
   },
   {
    "id": "2599796",
@@ -329,7 +356,8 @@
    "hasTime": true,
    "venue": "Daikin Park",
    "city": null,
-   "country": "United States"
+   "country": "United States",
+   "about": null
   },
   {
    "id": "2619165",
@@ -339,7 +367,8 @@
    "hasTime": true,
    "venue": null,
    "city": null,
-   "country": "Japan"
+   "country": "Japan",
+   "about": null
   },
   {
    "id": "2619166",
@@ -349,7 +378,8 @@
    "hasTime": true,
    "venue": "University of Wolverhampton at The Halls",
    "city": null,
-   "country": "United Kingdom"
+   "country": "United Kingdom",
+   "about": null
   },
   {
    "id": "2610091",
@@ -359,7 +389,8 @@
    "hasTime": true,
    "venue": "Principality Stadium",
    "city": null,
-   "country": "United Kingdom"
+   "country": "United Kingdom",
+   "about": null
   },
   {
    "id": "2619168",
@@ -369,7 +400,8 @@
    "hasTime": true,
    "venue": "UMMC Arena",
    "city": null,
-   "country": "Russia"
+   "country": "Russia",
+   "about": null
   },
   {
    "id": "2619167",
@@ -379,7 +411,8 @@
    "hasTime": true,
    "venue": "Salle des Etoliles",
    "city": null,
-   "country": "Monaco"
+   "country": "Monaco",
+   "about": null
   },
   {
    "id": "2607373",
@@ -389,7 +422,8 @@
    "hasTime": true,
    "venue": "SSE Arena Belfast",
    "city": null,
-   "country": "Northern Ireland"
+   "country": "Northern Ireland",
+   "about": null
   },
   {
    "id": "2619169",
@@ -399,8 +433,9 @@
    "hasTime": true,
    "venue": "Horsens Kommune",
    "city": null,
-   "country": "Denmark"
+   "country": "Denmark",
+   "about": null
   }
  ],
- "generated": "2026-10-20T03:05:20Z"
+ "generated": "2026-10-20T03:28:52Z"
 }
