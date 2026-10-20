@@ -64,8 +64,9 @@ OTHER = [
     {"sport": "RUGBY", "regions": ["AU"], "words": ["NRL", "Rugby League", "State of Origin"], "minutes": 110,
      "look": [("Australia", "Rugby")], "name": r"\bnrl\b|national rugby league|state of origin",
      "skip": r"women|nrlw|reserve|cup$"},
-    {"sport": "CRICKET", "regions": ["UK", "IE"], "words": ["County Championship", "The Hundred", "T20 Blast", "Vitality Blast", "One-Day Cup"], "minutes": 420,
-     "look": [("England", "Cricket")], "name": r"county championship|the hundred|blast|one.day cup",
+    # (The County Championship isn't kept up on TheSportsDB: its last season there is 2023.)
+    {"sport": "CRICKET", "regions": ["UK", "IE"], "words": ["T20 Blast", "Vitality Blast", "The Hundred"], "minutes": 210,
+     "look": [("England", "Cricket")], "name": r"blast|the hundred",
      "skip": r"women|second xi|2nd xi"},
     {"sport": "CRICKET", "regions": ["UK", "IE", "AU", "OTHER"], "words": ["IPL", "Indian Premier League"], "minutes": 210,
      "look": [("India", "Cricket")], "name": r"indian premier league|\bipl\b", "skip": r"women"},
@@ -76,8 +77,10 @@ OTHER = [
      "skip": r"women|u19|under.19|qualif"},
     {"sport": "HOCKEY", "regions": ["UK", "IE"], "words": ["Elite League", "Elite Ice Hockey"], "minutes": 150,
      "look": [("England", "Ice Hockey"), ("United Kingdom", "Ice Hockey"), ("Scotland", "Ice Hockey")], "name": r"elite", "skip": r"women"},
-    {"sport": "GAELIC", "regions": ["IE", "UK"], "words": ["GAA", "All-Ireland", "Hurling", "Gaelic Football"], "minutes": 100,
-     "look": [("Ireland", "Gaelic Football"), ("Ireland", "Hurling"), ("Ireland", "Gaelic")], "name": r"all.ireland|national (football|hurling) league|championship",
+    # Gaelic games: only the National Football League has games on TheSportsDB (the championships
+    # and hurling have none).
+    {"sport": "GAELIC", "regions": ["IE", "UK"], "words": ["National Football League", "Allianz League", "Allianz Football League", "GAA"], "minutes": 100,
+     "look": [("Ireland", "Gaelic")], "name": r"national football league",
      "skip": r"ladies|camogie|minor|u20|junior|intermediate"},
     {"sport": "NETBALL", "regions": ["UK", "IE"], "words": ["Netball Super League", "Netball"], "minutes": 90,
      "look": [("England", "Netball"), ("United Kingdom", "Netball")], "name": r"super league|netball", "skip": r"u21|u19"},
@@ -253,6 +256,15 @@ def find_leagues(summary):
     return chosen
 
 
+def season_after(season):
+    """"2025-2026" -> "2026-2027"; "2026" -> "2027"; None if it isn't a season like that."""
+    m = re.match(r"^(\d{4})(?:-(\d{4}))?$", season or "")
+    if not m:
+        return None
+    a = int(m.group(1)) + 1
+    return "%d-%d" % (a, int(m.group(2)) + 1) if m.group(2) else str(a)
+
+
 def season_before(season):
     """"2026" -> "2025"; "2025-2026" -> "2024-2025"; None if it isn't a season like that."""
     m = re.match(r"^(\d{4})(?:-(\d{4}))?$", season or "")
@@ -327,6 +339,13 @@ def full_run():
         season = (info.get("strCurrentSeason") or "").strip() or season_now(today)
         log("Reading %s (%s), season %s..." % (name, lid, season))
         rows = (get("eventsseason.php?id=%s&s=%s" % (lid, urllib.parse.quote(season))) or {}).get("events") or []
+        # TheSportsDB's "current season" isn't always moved on (several divisions still said
+        # 2025-2026 in October 2026): nothing there, try the next season.
+        nxt_season = season_after(season)
+        if not rows and nxt_season and nxt_season[:4] <= str(today.year):
+            rows = (get("eventsseason.php?id=%s&s=%s" % (lid, urllib.parse.quote(nxt_season))) or {}).get("events") or []
+            if rows:
+                season = nxt_season
         if not rows:
             rows = ((get("eventspastleague.php?id=%s" % lid) or {}).get("events") or []) + \
                    ((get("eventsnextleague.php?id=%s" % lid) or {}).get("events") or [])
