@@ -3,7 +3,8 @@ name: ESPN check
 # Runs the Sports page's own code (from the Nuvio_Testing repo's dev branch) against ESPN's
 # feeds for every league, and puts a report in the run's summary: games, scores, winners, team
 # colours and logos, TV networks, race and golf results, tennis matches, scoring plays and team
-# schedules, with anything that looks wrong listed at the bottom.
+# schedules, with anything that looks wrong listed at the bottom. Then a coverage list: every
+# league ESPN has that the app doesn't, busiest first.
 # Run it by hand from the Actions tab (Run workflow). It only reads ESPN's public feeds.
 on:
   workflow_dispatch:
@@ -14,7 +15,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 45
     steps:
       - name: Get the check
         uses: actions/checkout@v4
