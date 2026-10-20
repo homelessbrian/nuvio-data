@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-10-18",
-  "to": "2026-11-02"
+  "from": "2026-10-19",
+  "to": "2026-11-03"
  },
  "leagues": [
   {
@@ -51,16 +51,6 @@
   }
  ],
  "events": [
-  {
-   "id": "2607374",
-   "league": "boxing",
-   "name": "Sebastian Fundora vs Ermal Hadribeaj",
-   "start": "2026-10-18T00:00:00Z",
-   "hasTime": true,
-   "venue": "The Chelsea at The Cosmopolitan",
-   "city": null,
-   "country": "United States"
-  },
   {
    "id": "2618985",
    "league": "wwe",
@@ -412,5 +402,5 @@
    "country": "Denmark"
   }
  ],
- "generated": "2026-10-19T23:50:46Z"
+ "generated": "2026-10-20T01:43:27Z"
 }
