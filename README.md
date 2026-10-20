@@ -31,3 +31,9 @@ cover), from TheSportsDB. Needs the paid key in the `TSDB_KEY` secret.
   The run summary lists every English league on TheSportsDB with its id.
 
 Football data: TheSportsDB.
+
+## check/ (ESPN check)
+
+`.github/workflows/espn-check.yml` runs the app's Sports code (from Nuvio_Testing's dev branch)
+against ESPN's feeds for every league and writes a report in the run summary. Run it by hand
+from the Actions tab. It changes nothing.
