@@ -1,0 +1,59 @@
+name: ESPN check
+
+# Runs the Sports page's own code (from the Nuvio_Testing repo's dev branch) against ESPN's
+# feeds for every league, and puts a report in the run's summary: games, scores, winners, team
+# colours and logos, TV networks, race and golf results, tennis matches, scoring plays and team
+# schedules, with anything that looks wrong listed at the bottom.
+# Run it by hand from the Actions tab (Run workflow). It only reads ESPN's public feeds.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Get the check
+        uses: actions/checkout@v4
+
+      - name: Get the app's Sports code (Nuvio_Testing, dev)
+        uses: actions/checkout@v4
+        with:
+          repository: homelessbrian/Nuvio_Testing
+          ref: dev
+          path: app-src
+          sparse-checkout: |
+            app/src/main/java/com/nuvio/tv/livetv/sports
+            app/src/main/java/com/nuvio/tv/livetv/model
+            app/src/main/java/com/nuvio/tv/livetv/data/CatchupUrlBuilder.kt
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Get the Kotlin compiler and libraries
+        run: |
+          curl -sSL -o kotlin.zip https://github.com/JetBrains/kotlin/releases/download/v2.0.21/kotlin-compiler-2.0.21.zip
+          unzip -q kotlin.zip
+          curl -sSL -o json.jar https://repo1.maven.org/maven2/org/json/json/20240303/json-20240303.jar
+          curl -sSL -o coroutines.jar https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.8.1/kotlinx-coroutines-core-jvm-1.8.1.jar
+
+      - name: Build the check
+        run: |
+          L=app-src/app/src/main/java/com/nuvio/tv/livetv
+          kotlinc/bin/kotlinc -nowarn -cp json.jar:coroutines.jar \
+            check/stubs/*.kt \
+            $L/model/LiveTvModels.kt $L/data/CatchupUrlBuilder.kt \
+            $L/sports/SportsModels.kt $L/sports/SportsCatalog.kt $L/sports/SportsMatcher.kt \
+            $L/sports/SportsFeeds.kt $L/sports/SportsRows.kt \
+            check/Check.kt -d out
+
+      - name: Run it
+        run: |
+          java -cp out:json.jar:coroutines.jar:kotlinc/lib/kotlin-stdlib.jar com.nuvio.tv.livetv.sports.CheckKt report.md
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
