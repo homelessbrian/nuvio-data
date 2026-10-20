@@ -80,14 +80,13 @@ fun main(args: Array<String>) {
 
     for (l in leagues) {
         val problems = ArrayList<String>()
-        // The same requests the app makes: last week, and today to a week ahead (one request
-        // each); a feed that won't take a range of days: yesterday, today and tomorrow.
-        var raws = listOfNotNull(
-            fetch("$ESPN${l.espnPath}/scoreboard?dates=${day(now - 7 * DAY)}-${day(now - DAY)}&limit=1000${l.espnQuery}"),
-            fetch("$ESPN${l.espnPath}/scoreboard?dates=${day(now)}-${day(now + 7 * DAY)}&limit=1000${l.espnQuery}")
-        )
+        // ESPN doesn't take a range of days (the app asks a day at a time) but does take a month:
+        // the months the last week and the next five weeks touch, kept to that window.
+        val months = SimpleDateFormat("yyyyMM", Locale.US).apply { timeZone = TimeZone.getTimeZone("America/New_York") }
+        val wanted = listOf(now - 7 * DAY, now, now + 7 * DAY, now + 35 * DAY).map { months.format(Date(it)) }.distinct()
+        var raws = wanted.mapNotNull { m -> fetch("$ESPN${l.espnPath}/scoreboard?dates=$m&limit=1000${l.espnQuery}") }
         if (raws.isEmpty()) {
-            problems += "won't take a range of days (the app asks a day at a time; $lastError)"
+            problems += "won't take a month either ($lastError): the week ahead still works, a day at a time"
             raws = listOf(-1, 0, 1).mapNotNull { d -> fetch("$ESPN${l.espnPath}/scoreboard?dates=${day(now + d * DAY)}&limit=1000${l.espnQuery}") }
         }
         if (raws.isEmpty()) {
@@ -95,13 +94,15 @@ fun main(args: Array<String>) {
             if (raws.isNotEmpty()) problems += "only the feed's own default days work"
         }
         if (raws.isEmpty()) {
-            problems += "the feed didn't answer at all"
+            problems += "the feed didn't answer at all ($lastError)"
             (if (l.kind == LeagueKind.TEAMS) teamRows else eventRows) += Row(l, listOf("–"), problems)
             continue
         }
         val events = raws.flatMap { raw ->
             runCatching { SportsFeeds.parseScoreboard(l, raw) }.getOrElse { e -> problems += "couldn't read the feed: ${e.message}"; emptyList() }
-        }.distinctBy { it.id }
+        }.distinctBy { it.id }.filter { it.startMs in (now - 7 * DAY)..(now + 7 * DAY) || it.state == GameState.LIVE }
+        val aheadCount = raws.flatMap { raw -> runCatching { SportsFeeds.parseScoreboard(l, raw) }.getOrDefault(emptyList()) }
+            .distinctBy { it.id }.count { it.startMs in (now + 7 * DAY)..(now + 35 * DAY) }
         val logo = SportsFeeds.leagueLogos[l.id] != null
         val post = events.filter { it.state == GameState.POST }
         val live = events.filter { it.state == GameState.LIVE }
@@ -154,7 +155,7 @@ fun main(args: Array<String>) {
             }
 
             teamRows += Row(l, listOf(
-                "${post.size} / ${live.size} / ${pre.size}" + if (off.isNotEmpty()) " / ${off.size} off" else "",
+                "${post.size} / ${live.size} / ${pre.size}" + (if (off.isNotEmpty()) " / ${off.size} off" else "") + " · $aheadCount later",
                 "${pct(scored, post.size)} · ${pct(winners + ties, post.size)}",
                 if (live.isEmpty()) "–" else pct(liveStatus, live.size),
                 "${pct(colours, sides.size)} · ${pct(logos, sides.size)}",
@@ -187,12 +188,11 @@ fun main(args: Array<String>) {
     val md = StringBuilder()
     md.appendLine("## ESPN check")
     md.appendLine()
-    md.appendLine("The app's own Sports code, run against ESPN's feeds for every league: the last week and the week ahead.")
+    md.appendLine("The app's own Sports code, run against ESPN's feeds for every league: the last week, the week ahead, and up to five weeks ahead (asked by month, as the app now does).")
     md.appendLine()
-    rangeProbe(md, now)
     md.appendLine("### Leagues with teams")
     md.appendLine()
-    md.appendLine("| League | Finished / live / coming | Finished: score · winner | Live: clock | Teams: colours · logos | TV listed | Scoring plays (a finished game) | A team's season | League logo |")
+    md.appendLine("| League | Finished / live / coming (2 weeks) · later (5 weeks) | Finished: score · winner | Live: clock | Teams: colours · logos | TV listed | Scoring plays (a finished game) | A team's season | League logo |")
     md.appendLine("|---|---|---|---|---|---|---|---|---|")
     teamRows.forEach { r -> md.appendLine("| ${r.league.name} | " + r.cells.joinToString(" | ").padEnd(0) + if (r.cells.size == 1) " | | | | | | | |" else " |") }
     md.appendLine()

@@ -195,7 +195,20 @@ def to_event(key, e):
         "venue": (e.get("strVenue") or "").strip() or None,
         "city": (e.get("strCity") or "").strip() or None,
         "country": (e.get("strCountry") or "").strip() or None,
+        "about": about(e.get("strDescriptionEN")),
     }
+
+
+def about(text):
+    """A few lines about the show, cut at a sentence (TheSportsDB's description)."""
+    t = " ".join((text or "").split())
+    if len(t) < 20:
+        return None
+    if len(t) <= 400:
+        return t
+    cut = t[:400]
+    end = max(cut.rfind(". "), cut.rfind("! "), cut.rfind("? "))
+    return cut[:end + 1] if end > 120 else cut.rstrip() + "…"
 
 
 def main():
