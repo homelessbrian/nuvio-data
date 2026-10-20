@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Non-league football for the Nuvio + IPTV Sports page: English leagues ESPN doesn't cover (the
-National League and the leagues below it), from TheSportsDB. The app only ever reads the files
+National League and the leagues below it), from TheSportsDB. Also the other team sports ESPN
+doesn't cover (rugby league, cricket, UK ice hockey, Gaelic games, netball): see OTHER below. The app only ever reads the files
 this writes, so your TheSportsDB key stays in this repo's secrets.
 
 Two modes:
@@ -9,6 +10,8 @@ Two modes:
                                        teams). Run once a day.
   python scripts/football.py --scores  Scores: today's games only, for leagues with a game on.
                                        Run every 15 minutes at match times.
+  python scripts/football.py --check   Check: reads everything the full run would and reports
+                                       how good each league's data is, but writes nothing.
 
 Files written (only when something changed):
   football/index.json        The leagues and their teams (for Pick Your Teams).
@@ -18,6 +21,10 @@ Settings (Settings > Secrets and variables > Actions):
   TSDB_KEY            Secret. Your TheSportsDB key. Needed: the free key can't read whole seasons.
   FOOTBALL_LEAGUES    Variable, optional. Extra TheSportsDB league ids to include, e.g. "4500,4501".
   FOOTBALL_SKIP       Variable, optional. League ids to leave out.
+  OTHER_SPORTS        Variable. "on" adds the other sports (OTHER) to the files the app reads.
+                      Off until you set it, so you can run --check first, and so app versions from
+                      before other sports were supported don't list them as football.
+  OTHER_SKIP          Variable, optional. League ids from OTHER to leave out.
   FOOTBALL_LOGOS      Variable, optional. League ids whose club badges you've checked the licence
                       of, or "all". Badges are left out otherwise (the app shows a coloured tile).
 
@@ -40,10 +47,43 @@ LIVE_URL = "https://www.thesportsdb.com/api/v2/json/livescore/soccer"
 OUT_DIR = "football"
 GAP = [0.7 if not FREE else 3.5]
 KEEP_DAYS_BACK = 45
+CHECK = "--check" in sys.argv
 
 # English leagues below League Two (ESPN covers League Two and above).
 NONLEAGUE = re.compile(r"national league|southern|isthmian|northern premier", re.I)
 NOT_THESE = re.compile(r"women|u21|u23|u18|youth|cup|trophy|vase|shield|reserve", re.I)
+
+# Other sports ESPN doesn't cover, found by name in TheSportsDB's league lists. Each: the app's
+# sport, where it's shown by default, how guides name it, a game's usual length (minutes), and
+# which of TheSportsDB's lists to look in (country, TheSportsDB's sport name) with a name pattern.
+# A league with no games on TheSportsDB is left out (the run's summary says what was found).
+OTHER = [
+    {"sport": "RUGBY", "regions": ["UK", "IE"], "words": ["Super League", "Rugby League"], "minutes": 110,
+     "look": [("England", "Rugby")], "name": r"super league|challenge cup|championship.*rugby league|rugby league.*championship",
+     "skip": r"women|wheelchair|reserve|academy|union|prem"},
+    {"sport": "RUGBY", "regions": ["AU"], "words": ["NRL", "Rugby League", "State of Origin"], "minutes": 110,
+     "look": [("Australia", "Rugby")], "name": r"\bnrl\b|national rugby league|state of origin",
+     "skip": r"women|nrlw|reserve|cup$"},
+    {"sport": "CRICKET", "regions": ["UK", "IE"], "words": ["County Championship", "The Hundred", "T20 Blast", "Vitality Blast", "One-Day Cup"], "minutes": 420,
+     "look": [("England", "Cricket")], "name": r"county championship|the hundred|blast|one.day cup",
+     "skip": r"women|second xi|2nd xi"},
+    {"sport": "CRICKET", "regions": ["UK", "IE", "AU", "OTHER"], "words": ["IPL", "Indian Premier League"], "minutes": 210,
+     "look": [("India", "Cricket")], "name": r"indian premier league|\bipl\b", "skip": r"women"},
+    {"sport": "CRICKET", "regions": ["AU"], "words": ["Big Bash", "BBL"], "minutes": 210,
+     "look": [("Australia", "Cricket")], "name": r"big bash", "skip": r"women|wbbl"},
+    {"sport": "CRICKET", "regions": ["UK", "IE", "AU", "OTHER"], "words": ["Test Match", "ODI", "T20 International"], "minutes": 480,
+     "look": [("World", "Cricket")], "name": r"test|one day international|\bodi\b|t20 international|twenty20 international|world cup|champions trophy",
+     "skip": r"women|u19|under.19|qualif"},
+    {"sport": "HOCKEY", "regions": ["UK", "IE"], "words": ["Elite League", "Elite Ice Hockey"], "minutes": 150,
+     "look": [("England", "Ice Hockey"), ("United Kingdom", "Ice Hockey"), ("Scotland", "Ice Hockey")], "name": r"elite", "skip": r"women"},
+    {"sport": "GAELIC", "regions": ["IE", "UK"], "words": ["GAA", "All-Ireland", "Hurling", "Gaelic Football"], "minutes": 100,
+     "look": [("Ireland", "Gaelic Football"), ("Ireland", "Hurling"), ("Ireland", "Gaelic")], "name": r"all.ireland|national (football|hurling) league|championship",
+     "skip": r"ladies|camogie|minor|u20|junior|intermediate"},
+    {"sport": "NETBALL", "regions": ["UK", "IE"], "words": ["Netball Super League", "Netball"], "minutes": 90,
+     "look": [("England", "Netball"), ("United Kingdom", "Netball")], "name": r"super league|netball", "skip": r"u21|u19"},
+    {"sport": "NETBALL", "regions": ["AU"], "words": ["Super Netball", "Netball"], "minutes": 90,
+     "look": [("Australia", "Netball")], "name": r"super netball|netball", "skip": r"u21|u19"},
+]
 
 _last = [0.0]
 
@@ -138,7 +178,7 @@ def start_of(e):
         return None, False
 
 
-def state_of(status, hs, as_, start, now):
+def state_of(status, hs, as_, start, now, minutes=115):
     st = (status or "").strip().lower()
     if st in OFF:
         return "off"
@@ -147,11 +187,11 @@ def state_of(status, hs, as_, start, now):
     if st in LIVE or re.match(r"^\d{1,3}('|\+)", st):
         return "in"
     if hs is not None and as_ is not None and start is not None:
-        return "post" if now - start > dt.timedelta(hours=2, minutes=15) else "in"
+        return "post" if now - start > dt.timedelta(minutes=minutes + 20) else "in"
     return "pre"
 
 
-def norm_event(e, now):
+def norm_event(e, now, minutes=115):
     home, away = (e.get("strHomeTeam") or "").strip(), (e.get("strAwayTeam") or "").strip()
     if not home or not away:
         return None
@@ -160,7 +200,7 @@ def norm_event(e, now):
         return None
     hs, as_ = to_int(e.get("intHomeScore")), to_int(e.get("intAwayScore"))
     status = (e.get("strStatus") or "").strip()
-    state = state_of(status, hs, as_, start, now)
+    state = state_of(status, hs, as_, start, now, minutes)
     out = {
         "id": str(e.get("idEvent") or ""),
         "home": home, "homeId": str(e.get("idHomeTeam") or home),
@@ -213,8 +253,32 @@ def find_leagues(summary):
     return chosen
 
 
+def find_other(summary):
+    """OTHER's leagues on TheSportsDB: league id -> (name, the OTHER entry)."""
+    chosen = {}
+    skip_ids = set(env_ids("OTHER_SKIP"))
+    seen_lists = {}
+    for spec in OTHER:
+        for country, sport in spec["look"]:
+            key = (country, sport)
+            if key not in seen_lists:
+                rows = get("search_all_leagues.php?c=%s&s=%s" % (urllib.parse.quote(country), urllib.parse.quote(sport))) or {}
+                seen_lists[key] = rows.get("countries") or rows.get("leagues") or []
+            for r in seen_lists[key]:
+                lid, name = str(r.get("idLeague") or ""), (r.get("strLeague") or "")
+                if not lid or lid in chosen or lid in skip_ids:
+                    continue
+                if re.search(spec["name"], name, re.I) and not re.search(spec["skip"], name, re.I):
+                    chosen[lid] = (name, spec)
+    found = ["%s / %s: %s" % (c, sp, ", ".join("%s (%s)" % (r.get("strLeague"), r.get("idLeague")) for r in rows) or "nothing listed")
+             for (c, sp), rows in seen_lists.items()]
+    summary += ["", "<details><summary>Other sports: what TheSportsDB lists</summary>", ""] + \
+               ["- " + f for f in found] + ["", "</details>"]
+    return chosen
+
+
 def full_run():
-    summary = ["## Non-league football (full)", ""]
+    summary = ["## " + ("Check: TheSportsDB data (nothing written)" if CHECK else "Non-league football and other sports (full)"), ""]
     if FREE:
         summary.append("No TSDB_KEY secret: the free key can't read whole seasons, so nothing was done.")
         log(summary[-1])
@@ -223,12 +287,17 @@ def full_run():
     today = now.date()
     keep_from = (now - dt.timedelta(days=KEEP_DAYS_BACK)).strftime("%Y-%m-%d")
     logos = {s.lower() for s in env_ids("FOOTBALL_LOGOS")}
-    leagues = find_leagues(summary)
-    log("Leagues: %s" % ", ".join("%s %s" % (k, v) for k, v in leagues.items()))
-    summary[2:2] = ["| League | Id | Games kept | Upcoming | Teams | Badges |", "|---|---|---|---|---|---|"]
+    details = []
+    table = []
+    leagues = {lid: (name, None) for lid, name in find_leagues(details).items()}
+    with_other = CHECK or (os.environ.get("OTHER_SPORTS") or "").strip().lower() in ("on", "yes", "true", "1")
+    for lid, v in (find_other(details) if with_other else {}).items():
+        leagues.setdefault(lid, v)
+    log("Leagues: %s" % ", ".join("%s %s" % (k, v[0]) for k, v in leagues.items()))
     os.makedirs(OUT_DIR, exist_ok=True)
     index = []
-    for lid, name in leagues.items():
+    for lid, (name, spec) in leagues.items():
+        minutes = (spec or {}).get("minutes", 115)
         info = ((get("lookupleague.php?id=%s" % lid) or {}).get("leagues") or [{}])[0] or {}
         name = info.get("strLeague") or name or lid
         season = (info.get("strCurrentSeason") or "").strip() or season_now(today)
@@ -239,7 +308,7 @@ def full_run():
                    ((get("eventsnextleague.php?id=%s" % lid) or {}).get("events") or [])
         events = {}
         for e in rows:
-            ev = norm_event(e, now)
+            ev = norm_event(e, now, minutes)
             if ev and ev["start"][:10] >= keep_from:
                 events[ev["id"]] = ev
         events = sorted(events.values(), key=lambda x: (x["start"], x["home"]))
@@ -258,19 +327,44 @@ def full_run():
                      for tid, tn in sorted(teams.items(), key=lambda kv: kv[1].lower())]
         league_badge = (info.get("strBadge") or "").strip() if use_logos else ""
         upcoming = sum(1 for e in events if e["state"] == "pre")
-        summary.insert(-6, "| %s | %s | %d | %d | %d | %s |" % (clean_name(name), lid, len(events), upcoming, len(teams),
-                                                               "yes" if use_logos else "no"))
-        # No games on TheSportsDB for this one: left out of the app (it would be an empty league).
+        done = [e for e in events if e["state"] == "post"]
+        scored = sum(1 for e in done if "hs" in e)
+        sport = (spec or {}).get("sport", "FOOTBALL")
+        last = max((e["start"][:10] for e in done), default="-")
+        nxt = min((e["start"][:10] for e in events if e["state"] == "pre"), default="-")
+        timed = sum(1 for e in events if e.get("hasTime"))
+        # Good: games coming up, kick-off times, and scores on the results.
         if not events:
+            verdict = "no games: left out"
+        elif done and scored * 10 < len(done) * 8:
+            verdict = "thin: scores missing"
+        elif events and timed * 10 < len(events) * 8:
+            verdict = "thin: no kick-off times"
+        elif not upcoming:
+            verdict = "nothing coming up (off season?)"
+        else:
+            verdict = "good"
+        row = "| %s | %s | %s | %d | %d | %d | %s | %s | %s | %s |" % (
+            clean_name(name), sport.title(), lid, len(events), upcoming, len(teams),
+            ("%d of %d" % (scored, len(done))) if done else "-", last, nxt, verdict)
+        table.append(row)
+        # No games on TheSportsDB for this one: left out of the app (it would be an empty league).
+        if not events or CHECK:
             continue
         write_if_changed(os.path.join(OUT_DIR, "%s.json" % lid), {"league": lid, "events": events})
-        index.append({
+        entry = {
             "id": lid, "name": clean_name(name), "short": short_name(name), "season": season,
             "badge": league_badge or None, "teams": team_list, "games": len(events), "upcoming": upcoming,
-        })
-    summary.insert(-6, "")
-    summary.insert(-6, "Leagues with no games on TheSportsDB are left out of the app.")
-    if index:
+        }
+        if spec:
+            entry.update({"sport": spec["sport"], "regions": spec["regions"], "words": spec["words"], "minutes": spec["minutes"]})
+        index.append(entry)
+    summary += ["| League | Sport | Id | Games | Upcoming | Teams | Scores in results | Last result | Next game | Verdict |",
+                "|---|---|---|---|---|---|---|---|---|---|"] + table
+    summary += ["", "Leagues with no games on TheSportsDB are left out of the app."] + details
+    if CHECK:
+        summary += ["", "Check only: nothing was written. A thin league can be left out with the OTHER_SKIP (or FOOTBALL_SKIP) variable."]
+    elif index:
         write_if_changed(os.path.join(OUT_DIR, "index.json"), {"source": "TheSportsDB (thesportsdb.com)", "leagues": index})
     else:
         summary.append("")
@@ -294,6 +388,7 @@ def scores_run():
     now = dt.datetime.utcnow()
     files = {}
     busy = []
+    length = {lg["id"]: lg.get("minutes", 115) for lg in index.get("leagues") or []}
     for lg in index.get("leagues") or []:
         p = os.path.join(OUT_DIR, "%s.json" % lg["id"])
         if not os.path.exists(p):
@@ -306,7 +401,7 @@ def scores_run():
                 start = dt.datetime.strptime(ev["start"], "%Y-%m-%dT%H:%M:%SZ")
             except (KeyError, ValueError):
                 continue
-            if ev.get("state") == "in" or (ev.get("state") == "pre" and start - dt.timedelta(minutes=20) <= now <= start + dt.timedelta(hours=3)):
+            if ev.get("state") == "in" or (ev.get("state") == "pre" and start - dt.timedelta(minutes=20) <= now <= start + dt.timedelta(minutes=length[lg["id"]] + 60)):
                 busy.append(lg["id"])
                 break
     if not busy:
@@ -321,7 +416,7 @@ def scores_run():
     for lid in busy:
         for d in sorted(days):
             for e in (get("eventsday.php?d=%s&l=%s" % (d, lid)) or {}).get("events") or []:
-                ev = norm_event(e, now)
+                ev = norm_event(e, now, length.get(lid, 115))
                 if ev:
                     updates[ev["id"]] = ev
     live = get("", v2=True) or {}
@@ -330,7 +425,7 @@ def scores_run():
     for e in live_rows:
         if str(e.get("idLeague") or "") not in files:
             continue
-        ev = norm_event(e, now)
+        ev = norm_event(e, now, length.get(str(e.get("idLeague")), 115))
         if not ev:
             continue
         if ev["state"] == "pre":
