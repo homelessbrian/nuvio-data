@@ -21,14 +21,47 @@ import java.util.TimeZone
 private const val ESPN = "https://site.api.espn.com/apis/site/v2/sports/"
 private const val DAY = 86_400_000L
 
+/** Why the last request failed (status and the start of ESPN's answer), for the report. */
+private var lastError = ""
+
 private fun fetch(url: String): String? = runCatching {
     val c = URL(url).openConnection() as HttpURLConnection
     c.connectTimeout = 15_000
     c.readTimeout = 30_000
     c.setRequestProperty("User-Agent", "Mozilla/5.0 (nuvio-data ESPN check)")
     c.setRequestProperty("Accept", "application/json")
-    if (c.responseCode != 200) null else c.inputStream.bufferedReader().readText()
-}.getOrNull().also { Thread.sleep(250) }
+    val code = c.responseCode
+    if (code != 200) {
+        lastError = "HTTP $code: " + (runCatching { c.errorStream?.bufferedReader()?.readText() }.getOrNull() ?: "").take(160).replace("\n", " ")
+        null
+    } else c.inputStream.bufferedReader().readText()
+}.onFailure { lastError = it.javaClass.simpleName + ": " + it.message }.getOrNull().also { Thread.sleep(250) }
+
+/** Asking for several days at once: which forms of the request ESPN takes (the app asks for ranges). */
+private fun rangeProbe(md: StringBuilder, now: Long) {
+    md.appendLine("### Asking for several days at once")
+    md.appendLine()
+    md.appendLine("| League | Request | Answer |")
+    md.appendLine("|---|---|---|")
+    for (id in listOf("football/nfl", "soccer/eng.1", "hockey/nhl")) {
+        val l = SportsCatalog.league(id) ?: continue
+        val base = "$ESPN${l.espnPath}/scoreboard"
+        val tries = listOf(
+            "7 days, limit" to "$base?dates=${day(now)}-${day(now + 7 * DAY)}&limit=1000",
+            "7 days" to "$base?dates=${day(now)}-${day(now + 7 * DAY)}",
+            "2 days" to "$base?dates=${day(now)}-${day(now + DAY)}",
+            "1 day, limit" to "$base?dates=${day(now)}&limit=1000",
+            "month" to "$base?dates=${day(now).take(6)}",
+            "week param" to "$base?week=8&seasontype=2"
+        )
+        for ((label, url) in tries) {
+            val raw = fetch(url)
+            val n = raw?.let { runCatching { JSONObject(it).optJSONArray("events")?.length() ?: 0 }.getOrDefault(-1) }
+            md.appendLine("| ${l.name} | $label | " + (if (raw != null) "OK, $n events" else lastError.replace("|", "/")) + " |")
+        }
+    }
+    md.appendLine()
+}
 
 private val dayFmt = SimpleDateFormat("yyyyMMdd", Locale.US).apply { timeZone = TimeZone.getTimeZone("America/New_York") }
 private fun day(ms: Long) = dayFmt.format(Date(ms))
@@ -54,7 +87,7 @@ fun main(args: Array<String>) {
             fetch("$ESPN${l.espnPath}/scoreboard?dates=${day(now)}-${day(now + 7 * DAY)}&limit=1000${l.espnQuery}")
         )
         if (raws.isEmpty()) {
-            problems += "won't take a range of days (the app asks a day at a time)"
+            problems += "won't take a range of days (the app asks a day at a time; $lastError)"
             raws = listOf(-1, 0, 1).mapNotNull { d -> fetch("$ESPN${l.espnPath}/scoreboard?dates=${day(now + d * DAY)}&limit=1000${l.espnQuery}") }
         }
         if (raws.isEmpty()) {
@@ -156,6 +189,7 @@ fun main(args: Array<String>) {
     md.appendLine()
     md.appendLine("The app's own Sports code, run against ESPN's feeds for every league: the last week and the week ahead.")
     md.appendLine()
+    rangeProbe(md, now)
     md.appendLine("### Leagues with teams")
     md.appendLine()
     md.appendLine("| League | Finished / live / coming | Finished: score · winner | Live: clock | Teams: colours · logos | TV listed | Scoring plays (a finished game) | A team's season | League logo |")
