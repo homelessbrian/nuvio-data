@@ -32,14 +32,14 @@
    "key": "aew",
    "id": "4563",
    "name": "AEW",
-   "badge": null,
+   "badge": "https://r2.thesportsdb.com/images/media/league/badge/zb3zn01708517335.png",
    "brands": []
   },
   {
    "key": "tna",
    "id": "4455",
    "name": "TNA Wrestling",
-   "badge": null,
+   "badge": "https://r2.thesportsdb.com/images/media/league/badge/rc6r6l1743067823.png",
    "brands": []
   },
   {
@@ -402,5 +402,5 @@
    "country": "Denmark"
   }
  ],
- "generated": "2026-10-20T01:43:27Z"
+ "generated": "2026-10-20T03:05:20Z"
 }
