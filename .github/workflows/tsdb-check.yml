@@ -1,0 +1,36 @@
+name: TheSportsDB check
+
+# Reads everything the daily update would read from TheSportsDB (non-league football, rugby
+# league, cricket, UK ice hockey, Gaelic games, netball) and reports how good each league's data
+# is: games, upcoming games, teams, scores on results, and a verdict. It writes nothing, so the
+# app isn't affected. Run it by hand from the Actions tab (Run workflow).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check TheSportsDB's data
+        env:
+          # Your TheSportsDB key (never printed).
+          TSDB_KEY: ${{ secrets.TSDB_KEY }}
+          FOOTBALL_LEAGUES: ${{ vars.FOOTBALL_LEAGUES }}
+          FOOTBALL_SKIP: ${{ vars.FOOTBALL_SKIP }}
+          OTHER_SKIP: ${{ vars.OTHER_SKIP }}
+        run: |
+          if [ ! -f scripts/football.py ]; then
+            echo "scripts/football.py is missing: upload nuvio-data.zip first."
+            exit 1
+          fi
+          python scripts/football.py --check

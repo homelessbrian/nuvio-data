@@ -4,16 +4,18 @@ name: Nuvio data
 #  - Upload nuvio-data.zip to the repo: it's unpacked (scripts, README), the zip is deleted,
 #    and everything is updated straight away.
 #  - Every day (and when you press Run workflow): the full update. The wrestling schedule and
-#    the non-league football leagues (fixtures, results, teams) from TheSportsDB.
-#  - Every 15 minutes at UK match times: scores for non-league games that are on.
+#    the non-league football leagues and the other sports ESPN doesn't cover (fixtures, results,
+#    teams) from TheSportsDB.
+#  - Every 15 minutes from 7:00 to 22:45 UTC: scores for games that are on (non-league football,
+#    rugby league, cricket, UK ice hockey, Gaelic games, netball). A run with no games on asks
+#    TheSportsDB nothing.
 on:
   push:
     paths:
       - "nuvio-data.zip"
   schedule:
     - cron: "17 9 * * *"           # full update: 9:17 UTC every day
-    - cron: "*/15 11-22 * * 0,6"   # scores: weekends, 11:00-22:45 UTC
-    - cron: "*/15 18-22 * * 1-5"   # scores: weekday evenings, 18:00-22:45 UTC
+    - cron: "*/15 7-22 * * *"      # scores: every day, 7:00-22:45 UTC (Australian evenings to UK nights; a run with no games on does nothing)
   workflow_dispatch:
 
 permissions:
@@ -74,13 +76,17 @@ jobs:
           fi
           python scripts/wrestling.py
 
-      - name: Non-league football from TheSportsDB
+      - name: Non-league football and other sports from TheSportsDB
         if: github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true'
         env:
           TSDB_KEY: ${{ secrets.TSDB_KEY }}
           # Optional: extra or skipped league ids, and leagues whose club badges you've checked.
           FOOTBALL_LEAGUES: ${{ vars.FOOTBALL_LEAGUES }}
           FOOTBALL_SKIP: ${{ vars.FOOTBALL_SKIP }}
+          # Optional: other-sport league ids to leave out (… > Variables).
+          OTHER_SKIP: ${{ vars.OTHER_SKIP }}
+          # Set to "on" (… > Variables) once the TheSportsDB check looks good, and the new app is out.
+          OTHER_SPORTS: ${{ vars.OTHER_SPORTS }}
           FOOTBALL_LOGOS: ${{ vars.FOOTBALL_LOGOS }}
         run: |
           if [ ! -f scripts/football.py ]; then
