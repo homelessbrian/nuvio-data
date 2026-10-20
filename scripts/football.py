@@ -253,6 +253,30 @@ def find_leagues(summary):
     return chosen
 
 
+def season_before(season):
+    """"2026" -> "2025"; "2025-2026" -> "2024-2025"; None if it isn't a season like that."""
+    m = re.match(r"^(\d{4})(?:-(\d{4}))?$", season or "")
+    if not m:
+        return None
+    a = int(m.group(1)) - 1
+    return "%d-%d" % (a, int(m.group(2)) - 1) if m.group(2) else str(a)
+
+
+def last_season_note(lid, season, now, minutes):
+    """Check only, for a league with nothing coming up: how its last season looked."""
+    prev = season_before(season)
+    if not prev:
+        return "-"
+    rows = (get("eventsseason.php?id=%s&s=%s" % (lid, urllib.parse.quote(prev))) or {}).get("events") or []
+    evs = [ev for ev in (norm_event(e, now, minutes) for e in rows) if ev]
+    if not evs:
+        return "%s: no games" % prev
+    done = [e for e in evs if e["state"] == "post"]
+    scored = sum(1 for e in done if "hs" in e)
+    timed = sum(1 for e in evs if e.get("hasTime"))
+    return "%s: %d games, %d of %d scored, %d timed" % (prev, len(evs), scored, len(done), timed)
+
+
 def find_other(summary):
     """OTHER's leagues on TheSportsDB: league id -> (name, the OTHER entry)."""
     chosen = {}
@@ -344,9 +368,11 @@ def full_run():
             verdict = "nothing coming up (off season?)"
         else:
             verdict = "good"
-        row = "| %s | %s | %s | %d | %d | %d | %s | %s | %s | %s |" % (
-            clean_name(name), sport.title(), lid, len(events), upcoming, len(teams),
-            ("%d of %d" % (scored, len(done))) if done else "-", last, nxt, verdict)
+        # Off season: did last season have proper data? (Check only: one more request.)
+        before = last_season_note(lid, season, now, minutes) if CHECK and not upcoming else ""
+        row = "| %s | %s | %s | %s | %d | %d | %d | %s | %s | %s | %s | %s |" % (
+            clean_name(name), sport.title(), lid, season, len(events), upcoming, len(teams),
+            ("%d of %d" % (scored, len(done))) if done else "-", last, nxt, verdict, before or "-")
         table.append(row)
         # No games on TheSportsDB for this one: left out of the app (it would be an empty league).
         if not events or CHECK:
@@ -359,8 +385,8 @@ def full_run():
         if spec:
             entry.update({"sport": spec["sport"], "regions": spec["regions"], "words": spec["words"], "minutes": spec["minutes"]})
         index.append(entry)
-    summary += ["| League | Sport | Id | Games | Upcoming | Teams | Scores in results | Last result | Next game | Verdict |",
-                "|---|---|---|---|---|---|---|---|---|---|"] + table
+    summary += ["| League | Sport | Id | Season | Games | Upcoming | Teams | Scores in results | Last result | Next game | Verdict | Last season |",
+                "|---|---|---|---|---|---|---|---|---|---|---|---|"] + table
     summary += ["", "Leagues with no games on TheSportsDB are left out of the app."] + details
     if CHECK:
         summary += ["", "Check only: nothing was written. A thin league can be left out with the OTHER_SKIP (or FOOTBALL_SKIP) variable."]
