@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-10-19",
-  "to": "2026-11-03"
+  "from": "2026-10-20",
+  "to": "2026-11-04"
  },
  "leagues": [
   {
@@ -46,7 +46,7 @@
    "key": "boxing",
    "id": "4445",
    "name": "Boxing",
-   "badge": null,
+   "badge": "https://r2.thesportsdb.com/images/media/league/badge/j14hx41784791003.png",
    "brands": []
   }
  ],
@@ -437,5 +437,5 @@
    "about": null
   }
  ],
- "generated": "2026-10-20T14:09:33Z"
+ "generated": "2026-10-21T14:30:15Z"
 }
