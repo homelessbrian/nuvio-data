@@ -15,7 +15,8 @@ Two modes:
 
 Files written (only when something changed):
   football/index.json        The leagues and their teams (for Pick Your Teams).
-  football/<league id>.json  A league's games from six weeks ago to the end of the season.
+  football/<league id>.json  A league's games from six weeks ago to the end of the season, and its
+                             table (when TheSportsDB has one), for the app's Tables page.
 
 Settings (Settings > Secrets and variables > Actions):
   TSDB_KEY            Secret. Your TheSportsDB key. Needed: the free key can't read whole seasons.
@@ -237,6 +238,31 @@ def season_now(today):
 
 # ------------------------------------------------------------------ full run
 
+def read_table(lid, season, use_logos):
+    """The league table as the app reads it, or [] (cups, leagues TheSportsDB has no table for)."""
+    rows = (get("lookuptable.php?l=%s&s=%s" % (lid, urllib.parse.quote(season)), quiet404=True) or {}).get("table") or []
+    out = []
+    for r in rows:
+        tid = str(r.get("idTeam") or "").strip()
+        name = clean_name(r.get("strTeam") or "")
+        if not tid or not name:
+            continue
+        row = {"pos": to_int(r.get("intRank")) or len(out) + 1, "id": tid, "name": name,
+               "p": to_int(r.get("intPlayed")), "w": to_int(r.get("intWin")), "d": to_int(r.get("intDraw")),
+               "l": to_int(r.get("intLoss")), "gd": to_int(r.get("intGoalDifference")), "pts": to_int(r.get("intPoints"))}
+        form = re.sub(r"[^WDLwdl]", "", r.get("strForm") or "").upper()
+        if form:
+            row["form"] = form[-5:]
+        note = (r.get("strDescription") or "").strip()
+        if note:
+            row["note"] = note
+        badge = (r.get("strBadge") or "").strip()
+        if use_logos and badge.startswith("https://"):
+            row["badge"] = badge
+        out.append({k: v for k, v in row.items() if v is not None})
+    return sorted(out, key=lambda x: x["pos"])
+
+
 def find_leagues(summary):
     chosen = {}
     rows = (get("search_all_leagues.php?c=England&s=Soccer") or {})
@@ -394,16 +420,22 @@ def full_run():
             verdict = "nothing coming up (off season?)"
         else:
             verdict = "good"
+        # The table (one request): for the app's Tables page.
+        table_rows = read_table(lid, season, use_logos) if events else []
         # Off season: did last season have proper data? (Check only: one more request.)
         before = last_season_note(lid, season, now, minutes) if CHECK and not upcoming else ""
-        row = "| %s | %s | %s | %s | %d | %d | %d | %s | %s | %s | %s | %s |" % (
+        row = "| %s | %s | %s | %s | %d | %d | %d | %s | %s | %s | %s | %s | %s |" % (
             clean_name(name), sport.title(), lid, season, len(events), upcoming, len(teams),
-            ("%d of %d" % (scored, len(done))) if done else "-", last, nxt, verdict, before or "-")
+            ("%d of %d" % (scored, len(done))) if done else "-", last, nxt,
+            ("%d teams" % len(table_rows)) if table_rows else "-", verdict, before or "-")
         table.append(row)
         # No games on TheSportsDB for this one: left out of the app (it would be an empty league).
         if not events or CHECK:
             continue
-        write_if_changed(os.path.join(OUT_DIR, "%s.json" % lid), {"league": lid, "events": events})
+        data = {"league": lid, "season": season, "events": events}
+        if table_rows:
+            data["table"] = table_rows
+        write_if_changed(os.path.join(OUT_DIR, "%s.json" % lid), data)
         entry = {
             "id": lid, "name": clean_name(name), "short": short_name(name), "season": season,
             "badge": league_badge or None, "teams": team_list, "games": len(events), "upcoming": upcoming,
@@ -411,8 +443,8 @@ def full_run():
         if spec:
             entry.update({"sport": spec["sport"], "regions": spec["regions"], "words": spec["words"], "minutes": spec["minutes"]})
         index.append(entry)
-    summary += ["| League | Sport | Id | Season | Games | Upcoming | Teams | Scores in results | Last result | Next game | Verdict | Last season |",
-                "|---|---|---|---|---|---|---|---|---|---|---|---|"] + table
+    summary += ["| League | Sport | Id | Season | Games | Upcoming | Teams | Scores in results | Last result | Next game | Table | Verdict | Last season |",
+                "|---|---|---|---|---|---|---|---|---|---|---|---|---|"] + table
     summary += ["", "Leagues with no games on TheSportsDB are left out of the app."] + details
     if CHECK:
         summary += ["", "Check only: nothing was written. A thin league can be left out with the OTHER_SKIP (or FOOTBALL_SKIP) variable."]

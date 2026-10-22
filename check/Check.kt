@@ -126,8 +126,9 @@ fun main(args: Array<String>) {
             val tv = (pre + live).count { it.broadcasts.isNotEmpty() }
             val liveStatus = live.count { it.status != null }
 
-            // Scoring plays (Latest Scoring) for a finished game.
+            // Scoring plays (Latest Scoring) for a finished game, and what the game page's panels get.
             var plays = "–"
+            var after = "–"
             post.firstOrNull { it.espnId != null }?.let { g ->
                 val raw = fetch("$ESPN${l.espnPath}/summary?event=${g.espnId}")
                 plays = if (raw == null) "no answer" else {
@@ -135,6 +136,11 @@ fun main(args: Array<String>) {
                     if (n == 0 && g.hasScore && g.sides.any { (it.score?.toDoubleOrNull() ?: 0.0) > 0 }) problems += "no scoring plays read for a game that had scoring (${g.title})"
                     if (n < 0) "unreadable" else "$n"
                 }
+                if (raw != null) after = extrasNote(raw, g, l, problems)
+            }
+            var before = "–"
+            pre.firstOrNull { it.espnId != null }?.let { g ->
+                fetch("$ESPN${l.espnPath}/summary?event=${g.espnId}")?.let { before = extrasNote(it, g, l, problems) }
             }
 
             // A team's season (My Sports rows): the first team in the league.
@@ -154,6 +160,7 @@ fun main(args: Array<String>) {
                 if (others.isNotEmpty()) season += " · also " + others.joinToString { SportsCatalog.league(it)?.short ?: it }
             }
 
+            val tableNote = tableNote(l, problems)
             teamRows += Row(l, listOf(
                 "${post.size} / ${live.size} / ${pre.size}" + (if (off.isNotEmpty()) " / ${off.size} off" else "") + " · $aheadCount later",
                 "${pct(scored, post.size)} · ${pct(winners + ties, post.size)}",
@@ -161,7 +168,9 @@ fun main(args: Array<String>) {
                 "${pct(colours, sides.size)} · ${pct(logos, sides.size)}",
                 pct(tv, pre.size + live.size),
                 plays,
+                "before: $before<br>after: $after",
                 season,
+                tableNote,
                 if (logo) "yes" else "no"
             ), problems)
         } else {
@@ -179,6 +188,7 @@ fun main(args: Array<String>) {
                 "$multi multi-day ($stillOn still on)",
                 pct((pre + live).count { it.broadcasts.isNotEmpty() }, pre.size + live.size),
                 example.replace("|", "/"),
+                if (l.sport == Sport.RACING) tableNote(l, problems) else "–",
                 if (logo) "yes" else "no"
             ), problems)
         }
@@ -192,15 +202,15 @@ fun main(args: Array<String>) {
     md.appendLine()
     md.appendLine("### Leagues with teams")
     md.appendLine()
-    md.appendLine("| League | Finished / live / coming (2 weeks) · later (5 weeks) | Finished: score · winner | Live: clock | Teams: colours · logos | TV listed | Scoring plays (a finished game) | A team's season | League logo |")
-    md.appendLine("|---|---|---|---|---|---|---|---|---|")
-    teamRows.forEach { r -> md.appendLine("| ${r.league.name} | " + r.cells.joinToString(" | ").padEnd(0) + if (r.cells.size == 1) " | | | | | | | |" else " |") }
+    md.appendLine("| League | Finished / live / coming (2 weeks) · later (5 weeks) | Finished: score · winner | Live: clock | Teams: colours · logos | TV listed | Scoring plays (a finished game) | Game page panels | A team's season | Table | League logo |")
+    md.appendLine("|---|---|---|---|---|---|---|---|---|---|---|")
+    teamRows.forEach { r -> md.appendLine("| ${r.league.name} | " + r.cells.joinToString(" | ").padEnd(0) + if (r.cells.size == 1) " | | | | | | | | | |" else " |") }
     md.appendLine()
     md.appendLine("### Events (races, fights, golf, tennis)")
     md.appendLine()
-    md.appendLine("| League | Finished / live / coming | Results read | Multi-day | TV listed | Example | League logo |")
-    md.appendLine("|---|---|---|---|---|---|---|")
-    eventRows.forEach { r -> md.appendLine("| ${r.league.name} | " + r.cells.joinToString(" | ") + if (r.cells.size == 1) " | | | | | |" else " |") }
+    md.appendLine("| League | Finished / live / coming | Results read | Multi-day | TV listed | Example | Table | League logo |")
+    md.appendLine("|---|---|---|---|---|---|---|---|")
+    eventRows.forEach { r -> md.appendLine("| ${r.league.name} | " + r.cells.joinToString(" | ") + if (r.cells.size == 1) " | | | | | | |" else " |") }
     md.appendLine()
     val all = teamRows + eventRows
     val flagged = all.filter { it.problems.isNotEmpty() }
@@ -335,4 +345,48 @@ private fun coverage(md: StringBuilder, now: Long) {
         md.appendLine()
     }
     println("Coverage: ${missing.size} leagues the app doesn't have (${busy.size} with games coming up)")
+}
+
+
+/** What a game's summary gives the panels under the game page: "stats 6 · leaders 4 · table 8 · venue · chances". */
+/**
+ * The league's table as the Tables page reads it: how many teams (or drivers), in how many groups,
+ * the columns, and the leader. "none" for a league without one (a cup: left off the Tables page).
+ */
+private fun tableNote(l: League, problems: MutableList<String>): String {
+    val url = Standings.espnUrl(l) ?: return "–"
+    val raw = fetch(url) ?: return "no answer ($lastError)"
+    val t = runCatching { Standings.parseEspn(l, raw) }.getOrElse { e ->
+        problems += "couldn't read the table: ${e.message}"
+        return "unreadable"
+    } ?: return "none"
+    val rows = t.groups.sumOf { it.rows.size }
+    if (rows == 0) return "none"
+    val lead = t.groups.first().rows.firstOrNull()
+    val zones = t.groups.flatMap { g -> g.rows.mapNotNull { it.zone?.label } }.distinct()
+    val noValues = t.groups.flatMap { it.rows }.count { r -> t.columns.any { c -> c.key != "behind" && r.values[c.key].isNullOrBlank() } }
+    if (noValues > 0) problems += "$noValues table rows with empty columns"
+    return "$rows in ${t.groups.size} group(s) · ${t.columns.joinToString(" ") { it.label }}" +
+        (lead?.let { "<br>1st: ${it.name.replace("|", "/")}" } ?: "") +
+        (if (t.hasDivisions) "<br>conferences: ${t.conferences.size}" else "") +
+        (if (zones.isNotEmpty()) "<br>zones: ${zones.joinToString(", ")}" else "") +
+        (t.season?.let { "<br>season $it" } ?: "")
+}
+
+private fun extrasNote(raw: String, g: SportsEvent, l: League, problems: MutableList<String>): String {
+    val x = runCatching { SportsExtras.parse(JSONObject(raw), g, l.sport) }.getOrElse { e ->
+        problems += "game page panels: couldn't read the summary (${e.message})"; return "unreadable"
+    }
+    val parts = listOfNotNull(
+        x.stats.size.takeIf { it > 0 }?.let { "stats $it" },
+        x.performers.size.takeIf { it > 0 }?.let { "leaders $it" },
+        x.lineups.size.takeIf { it > 0 }?.let { "line-ups" },
+        x.form.size.takeIf { it > 0 }?.let { "form $it" },
+        x.meetings.size.takeIf { it > 0 }?.let { "meetings $it" },
+        x.table.size.takeIf { it > 0 }?.let { "table ${it}" },
+        if (x.hasMatchInfo) "venue" else null,
+        if (x.hasOdds) "chances" else null,
+        x.winHistory.size.takeIf { it > 1 }?.let { "chance line" }
+    )
+    return parts.joinToString(" · ").ifBlank { "nothing" }
 }
