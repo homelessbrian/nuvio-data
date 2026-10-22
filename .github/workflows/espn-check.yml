@@ -2,8 +2,8 @@ name: ESPN check
 
 # Runs the Sports page's own code (from the Nuvio_Testing repo's dev branch) against ESPN's
 # feeds for every league, and puts a report in the run's summary: games, scores, winners, team
-# colours and logos, TV networks, race and golf results, tennis matches, scoring plays and team
-# schedules, with anything that looks wrong listed at the bottom. Then a coverage list: every
+# colours and logos, TV networks, race and golf results, tennis matches, scoring plays, team
+# schedules and league tables, with anything that looks wrong listed at the bottom. Then a coverage list: every
 # league ESPN has that the app doesn't, busiest first.
 # Run it by hand from the Actions tab (Run workflow). It only reads ESPN's public feeds.
 on:
@@ -51,7 +51,7 @@ jobs:
             check/stubs/*.kt \
             $L/model/LiveTvModels.kt $L/data/CatchupUrlBuilder.kt \
             $L/sports/SportsModels.kt $L/sports/SportsCatalog.kt $L/sports/SportsMatcher.kt \
-            $L/sports/SportsFeeds.kt $L/sports/SportsRows.kt \
+            $L/sports/SportsFeeds.kt $L/sports/SportsRows.kt $L/sports/SportsExtras.kt $L/sports/SportsStandings.kt \
             check/Check.kt -d out
 
       - name: Run it
