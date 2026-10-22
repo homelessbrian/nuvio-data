@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-10-20",
-  "to": "2026-11-04"
+  "from": "2026-10-21",
+  "to": "2026-11-05"
  },
  "leagues": [
   {
@@ -52,17 +52,6 @@
  ],
  "events": [
   {
-   "id": "2599789",
-   "league": "wwe",
-   "name": "RAW #1743",
-   "start": "2026-10-20T00:00:00Z",
-   "hasTime": true,
-   "venue": "Pechanga Arena",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2618985",
    "league": "wwe",
    "name": "NXT #860",
@@ -88,7 +77,7 @@
    "id": "2618956",
    "league": "tna",
    "name": "TNA iMPACT #1161",
-   "start": "2026-10-22T00:00:00Z",
+   "start": "2026-10-23T00:00:00Z",
    "hasTime": true,
    "venue": null,
    "city": null,
@@ -437,5 +426,5 @@
    "about": null
   }
  ],
- "generated": "2026-10-21T14:30:15Z"
+ "generated": "2026-10-22T14:31:41Z"
 }
