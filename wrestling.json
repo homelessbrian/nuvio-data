@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-10-21",
-  "to": "2026-11-05"
+  "from": "2026-10-22",
+  "to": "2026-11-06"
  },
  "leagues": [
   {
@@ -52,17 +52,6 @@
  ],
  "events": [
   {
-   "id": "2618985",
-   "league": "wwe",
-   "name": "NXT #860",
-   "start": "2026-10-21T00:00:00Z",
-   "hasTime": true,
-   "venue": "WWE Performance Center",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2615936",
    "league": "aew",
    "name": "Dynamite #368",
@@ -80,17 +69,6 @@
    "start": "2026-10-23T00:00:00Z",
    "hasTime": true,
    "venue": null,
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2599790",
-   "league": "wwe",
-   "name": "SmackDown #1418",
-   "start": "2026-10-23T00:00:00Z",
-   "hasTime": true,
-   "venue": "Toyota Arena",
    "city": null,
    "country": "United States",
    "about": null
@@ -124,6 +102,17 @@
    "start": "2026-10-24T00:00:00Z",
    "hasTime": true,
    "venue": "Frost Bank Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2599790",
+   "league": "wwe",
+   "name": "SmackDown #1418",
+   "start": "2026-10-24T00:00:00Z",
+   "hasTime": true,
+   "venue": "Toyota Arena",
    "city": null,
    "country": "United States",
    "about": null
@@ -426,5 +415,5 @@
    "about": null
   }
  ],
- "generated": "2026-10-22T14:31:41Z"
+ "generated": "2026-10-23T14:15:27Z"
 }
