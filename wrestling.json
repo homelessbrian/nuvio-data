@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-10-22",
-  "to": "2026-11-06"
+  "from": "2026-10-23",
+  "to": "2026-11-07"
  },
  "leagues": [
   {
@@ -52,56 +52,12 @@
  ],
  "events": [
   {
-   "id": "2615936",
-   "league": "aew",
-   "name": "Dynamite #368",
-   "start": "2026-10-22T00:00:00Z",
-   "hasTime": true,
-   "venue": "Watsco Center",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2618956",
    "league": "tna",
    "name": "TNA iMPACT #1161",
    "start": "2026-10-23T00:00:00Z",
    "hasTime": true,
    "venue": null,
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2618988",
-   "league": "aew",
-   "name": "Collision #167",
-   "start": "2026-10-24T00:00:00Z",
-   "hasTime": true,
-   "venue": "Lawrence Joel Veterans Memorial Coliseum",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2548281",
-   "league": "boxing",
-   "name": "Dalton Smith vs Alberto Puello",
-   "start": "2026-10-24T00:00:00Z",
-   "hasTime": true,
-   "venue": "Sheffield Arena",
-   "city": null,
-   "country": "United Kingdom",
-   "about": null
-  },
-  {
-   "id": "2607372",
-   "league": "boxing",
-   "name": "Emanuel Navarrete vs O'Shaquie Foster",
-   "start": "2026-10-24T00:00:00Z",
-   "hasTime": true,
-   "venue": "Frost Bank Center",
    "city": null,
    "country": "United States",
    "about": null
@@ -118,10 +74,32 @@
    "about": null
   },
   {
-   "id": "2600288",
+   "id": "2548281",
+   "league": "boxing",
+   "name": "Dalton Smith vs Alberto Puello",
+   "start": "2026-10-24T18:00:00Z",
+   "hasTime": true,
+   "venue": "Utilita Arena Sheffield",
+   "city": null,
+   "country": "United Kingdom",
+   "about": null
+  },
+  {
+   "id": "2607372",
+   "league": "boxing",
+   "name": "Emanuel Navarrete vs O'Shaquie Foster",
+   "start": "2026-10-24T22:30:00Z",
+   "hasTime": true,
+   "venue": "Frost Bank Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2618988",
    "league": "aew",
-   "name": "Collision #166",
-   "start": "2026-10-25T00:00:00Z",
+   "name": "Collision #167",
+   "start": "2026-10-24T23:30:00Z",
    "hasTime": true,
    "venue": "Lawrence Joel Veterans Memorial Coliseum",
    "city": null,
@@ -151,10 +129,21 @@
    "about": null
   },
   {
-   "id": "2618994",
+   "id": "2618995",
+   "league": "aew",
+   "name": "Collision #168 Fright Night Collision",
+   "start": "2026-10-28T23:30:00Z",
+   "hasTime": true,
+   "venue": "Chaifetz Arena",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2600289",
    "league": "aew",
    "name": "Dynamite #369 Fright Night Dynamite",
-   "start": "2026-10-28T00:00:00Z",
+   "start": "2026-10-28T23:30:00Z",
    "hasTime": true,
    "venue": "Chaifetz Arena",
    "city": null,
@@ -168,17 +157,6 @@
    "start": "2026-10-30T00:00:00Z",
    "hasTime": true,
    "venue": "Charleston Coliseum",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2618995",
-   "league": "aew",
-   "name": "Collision #168 Fright Night Collision",
-   "start": "2026-10-31T00:00:00Z",
-   "hasTime": true,
-   "venue": "Chaifetz Arena",
    "city": null,
    "country": "United States",
    "about": null
@@ -206,23 +184,23 @@
    "about": null
   },
   {
-   "id": "2600290",
-   "league": "aew",
-   "name": "Collision #167 Fright Night Collision",
-   "start": "2026-11-01T00:00:00Z",
-   "hasTime": true,
-   "venue": "Chaifetz Arena",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2599794",
    "league": "wwe",
    "name": "RAW #1745",
    "start": "2026-11-02T00:00:00Z",
    "hasTime": true,
    "venue": "Barclays Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2618994",
+   "league": "aew",
+   "name": "Dynamite #370 - Blood & Guts",
+   "start": "2026-11-05T00:30:00Z",
+   "hasTime": true,
+   "venue": "VyStar Veterans Memorial Arena",
    "city": null,
    "country": "United States",
    "about": null
@@ -261,12 +239,45 @@
    "about": null
   },
   {
+   "id": "2600288",
+   "league": "aew",
+   "name": "Collision #169 - Chris Jericho's Rock N' Wrestling Rager",
+   "start": "2026-11-07T23:30:00Z",
+   "hasTime": true,
+   "venue": null,
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2607376",
    "league": "boxing",
    "name": "MVPW 07 Turhan vs Baumgardner",
    "start": "2026-11-08T00:00:00Z",
    "hasTime": true,
    "venue": "College Park Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2600290",
+   "league": "aew",
+   "name": "Collision #170",
+   "start": "2026-11-11T23:30:00Z",
+   "hasTime": true,
+   "venue": "Maverik Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2620173",
+   "league": "aew",
+   "name": "Dynamite #371",
+   "start": "2026-11-11T23:30:00Z",
+   "hasTime": true,
+   "venue": "Maverik Center",
    "city": null,
    "country": "United States",
    "about": null
@@ -283,6 +294,17 @@
    "about": null
   },
   {
+   "id": "2579124",
+   "league": "aew",
+   "name": "Full Gear",
+   "start": "2026-11-14T23:00:00Z",
+   "hasTime": true,
+   "venue": null,
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2606669",
    "league": "tna",
    "name": "TNA Destination X",
@@ -294,10 +316,43 @@
    "about": null
   },
   {
-   "id": "2579124",
+   "id": "2620174",
    "league": "aew",
-   "name": "Full Gear",
-   "start": "2026-11-15T01:00:00Z",
+   "name": "Dynamite #372",
+   "start": "2026-11-18T23:30:00Z",
+   "hasTime": true,
+   "venue": "Mission Ballroom",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2620175",
+   "league": "aew",
+   "name": "Collision #171",
+   "start": "2026-11-21T23:30:00Z",
+   "hasTime": true,
+   "venue": "Resch Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2620176",
+   "league": "aew",
+   "name": "Collision #172 - Thanksgiving",
+   "start": "2026-11-25T23:30:00Z",
+   "hasTime": true,
+   "venue": null,
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2620177",
+   "league": "aew",
+   "name": "Dynamite #373 - Thanksgiving Eve",
+   "start": "2026-11-25T23:30:00Z",
    "hasTime": true,
    "venue": null,
    "city": null,
@@ -346,6 +401,17 @@
    "venue": null,
    "city": null,
    "country": "Japan",
+   "about": null
+  },
+  {
+   "id": "2620178",
+   "league": "aew",
+   "name": "Dynamite #374",
+   "start": "2026-12-02T23:30:00Z",
+   "hasTime": true,
+   "venue": "Sames Auto Arena",
+   "city": null,
+   "country": "United States",
    "about": null
   },
   {
@@ -415,5 +481,5 @@
    "about": null
   }
  ],
- "generated": "2026-10-23T14:15:27Z"
+ "generated": "2026-10-24T13:20:38Z"
 }
