@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-10-23",
-  "to": "2026-11-07"
+  "from": "2026-10-24",
+  "to": "2026-11-08"
  },
  "leagues": [
   {
@@ -52,17 +52,6 @@
  ],
  "events": [
   {
-   "id": "2618956",
-   "league": "tna",
-   "name": "TNA iMPACT #1161",
-   "start": "2026-10-23T00:00:00Z",
-   "hasTime": true,
-   "venue": null,
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2599790",
    "league": "wwe",
    "name": "SmackDown #1418",
@@ -99,7 +88,7 @@
    "id": "2618988",
    "league": "aew",
    "name": "Collision #167",
-   "start": "2026-10-24T23:30:00Z",
+   "start": "2026-10-25T00:00:00Z",
    "hasTime": true,
    "venue": "Lawrence Joel Veterans Memorial Coliseum",
    "city": null,
@@ -110,7 +99,7 @@
    "id": "2355269",
    "league": "wwe",
    "name": "Halloween Havoc",
-   "start": "2026-10-25T00:00:00Z",
+   "start": "2026-10-26T00:00:00Z",
    "hasTime": true,
    "venue": null,
    "city": null,
@@ -124,17 +113,6 @@
    "start": "2026-10-26T00:00:00Z",
    "hasTime": true,
    "venue": null,
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2618995",
-   "league": "aew",
-   "name": "Collision #168 Fright Night Collision",
-   "start": "2026-10-28T23:30:00Z",
-   "hasTime": true,
-   "venue": "Chaifetz Arena",
    "city": null,
    "country": "United States",
    "about": null
@@ -162,10 +140,21 @@
    "about": null
   },
   {
+   "id": "2599793",
+   "league": "wwe",
+   "name": "NXT Halloween Havoc",
+   "start": "2026-10-31T00:00:00Z",
+   "hasTime": true,
+   "venue": "WWE Performance Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2577181",
    "league": "boxing",
-   "name": "Christian Mbilli vs Canelo Álvarez",
-   "start": "2026-10-31T00:00:00Z",
+   "name": "Canelo Álvarez vs Christian Mbilli",
+   "start": "2026-10-31T15:00:00Z",
    "hasTime": true,
    "venue": null,
    "city": null,
@@ -173,12 +162,12 @@
    "about": null
   },
   {
-   "id": "2599793",
-   "league": "wwe",
-   "name": "NXT Halloween Havoc",
-   "start": "2026-10-31T00:00:00Z",
+   "id": "2618995",
+   "league": "aew",
+   "name": "Collision #168 Fright Night Collision",
+   "start": "2026-11-01T00:00:00Z",
    "hasTime": true,
-   "venue": "WWE Performance Center",
+   "venue": "Chaifetz Arena",
    "city": null,
    "country": "United States",
    "about": null
@@ -426,6 +415,28 @@
    "about": null
   },
   {
+   "id": "2620179",
+   "league": "aew",
+   "name": "Collision #174 - Winter is Coming",
+   "start": "2026-12-09T00:00:00Z",
+   "hasTime": true,
+   "venue": "Arena Monterrey",
+   "city": null,
+   "country": "Mexico",
+   "about": null
+  },
+  {
+   "id": "2620181",
+   "league": "aew",
+   "name": "Dynamite #375 - Winter is Coming",
+   "start": "2026-12-09T23:30:00Z",
+   "hasTime": true,
+   "venue": "Arena Monterrey",
+   "city": null,
+   "country": "Mexico",
+   "about": null
+  },
+  {
    "id": "2610091",
    "league": "boxing",
    "name": "Tyson Fury vs Anthony Joshua",
@@ -481,5 +492,5 @@
    "about": null
   }
  ],
- "generated": "2026-10-24T13:20:38Z"
+ "generated": "2026-10-25T13:43:24Z"
 }
