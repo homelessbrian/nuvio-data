@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-10-24",
-  "to": "2026-11-08"
+  "from": "2026-10-25",
+  "to": "2026-11-09"
  },
  "leagues": [
   {
@@ -52,39 +52,6 @@
  ],
  "events": [
   {
-   "id": "2599790",
-   "league": "wwe",
-   "name": "SmackDown #1418",
-   "start": "2026-10-24T00:00:00Z",
-   "hasTime": true,
-   "venue": "Toyota Arena",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2548281",
-   "league": "boxing",
-   "name": "Dalton Smith vs Alberto Puello",
-   "start": "2026-10-24T18:00:00Z",
-   "hasTime": true,
-   "venue": "Utilita Arena Sheffield",
-   "city": null,
-   "country": "United Kingdom",
-   "about": null
-  },
-  {
-   "id": "2607372",
-   "league": "boxing",
-   "name": "Emanuel Navarrete vs O'Shaquie Foster",
-   "start": "2026-10-24T22:30:00Z",
-   "hasTime": true,
-   "venue": "Frost Bank Center",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2618988",
    "league": "aew",
    "name": "Collision #167",
@@ -96,23 +63,12 @@
    "about": null
   },
   {
-   "id": "2355269",
-   "league": "wwe",
-   "name": "Halloween Havoc",
-   "start": "2026-10-26T00:00:00Z",
-   "hasTime": true,
-   "venue": null,
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2599791",
    "league": "wwe",
    "name": "RAW #1744",
-   "start": "2026-10-26T00:00:00Z",
+   "start": "2026-10-27T00:00:00Z",
    "hasTime": true,
-   "venue": null,
+   "venue": "Save Mart Center",
    "city": null,
    "country": "United States",
    "about": null
@@ -173,10 +129,21 @@
    "about": null
   },
   {
+   "id": "2355269",
+   "league": "wwe",
+   "name": "Halloween Havoc",
+   "start": "2026-11-01T00:00:00Z",
+   "hasTime": true,
+   "venue": null,
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2599794",
    "league": "wwe",
    "name": "RAW #1745",
-   "start": "2026-11-02T00:00:00Z",
+   "start": "2026-11-03T00:00:00Z",
    "hasTime": true,
    "venue": "Barclays Center",
    "city": null,
@@ -492,5 +459,5 @@
    "about": null
   }
  ],
- "generated": "2026-10-25T13:43:24Z"
+ "generated": "2026-10-26T16:08:33Z"
 }
