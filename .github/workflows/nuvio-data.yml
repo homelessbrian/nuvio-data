@@ -3,19 +3,20 @@ name: Nuvio data
 # One workflow for the nuvio-data repo:
 #  - Upload nuvio-data.zip to the repo: it's unpacked (scripts, README), the zip is deleted,
 #    and everything is updated straight away.
-#  - Every day (and when you press Run workflow): the full update. The wrestling schedule and
-#    the non-league football leagues and the other sports ESPN doesn't cover (fixtures, results,
-#    teams) from TheSportsDB.
-#  - Every 15 minutes from 7:00 to 22:45 UTC: scores for games that are on (non-league football,
-#    rugby league, cricket, UK ice hockey, Gaelic games, netball). A run with no games on asks
-#    TheSportsDB nothing.
+#  - Every day (and when you press Run workflow): the full update. Every league in leagues.txt
+#    (fixtures, results, events, teams, tables) from TheSportsDB, into the sportsdb folder.
+#    To add a sport or league, add a line to leagues.txt: nothing else needs changing.
+#  - Every 15 minutes: scores for games that are on. A run with no games on asks TheSportsDB
+#    nothing.
+#  - The old wrestling.json and football folder are still made for people on older versions of
+#    the app. Once everyone has the new version, the two "older app versions" steps can go.
 on:
   push:
     paths:
       - "nuvio-data.zip"
   schedule:
     - cron: "17 9 * * *"           # full update: 9:17 UTC every day
-    - cron: "*/15 7-22 * * *"      # scores: every day, 7:00-22:45 UTC (Australian evenings to UK nights; a run with no games on does nothing)
+    - cron: "*/15 * * * *"         # scores: every 15 minutes (a run with no games on does nothing)
   workflow_dispatch:
 
 permissions:
@@ -28,7 +29,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     env:
       # Scheduled runs other than the daily one only update scores.
       MODE: ${{ (github.event_name == 'schedule' && github.event.schedule != '17 9 * * *') && 'scores' || 'full' }}
@@ -60,7 +61,19 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Read the wrestling schedule from TheSportsDB
+      - name: All sports in leagues.txt, from TheSportsDB
+        if: github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true'
+        env:
+          # Your paid TheSportsDB key (Settings > Secrets and variables > Actions > Secrets).
+          TSDB_KEY: ${{ secrets.TSDB_KEY }}
+        run: |
+          if [ ! -f scripts/sportsdb.py ]; then
+            echo "scripts/sportsdb.py is missing: upload nuvio-data.zip first."
+            exit 0
+          fi
+          if [ "$MODE" = "scores" ]; then python scripts/sportsdb.py --scores; else python scripts/sportsdb.py; fi
+
+      - name: Older app versions - wrestling schedule
         if: env.MODE == 'full' && (github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true')
         env:
           # Optional: a paid TheSportsDB key (Settings > Secrets and variables > Actions > Secrets).
@@ -76,7 +89,7 @@ jobs:
           fi
           python scripts/wrestling.py
 
-      - name: Non-league football and other sports from TheSportsDB
+      - name: Older app versions - non-league football and other sports
         if: github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true'
         env:
           TSDB_KEY: ${{ secrets.TSDB_KEY }}
@@ -98,13 +111,13 @@ jobs:
       - name: Save what changed
         if: github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true'
         run: |
-          for p in wrestling.json football; do if [ -e "$p" ]; then git add -A "$p"; fi; done
+          for p in sportsdb wrestling.json football; do if [ -e "$p" ]; then git add -A "$p"; fi; done
           if git diff --cached --quiet; then
             echo "No changes to save."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ "$MODE" = "scores" ]; then git commit -q -m "Football scores"; else git commit -q -m "Schedule update"; fi
+          if [ "$MODE" = "scores" ]; then git commit -q -m "Scores"; else git commit -q -m "Schedule update"; fi
           git pull --rebase -q || true
           git push
