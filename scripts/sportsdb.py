@@ -232,12 +232,13 @@ def resolve(items, summary):
         else:
             g = it["group"]
             skip = [norm(s) for s in split_list(it.get("skip"))]
+            not_ids = set(split_list(it.get("not")))
             words = [norm(w) for w in g["words"]]
             for country in g["countries"]:
                 for r in league_list(g["sport"], country):
                     nm = norm(r.get("strLeague"))
                     if any(w and (" " + w + " ") in (" " + nm + " ") or (len(w) > 4 and w in nm) for w in words) and \
-                            not any(s and s in nm for s in skip):
+                            not any(s and s in nm for s in skip) and str(r.get("idLeague")) not in not_ids:
                         found.append((str(r.get("idLeague")), r))
             notes.append("- line %d **%s**: %s" % (it["line"], it["text"].split("|")[0].strip(), ", ".join(
                 "%s (%s)" % (r.get("strLeague"), lid) for lid, r in found) or "nothing matched"))

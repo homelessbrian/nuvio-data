@@ -17,6 +17,7 @@
 #   app=guide/wwe       Show it under one of the app's own leagues instead of a new one.
 #   brands              Wrestling: logos for its shows (NXT, Raw...), from its teams.
 #   skip=Women, U21     For a group line (below): names containing any of these are left out.
+#   not=4590            For a group line: these league ids are left out (one the app gets elsewhere).
 #
 # A group line adds every league in a country's list whose name contains one of the words:
 #   England / Soccer: National League, Southern, Isthmian | skip=Women
@@ -29,7 +30,7 @@ TNA Wrestling | app=guide/wrestling
 Boxing | app=guide/boxing
 
 # ---- Non-league football (England, below League Two)
-England / Soccer: National League, Southern, Isthmian, Northern Premier | skip=Women, U21, U23, U18, Youth, Cup, Trophy, Vase, Shield, Reserve
+England / Soccer: National League, Southern, Isthmian, Northern Premier | not=4590 | skip=Women, U21, U23, U18, Youth, Cup, Trophy, Vase, Shield, Reserve
 
 # ---- More football ESPN doesn't carry
 Ireland / Soccer: Premier Division | skip=Women, U19, U21, Reserve, First Division | regions=IE | words=League of Ireland, Premier Division, SSE Airtricity | minutes=115
@@ -61,10 +62,10 @@ FIA World Endurance Championship | regions=everywhere | words=WEC, World Enduran
 IMSA SportsCar Championship | regions=US, CA | words=IMSA, Rolex 24, Daytona 24 | minutes=240
 World Rally Championship | regions=everywhere | words=WRC, World Rally | minutes=180
 Dakar Rally | words=Dakar | minutes=120
-Superbike World Championship | regions=UK, IE, AU, OTHER | words=WorldSBK, World Superbikes, Superbikes | minutes=90
+4454 | regions=UK, IE, AU, OTHER | words=WorldSBK, World Superbikes, Superbikes | minutes=90
 Isle of Man TT | regions=UK, IE | words=Isle of Man TT, TT Races | minutes=120
 British Touring Car Championship | regions=UK, IE | words=BTCC, British Touring Car | minutes=90
 Supercars Championship | regions=AU | words=Supercars, Repco Supercars | minutes=120
 NHRA | regions=US, CA | words=NHRA, Drag Racing | minutes=180
-Formula Drift | regions=US | words=Formula Drift | minutes=180
-Pikes Peak International Hill Climb | words=Pikes Peak | minutes=240
+# Formula Drift: not on TheSportsDB (yet)
+# Pikes Peak International Hill Climb: not on TheSportsDB (yet)
