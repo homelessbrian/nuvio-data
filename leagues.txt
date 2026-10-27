@@ -31,6 +31,13 @@ Boxing | app=guide/boxing
 # ---- Non-league football (England, below League Two)
 England / Soccer: National League, Southern, Isthmian, Northern Premier | skip=Women, U21, U23, U18, Youth, Cup, Trophy, Vase, Shield, Reserve
 
+# ---- More football ESPN doesn't carry
+Ireland / Soccer: Premier Division | skip=Women, U19, U21, Reserve, First Division | regions=IE | words=League of Ireland, Premier Division, SSE Airtricity | minutes=115
+Northern Ireland / Soccer: Premiership | skip=Women, Reserve, Intermediate, Championship | regions=UK, IE | words=NIFL Premiership, Irish Premiership | minutes=115
+Wales / Soccer: Premier | skip=Women, Reserve, U19, Cup | regions=UK | words=Cymru Premier, JD Cymru Premier | minutes=115
+Scotland / Soccer: League One, League Two, League 1, League 2 | skip=Women, Reserve, Cup, Lowland, Highland | regions=UK | minutes=115
+Switzerland / Soccer: Super League | skip=Women, Challenge | words=Swiss Super League | minutes=115
+
 # ---- Rugby league (the NRL comes from ESPN in the app)
 England / Rugby: Super League, Challenge Cup, Rugby League Championship | skip=Women, Wheelchair, Reserve, Academy, Union, Prem | sport=Rugby | regions=UK, IE | words=Super League, Rugby League | minutes=110
 
