@@ -84,12 +84,17 @@ fun main(args: Array<String>) {
         // the months the last week and the next five weeks touch, kept to that window.
         val months = SimpleDateFormat("yyyyMM", Locale.US).apply { timeZone = TimeZone.getTimeZone("America/New_York") }
         val wanted = listOf(now - 7 * DAY, now, now + 7 * DAY, now + 35 * DAY).map { months.format(Date(it)) }.distinct()
-        var raws = wanted.mapNotNull { m -> fetch("$ESPN${l.espnPath}/scoreboard?dates=$m&limit=1000${l.espnQuery}") }
-        if (raws.isEmpty()) {
+        var raws = if (other(l)) {
+            val back = if (l.espnPath == "cricket/panel") 3 else 7
+            val ahead = if (l.espnPath == "cricket/panel") 3 else 35
+            listOfNotNull(runCatching { OtherFeeds.scoreboard(l.espnPath!!, day(now - back * DAY), day(now + ahead * DAY), getOrThrow) }
+                .onFailure { problems += "the feed didn't answer (${it.message})" }.getOrNull())
+        } else wanted.mapNotNull { m -> fetch("$ESPN${l.espnPath}/scoreboard?dates=$m&limit=1000${l.espnQuery}") }
+        if (raws.isEmpty() && !other(l)) {
             problems += "won't take a month either ($lastError): the week ahead still works, a day at a time"
             raws = listOf(-1, 0, 1).mapNotNull { d -> fetch("$ESPN${l.espnPath}/scoreboard?dates=${day(now + d * DAY)}&limit=1000${l.espnQuery}") }
         }
-        if (raws.isEmpty()) {
+        if (raws.isEmpty() && !other(l)) {
             raws = listOfNotNull(fetch("$ESPN${l.espnPath}/scoreboard?limit=1000${l.espnQuery}"))
             if (raws.isNotEmpty()) problems += "only the feed's own default days work"
         }
@@ -129,7 +134,7 @@ fun main(args: Array<String>) {
             // Scoring plays (Latest Scoring) for a finished game, and what the game page's panels get.
             var plays = "–"
             var after = "–"
-            post.firstOrNull { it.espnId != null }?.let { g ->
+            post.firstOrNull { it.espnId != null && OtherFeeds.espnExtras(l.espnPath) }?.let { g ->
                 val raw = fetch("$ESPN${l.espnPath}/summary?event=${g.espnId}")
                 plays = if (raw == null) "no answer" else {
                     val n = runCatching { SportsFeeds.parseSummary(JSONObject(raw)).size }.getOrDefault(-1)
@@ -139,18 +144,19 @@ fun main(args: Array<String>) {
                 if (raw != null) after = extrasNote(raw, g, l, problems)
             }
             var before = "–"
-            pre.firstOrNull { it.espnId != null }?.let { g ->
+            pre.firstOrNull { it.espnId != null && OtherFeeds.espnExtras(l.espnPath) }?.let { g ->
                 fetch("$ESPN${l.espnPath}/summary?event=${g.espnId}")?.let { before = extrasNote(it, g, l, problems) }
             }
 
             // A team's season (My Sports rows): the first team in the league.
             var season = "–"
-            val teamsRaw = fetch("$ESPN${l.espnPath}/teams?limit=1000")
+            val teamsRaw = if (other(l)) runCatching { OtherFeeds.teams(l.espnPath!!, getOrThrow) }.getOrNull() else fetch("$ESPN${l.espnPath}/teams?limit=1000")
             val team = teamsRaw?.let { runCatching { SportsFeeds.parseTeams(l, it) }.getOrNull() }?.firstOrNull()
             if (teamsRaw == null || team == null) problems += "couldn't get the league's teams (Follow Teams & Leagues)"
             else {
                 val sch = listOfNotNull(
-                    fetch("$ESPN${l.espnPath}/teams/${team.id}/schedule"),
+                    if (other(l)) runCatching { OtherFeeds.teamSchedule(l.espnPath!!, team.id, getOrThrow) }.getOrNull()
+                    else fetch("$ESPN${l.espnPath}/teams/${team.id}/schedule"),
                     if (l.espnPath!!.startsWith("soccer/")) fetch("$ESPN${l.espnPath}/teams/${team.id}/schedule?fixture=true") else null
                 ).flatMap { runCatching { SportsFeeds.parseSchedule(l, it) }.getOrDefault(emptyList()) }.distinctBy { it.espnId ?: it.id }
                 val ahead = sch.count { it.startMs > now }
@@ -353,7 +359,12 @@ private fun coverage(md: StringBuilder, now: Long) {
  * The league's table as the Tables page reads it: how many teams (or drivers), in how many groups,
  * the columns, and the leader. "none" for a league without one (a cup: left off the Tables page).
  */
+/** Leagues from HockeyTech, MLB's stats service or ESPN's cricket feeds: read through the app's own adapter. */
+private fun other(l: League) = OtherFeeds.handles(l.espnPath)
+private val getOrThrow: (String) -> String = { u -> fetch(u) ?: throw java.io.IOException(lastError) }
+
 private fun tableNote(l: League, problems: MutableList<String>): String {
+    if (!OtherFeeds.espnExtras(l.espnPath)) return "– (scores only)"
     val url = Standings.espnUrl(l) ?: return "–"
     val raw = fetch(url) ?: return "no answer ($lastError)"
     val t = runCatching { Standings.parseEspn(l, raw) }.getOrElse { e ->

@@ -1,39 +1,41 @@
 # nuvio-data
 
-Data files for the Nuvio + IPTV app, kept up to date by GitHub Actions.
+Data files for the Nuvio + IPTV app, kept up to date by GitHub Actions
+(`.github/workflows/nuvio-data.yml`). The app only reads these files; it never contacts
+TheSportsDB itself, so the key stays here.
 
-## wrestling.json (wrestling and boxing)
+## leagues.txt: every sport from TheSportsDB
 
-WWE, AEW and TNA shows from yesterday to two weeks ahead, read once a day from
-[TheSportsDB](https://www.thesportsdb.com) by `.github/workflows/nuvio-data.yml`. The app reads this
-file (it never contacts TheSportsDB itself).
+One line per league. **To add a league or a whole new sport, add a line and commit.** After the next
+daily run (or press Run workflow in the Actions tab) it's on everyone's Sports page. To remove one,
+delete its line or put `#` in front of it. The top of the file explains the optional extras
+(where it's shown, how TV guides name it, logos...).
 
-- Text only: show name, league, start time (UTC) and venue.
-- League logos are included as web addresses on TheSportsDB's image server, never as image files,
-  and only for leagues listed in the `WRESTLING_LOGOS` repository variable (or whose logo licence
-  TheSportsDB's API states). Check the logo's licence on its TheSportsDB league page before adding it.
-- Optional paid key: add it as the `TSDB_KEY` secret. Whole seasons are then read in one request
-  per league instead of day by day.
+The run's Summary page lists what each line found on TheSportsDB, with ids, and suggests names
+when a line isn't found.
 
-Wrestling schedule data: TheSportsDB.
+The only setting is the `TSDB_KEY` secret (your paid TheSportsDB key).
 
-## football/
+## sportsdb/
 
-Non-league English football (the National League and the leagues below it, which ESPN doesn't
-cover), from TheSportsDB. Needs the paid key in the `TSDB_KEY` secret.
+What the app reads:
 
-- `football/index.json`: the leagues and their teams (the app's Pick Your Teams reads it).
-- `football/<league id>.json`: each league's games, from six weeks ago to the end of the season.
-- Full update once a day; scores every 15 minutes at UK match times (weekends 11:00 to 22:45 UTC,
-  weekday evenings 18:00 to 22:45 UTC), only for leagues with a game on.
-- Optional variables: `FOOTBALL_LEAGUES` (extra league ids), `FOOTBALL_SKIP` (ids to leave out),
-  `FOOTBALL_LOGOS` (league ids whose club badges you've checked the licence of, or `all`).
-  The run summary lists every English league on TheSportsDB with its id.
+- `sportsdb/index.json`: every league, its sport, where it's shown, and its teams.
+- `sportsdb/<league id>.json`: its games (team sports, with scores and the table) or events
+  (races, fight cards, wrestling shows), from a few weeks back to the end of the season.
+- Full update once a day; scores every 15 minutes, only for leagues with a game on.
 
-Football data: TheSportsDB.
+## wrestling.json and football/ (older app versions)
+
+The files older versions of the app read. They're still made until everyone has the new
+version; then the two "Older app versions" steps in the workflow (and `scripts/wrestling.py`,
+`scripts/football.py`) can be deleted. Their old optional variables (`WRESTLING_LEAGUES`,
+`FOOTBALL_LEAGUES`, `OTHER_SPORTS`...) only affect these old files.
 
 ## check/ (ESPN check)
 
 `.github/workflows/espn-check.yml` runs the app's Sports code (from Nuvio_Testing's dev branch)
 against ESPN's feeds for every league and writes a report in the run summary. Run it by hand
 from the Actions tab. It changes nothing.
+
+Sports data: TheSportsDB (thesportsdb.com).

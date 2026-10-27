@@ -1,0 +1,63 @@
+# Leagues for the Nuvio + IPTV Sports page, read from TheSportsDB every day.
+#
+# To add a league: add a line with its name as TheSportsDB writes it (or its TheSportsDB id),
+# commit, and it's in everyone's Sports page after the next daily run (or press Run workflow).
+# To take one out: delete its line, or put # in front of it.
+#
+# The run's summary (Actions > the run > Summary) says what each line found, with ids, and
+# suggests names when one isn't found.
+#
+# After the name, anything else is optional, each after a | :
+#   regions=UK, IE      Shown without following it in: US, UK, IE, CA, AU, OTHER (or "everywhere").
+#                       Leave out: only for people who follow it.
+#   words=E-Prix, ...   Other ways TV guides write it (its name is always used).
+#   minutes=120         How long one game or session usually lasts.
+#   sport=Racing        The app's sport, if the automatic one is wrong.
+#   logos               Include the league's and teams' logos (check their licence first).
+#   app=guide/wwe       Show it under one of the app's own leagues instead of a new one.
+#   brands              Wrestling: logos for its shows (NXT, Raw...), from its teams.
+#   skip=Women, U21     For a group line (below): names containing any of these are left out.
+#
+# A group line adds every league in a country's list whose name contains one of the words:
+#   England / Soccer: National League, Southern, Isthmian | skip=Women
+# Several countries: "England, Scotland / Ice Hockey: Elite".
+
+# ---- Wrestling and boxing (the app's own WWE, AEW, wrestling and boxing pages)
+4444 | app=guide/wwe | logos | brands
+All Elite Wrestling | app=guide/aew | logos | brands
+TNA Wrestling | app=guide/wrestling
+Boxing | app=guide/boxing
+
+# ---- Non-league football (England, below League Two)
+England / Soccer: National League, Southern, Isthmian, Northern Premier | skip=Women, U21, U23, U18, Youth, Cup, Trophy, Vase, Shield, Reserve
+
+# ---- Rugby league (the NRL comes from ESPN in the app)
+England / Rugby: Super League, Challenge Cup, Rugby League Championship | skip=Women, Wheelchair, Reserve, Academy, Union, Prem | sport=Rugby | regions=UK, IE | words=Super League, Rugby League | minutes=110
+
+# ---- Cricket (the IPL, Big Bash, SA20, Major League Cricket and internationals come from ESPN in the app)
+England / Cricket: Blast, The Hundred | skip=Women, Second XI, 2nd XI | regions=UK, IE | words=T20 Blast, Vitality Blast, The Hundred | minutes=210
+
+# ---- Ice hockey (the AHL, ECHL, PWHL and juniors come from HockeyTech in the app)
+England, United Kingdom, Scotland / Ice Hockey: Elite | skip=Women | regions=UK, IE | words=Elite League, Elite Ice Hockey | minutes=150
+
+# ---- Gaelic games and netball
+Ireland / Gaelic: National Football League | skip=Ladies, Camogie, Minor, U20, Junior, Intermediate | sport=Gaelic | regions=IE, UK | words=National Football League, Allianz League, Allianz Football League, GAA | minutes=100
+England, United Kingdom / Netball: Super League, Netball | skip=U21, U19 | regions=UK, IE | words=Netball Super League, Netball | minutes=90
+Australia / Netball: Super Netball, Netball | skip=U21, U19 | regions=AU | words=Super Netball, Netball | minutes=90
+
+# ---- Motorsport (F1, NASCAR and IndyCar come from ESPN already)
+MotoGP | app=guide/motogp | words=MotoGP | minutes=150
+Formula E | regions=everywhere | words=Formula E, E-Prix | minutes=120
+Formula 2 | regions=UK, IE, OTHER | words=Formula 2, F2 | minutes=90
+Formula 3 | regions=UK, IE, OTHER | words=Formula 3, F3 | minutes=75
+FIA World Endurance Championship | regions=everywhere | words=WEC, World Endurance Championship, Le Mans | minutes=360
+IMSA SportsCar Championship | regions=US, CA | words=IMSA, Rolex 24, Daytona 24 | minutes=240
+World Rally Championship | regions=everywhere | words=WRC, World Rally | minutes=180
+Dakar Rally | words=Dakar | minutes=120
+Superbike World Championship | regions=UK, IE, AU, OTHER | words=WorldSBK, World Superbikes, Superbikes | minutes=90
+Isle of Man TT | regions=UK, IE | words=Isle of Man TT, TT Races | minutes=120
+British Touring Car Championship | regions=UK, IE | words=BTCC, British Touring Car | minutes=90
+Supercars Championship | regions=AU | words=Supercars, Repco Supercars | minutes=120
+NHRA | regions=US, CA | words=NHRA, Drag Racing | minutes=180
+Formula Drift | regions=US | words=Formula Drift | minutes=180
+Pikes Peak International Hill Climb | words=Pikes Peak | minutes=240

@@ -78,6 +78,10 @@ OTHER = [
      "skip": r"women|u19|under.19|qualif"},
     {"sport": "HOCKEY", "regions": ["UK", "IE"], "words": ["Elite League", "Elite Ice Hockey"], "minutes": 150,
      "look": [("England", "Ice Hockey"), ("United Kingdom", "Ice Hockey"), ("Scotland", "Ice Hockey")], "name": r"elite", "skip": r"women"},
+    # The AHL (the NHL's development league): ESPN doesn't carry it.
+    {"sport": "HOCKEY", "regions": ["US", "CA"], "words": ["AHL", "American Hockey League"], "minutes": 150,
+     "look": [("United States", "Ice Hockey"), ("USA", "Ice Hockey"), ("Canada", "Ice Hockey")],
+     "name": r"american hockey league|\bahl\b", "skip": r"women|junior|u18|u20"},
     # Gaelic games: only the National Football League has games on TheSportsDB (the championships
     # and hurling have none).
     {"sport": "GAELIC", "regions": ["IE", "UK"], "words": ["National Football League", "Allianz League", "Allianz Football League", "GAA"], "minutes": 100,
