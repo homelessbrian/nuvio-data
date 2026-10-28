@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-10-26",
-  "to": "2026-11-10"
+  "from": "2026-10-27",
+  "to": "2026-11-11"
  },
  "leagues": [
   {
@@ -426,6 +426,17 @@
    "about": null
   },
   {
+   "id": "2599797",
+   "league": "wwe",
+   "name": "Wrestlepalooza",
+   "start": "2026-12-12T00:00:00Z",
+   "hasTime": true,
+   "venue": "RAC Arena",
+   "city": null,
+   "country": "Australia",
+   "about": null
+  },
+  {
    "id": "2607373",
    "league": "boxing",
    "name": "Anthony Cacace vs Nick Ball",
@@ -448,5 +459,5 @@
    "about": null
   }
  ],
- "generated": "2026-10-27T12:41:35Z"
+ "generated": "2026-10-28T16:06:23Z"
 }
