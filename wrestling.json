@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-10-27",
-  "to": "2026-11-11"
+  "from": "2026-10-28",
+  "to": "2026-11-12"
  },
  "leagues": [
   {
@@ -52,12 +52,12 @@
  ],
  "events": [
   {
-   "id": "2599791",
+   "id": "2624406",
    "league": "wwe",
-   "name": "RAW #1744",
-   "start": "2026-10-27T00:00:00Z",
+   "name": "NXT #861",
+   "start": "2026-10-28T00:00:00Z",
    "hasTime": true,
-   "venue": "Save Mart Center",
+   "venue": "WWE Performance Center",
    "city": null,
    "country": "United States",
    "about": null
@@ -66,20 +66,9 @@
    "id": "2600289",
    "league": "aew",
    "name": "Dynamite #369 Fright Night Dynamite",
-   "start": "2026-10-28T23:30:00Z",
+   "start": "2026-10-29T00:00:00Z",
    "hasTime": true,
    "venue": "Chaifetz Arena",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2599792",
-   "league": "wwe",
-   "name": "SmackDown #1419",
-   "start": "2026-10-30T00:00:00Z",
-   "hasTime": true,
-   "venue": "Charleston Coliseum",
    "city": null,
    "country": "United States",
    "about": null
@@ -91,6 +80,17 @@
    "start": "2026-10-31T00:00:00Z",
    "hasTime": true,
    "venue": "WWE Performance Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2624413",
+   "league": "wwe",
+   "name": "SmackDown #1419 Danhausens Very Nice Very Evil SmackDown",
+   "start": "2026-10-31T00:00:00Z",
+   "hasTime": true,
+   "venue": "Charleston Coliseum",
    "city": null,
    "country": "United States",
    "about": null
@@ -118,23 +118,23 @@
    "about": null
   },
   {
-   "id": "2355269",
-   "league": "wwe",
-   "name": "Halloween Havoc",
-   "start": "2026-11-01T00:00:00Z",
-   "hasTime": true,
-   "venue": null,
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2599794",
    "league": "wwe",
    "name": "RAW #1745",
    "start": "2026-11-03T00:00:00Z",
    "hasTime": true,
    "venue": "Barclays Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2624415",
+   "league": "wwe",
+   "name": "NXT #862",
+   "start": "2026-11-04T00:00:00Z",
+   "hasTime": true,
+   "venue": "WWE Performance Center",
    "city": null,
    "country": "United States",
    "about": null
@@ -184,6 +184,17 @@
    "about": null
   },
   {
+   "id": "2624414",
+   "league": "wwe",
+   "name": "SmackDown #1420",
+   "start": "2026-11-07T00:00:00Z",
+   "hasTime": true,
+   "venue": "Barclays Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2600288",
    "league": "aew",
    "name": "Collision #169 - Chris Jericho's Rock N' Wrestling Rager",
@@ -201,6 +212,17 @@
    "start": "2026-11-08T00:00:00Z",
    "hasTime": true,
    "venue": "College Park Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2624416",
+   "league": "wwe",
+   "name": "RAW #1746",
+   "start": "2026-11-09T00:00:00Z",
+   "hasTime": true,
+   "venue": "Bon Secours Wellness Arena",
    "city": null,
    "country": "United States",
    "about": null
@@ -239,6 +261,17 @@
    "about": null
   },
   {
+   "id": "2624417",
+   "league": "wwe",
+   "name": "SmackDown #1421",
+   "start": "2026-11-13T00:00:00Z",
+   "hasTime": true,
+   "venue": "Amerant Bank Arena",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2579124",
    "league": "aew",
    "name": "Full Gear",
@@ -261,6 +294,17 @@
    "about": null
   },
   {
+   "id": "2624418",
+   "league": "wwe",
+   "name": "RAW #1747",
+   "start": "2026-11-16T00:00:00Z",
+   "hasTime": true,
+   "venue": "Lenovo Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2620174",
    "league": "aew",
    "name": "Dynamite #372",
@@ -272,12 +316,34 @@
    "about": null
   },
   {
+   "id": "2624419",
+   "league": "wwe",
+   "name": "SmackDown #1422",
+   "start": "2026-11-20T00:00:00Z",
+   "hasTime": true,
+   "venue": null,
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2620175",
    "league": "aew",
    "name": "Collision #171",
    "start": "2026-11-21T23:30:00Z",
    "hasTime": true,
    "venue": "Resch Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2624421",
+   "league": "wwe",
+   "name": "RAW #1748",
+   "start": "2026-11-23T00:00:00Z",
+   "hasTime": true,
+   "venue": "Intrust Bank Arena",
    "city": null,
    "country": "United States",
    "about": null
@@ -316,6 +382,17 @@
    "about": null
   },
   {
+   "id": "2624420",
+   "league": "wwe",
+   "name": "SmackDown #1423",
+   "start": "2026-11-27T00:00:00Z",
+   "hasTime": true,
+   "venue": "Intrust Bank Arena",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2619164",
    "league": "boxing",
    "name": "Agit Kabayel vs Nelson Hysa",
@@ -349,12 +426,34 @@
    "about": null
   },
   {
+   "id": "2624422",
+   "league": "wwe",
+   "name": "RAW #1749",
+   "start": "2026-11-30T00:00:00Z",
+   "hasTime": true,
+   "venue": "Simmons Bank Arena",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2620178",
    "league": "aew",
    "name": "Dynamite #374",
    "start": "2026-12-02T23:30:00Z",
    "hasTime": true,
    "venue": "Sames Auto Arena",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2624423",
+   "league": "wwe",
+   "name": "SmackDown #1424",
+   "start": "2026-12-04T00:00:00Z",
+   "hasTime": true,
+   "venue": "Van Andel Arena",
    "city": null,
    "country": "United States",
    "about": null
@@ -368,6 +467,17 @@
    "venue": "University of Wolverhampton at The Halls",
    "city": null,
    "country": "United Kingdom",
+   "about": null
+  },
+  {
+   "id": "2624424",
+   "league": "wwe",
+   "name": "RAW #1750",
+   "start": "2026-12-07T00:00:00Z",
+   "hasTime": true,
+   "venue": "Huntington Center",
+   "city": null,
+   "country": "United States",
    "about": null
   },
   {
@@ -390,6 +500,17 @@
    "venue": "Arena Monterrey",
    "city": null,
    "country": "Mexico",
+   "about": null
+  },
+  {
+   "id": "2624425",
+   "league": "wwe",
+   "name": "SmackDown #1425",
+   "start": "2026-12-11T00:00:00Z",
+   "hasTime": true,
+   "venue": "RAC Arena",
+   "city": null,
+   "country": "Australia",
    "about": null
   },
   {
@@ -459,5 +580,5 @@
    "about": null
   }
  ],
- "generated": "2026-10-28T16:06:23Z"
+ "generated": "2026-10-29T16:10:14Z"
 }
