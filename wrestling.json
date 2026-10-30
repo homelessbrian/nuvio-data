@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-10-28",
-  "to": "2026-11-12"
+  "from": "2026-10-29",
+  "to": "2026-11-13"
  },
  "leagues": [
   {
@@ -51,17 +51,6 @@
   }
  ],
  "events": [
-  {
-   "id": "2624406",
-   "league": "wwe",
-   "name": "NXT #861",
-   "start": "2026-10-28T00:00:00Z",
-   "hasTime": true,
-   "venue": "WWE Performance Center",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
   {
    "id": "2600289",
    "league": "aew",
@@ -558,6 +547,17 @@
    "about": null
   },
   {
+   "id": "2624426",
+   "league": "wwe",
+   "name": "RAW #1751",
+   "start": "2026-12-14T00:00:00Z",
+   "hasTime": true,
+   "venue": "RAC Arena",
+   "city": null,
+   "country": "Australia",
+   "about": null
+  },
+  {
    "id": "2607373",
    "league": "boxing",
    "name": "Anthony Cacace vs Nick Ball",
@@ -580,5 +580,5 @@
    "about": null
   }
  ],
- "generated": "2026-10-29T16:10:14Z"
+ "generated": "2026-10-30T15:58:36Z"
 }
