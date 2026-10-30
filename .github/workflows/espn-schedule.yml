@@ -1,0 +1,51 @@
+name: ESPN shared schedule cache
+
+# A new, separate job from nuvio-data.yml: it never touches TheSportsDB or the files that job
+# writes, so it can't break anything the existing job (or an older app version) depends on.
+#
+# Every 5 minutes, scripts/espn.py asks ESPN for yesterday/today/tomorrow's scoreboard for every
+# league in espn-leagues.txt and writes the raw answers to espn/*.json, shared by every installed
+# copy of the app. The app reads these files first and only asks ESPN directly itself for a
+# league this cache doesn't have yet, or a live game it needs sooner than this cache refreshes.
+#
+# To add a league: add a line to espn-leagues.txt ("<app league id>|<ESPN path>|<extra query
+# string, or blank>"). Leagues the app routes through HockeyTech, the MLB Stats API or ESPN's
+# cricket score panel aren't listed here on purpose (see espn-leagues.txt's own notes).
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: espn-schedule
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch ESPN's scoreboard for every listed league
+        run: python scripts/espn.py
+
+      - name: Save what changed
+        run: |
+          git add -A espn
+          if git diff --cached --quiet; then
+            echo "No changes to save."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -m "ESPN schedule cache"
+          git pull --rebase -q || true
+          git push

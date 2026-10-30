@@ -69,3 +69,36 @@ Supercars Championship | regions=AU | words=Supercars, Repco Supercars | minutes
 NHRA | regions=US, CA | words=NHRA, Drag Racing | minutes=180
 # Formula Drift: not on TheSportsDB (yet)
 # Pikes Peak International Hill Climb: not on TheSportsDB (yet)
+
+# ---- Darts, snooker (previously only a catch-all TV-guide search; these give them a real
+# schedule and let people follow a specific one). Added 2026-10-30 from TheSportsDB's likely
+# names for each — check the next run's Summary page for any that didn't resolve and need
+# renaming; nothing breaks if one doesn't match, it's just reported and skipped.
+PDC World Darts Championship | sport=Darts | regions=UK, IE | words=PDC World Championship, World Darts Championship | minutes=180
+Premier League Darts | sport=Darts | regions=UK, IE | words=Premier League Darts | minutes=150
+PDC World Matchplay | sport=Darts | regions=UK, IE | words=World Matchplay | minutes=180
+World Snooker Championship | sport=Snooker | regions=UK, IE | words=World Snooker Championship | minutes=300
+UK Championship | sport=Snooker | regions=UK, IE | words=UK Championship | minutes=240
+
+# ---- Cycling (previously only a catch-all TV-guide search for a handful of named tours). No
+# sport= override needed: the app has no sport of its own for cycling, and TheSportsDB's own
+# "Cycling" already auto-maps to "Other", same as if we'd spelled it out.
+Tour de France | regions=everywhere | words=Tour de France | minutes=300
+Giro d'Italia | regions=everywhere | words=Giro d'Italia, Giro | minutes=300
+Vuelta a España | regions=everywhere | words=Vuelta a Espana, La Vuelta | minutes=300
+UCI Road World Championships | regions=everywhere | words=Road World Championships, Road Worlds | minutes=300
+
+# ---- Horse racing (previously only a catch-all TV-guide search; "Other" because the app has
+# no dedicated horse-racing sport of its own, see guide/horse-racing in SportsCatalog.kt)
+Royal Ascot | sport=Other | regions=UK, IE | words=Royal Ascot, Ascot | minutes=360
+Cheltenham Festival | sport=Other | regions=UK, IE | words=Cheltenham Festival, Cheltenham | minutes=360
+Grand National | sport=Other | regions=UK, IE | words=Grand National, Aintree | minutes=240
+Kentucky Derby | sport=Other | regions=US | words=Kentucky Derby, Triple Crown | minutes=240
+
+# ---- More rugby league (the NRL and England's Super League are covered already)
+Rugby League World Cup | sport=Rugby | regions=UK, AU, OTHER | words=Rugby League World Cup | minutes=110
+Elite One Championship | sport=Rugby | regions=UK, OTHER | words=Elite One Championship | minutes=110
+
+# ---- More US soccer below the USL (the USL Championship and USL League One come from ESPN)
+USL League Two | regions=US | words=USL League Two, USL2 | minutes=115
+NISA | regions=US | words=NISA, National Independent Soccer Association | minutes=115
