@@ -169,6 +169,7 @@ soccer/ned.cup|soccer/ned.cup|
 soccer/ned.w.1|soccer/ned.w.1|
 soccer/nor.1|soccer/nor.1|
 soccer/par.1|soccer/par.1|
+soccer/par.1.supercopa|soccer/par.1.supercopa|
 soccer/per.1|soccer/per.1|
 soccer/por.1|soccer/por.1|
 soccer/por.taca.portugal|soccer/por.taca.portugal|

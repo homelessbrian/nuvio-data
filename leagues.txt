@@ -38,6 +38,8 @@ Northern Ireland / Soccer: Premiership | skip=Women, Reserve, Intermediate, Cham
 Wales / Soccer: Premier | skip=Women, Reserve, U19, Cup | regions=UK | words=Cymru Premier, JD Cymru Premier | minutes=115
 Scotland / Soccer: League One, League Two, League 1, League 2 | skip=Women, Reserve, Cup, Lowland, Highland | regions=UK | minutes=115
 Switzerland / Soccer: Super League | skip=Women, Challenge | words=Swiss Super League | minutes=115
+Polish Ekstraklasa | words=Ekstraklasa, PKO BP Ekstraklasa, PKO Ekstraklasa | minutes=115
+5499 | words=Copa Paraguay | minutes=125
 
 # ---- Rugby league (the NRL comes from ESPN in the app)
 England / Rugby: Super League, Challenge Cup, Rugby League Championship | skip=Women, Wheelchair, Reserve, Academy, Union, Prem | sport=Rugby | regions=UK, IE | words=Super League, Rugby League | minutes=110
