@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-10-29",
-  "to": "2026-11-13"
+  "from": "2026-10-30",
+  "to": "2026-11-14"
  },
  "leagues": [
   {
@@ -52,28 +52,6 @@
  ],
  "events": [
   {
-   "id": "2600289",
-   "league": "aew",
-   "name": "Dynamite #369 Fright Night Dynamite",
-   "start": "2026-10-29T00:00:00Z",
-   "hasTime": true,
-   "venue": "Chaifetz Arena",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2599793",
-   "league": "wwe",
-   "name": "NXT Halloween Havoc",
-   "start": "2026-10-31T00:00:00Z",
-   "hasTime": true,
-   "venue": "WWE Performance Center",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2624413",
    "league": "wwe",
    "name": "SmackDown #1419 Danhausens Very Nice Very Evil SmackDown",
@@ -102,6 +80,17 @@
    "start": "2026-11-01T00:00:00Z",
    "hasTime": true,
    "venue": "Chaifetz Arena",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2599793",
+   "league": "wwe",
+   "name": "NXT Halloween Havoc",
+   "start": "2026-11-01T00:00:00Z",
+   "hasTime": true,
+   "venue": "WWE Performance Center",
    "city": null,
    "country": "United States",
    "about": null
@@ -580,5 +569,5 @@
    "about": null
   }
  ],
- "generated": "2026-10-30T15:58:36Z"
+ "generated": "2026-10-31T15:02:41Z"
 }
