@@ -2,7 +2,8 @@ name: TheSportsDB check
 
 # Reads everything the daily update would read from TheSportsDB (non-league football, rugby
 # league, cricket, UK ice hockey, Gaelic games, netball) and reports how good each league's data
-# is: games, upcoming games, teams, scores on results, and a verdict. It writes nothing, so the
+# is: games, upcoming games, teams, scores on results, and a verdict. Also how many games have TV
+# channels listed (scripts/tvcheck.py). It writes nothing, so the
 # app isn't affected. Run it by hand from the Actions tab (Run workflow).
 on:
   workflow_dispatch:
@@ -34,3 +35,10 @@ jobs:
             exit 1
           fi
           python scripts/football.py --check
+
+      # How many games TheSportsDB lists TV channels for, league by league (report only).
+      - name: Check TheSportsDB's TV channels
+        if: always()
+        env:
+          TSDB_KEY: ${{ secrets.TSDB_KEY }}
+        run: python scripts/tvcheck.py
