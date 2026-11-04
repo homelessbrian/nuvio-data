@@ -8,7 +8,7 @@ Three modes:
   python scripts/sportsdb.py           Full: every league's season (games or events, teams,
                                        table). Run once a day.
   python scripts/sportsdb.py --scores  Scores: today's games, for leagues with a game on now.
-                                       Run every 15 minutes.
+                                       Run every 5 minutes.
   python scripts/sportsdb.py --check   Reads everything a full run would, reports, writes nothing.
 
 Files (written only when something changed):
@@ -683,6 +683,134 @@ def scores_run():
     return summary
 
 
+# ------------------------------------------------------------------ game details
+
+GAMES_DIR = os.path.join(OUT_DIR, "games")
+DETAIL_RETRY_HOURS = 36      # a finished game with no details yet is asked again until then
+DETAIL_MAX_PER_RUN = 150     # finished games filled in per run (the rest next run)
+
+
+def yes(v):
+    return str(v or "").strip().lower() in ("yes", "true", "1", "home")
+
+
+def game_details(e_id):
+    """A game's goals and cards, team stats and line-ups, in the shape the app reads. None: nothing listed."""
+    def read(v1, v2, *keys):
+        d = get(v1, quiet404=True)
+        if d is None:  # the older address refused: the newer one
+            d = get(v2, v2=True, quiet404=True)
+        return rows_of(d, *keys)
+    tl = read("lookuptimeline.php?id=%s" % e_id, "lookup/event_timeline/%s" % e_id, "timeline", "lookup")
+    st = read("lookupeventstats.php?id=%s" % e_id, "lookup/event_stats/%s" % e_id, "eventstats", "lookup")
+    lu = read("lookuplineup.php?id=%s" % e_id, "lookup/event_lineup/%s" % e_id, "lineup", "lookup")
+    out = {}
+    moments = []
+    for r in sorted(tl, key=lambda r: to_int(r.get("intTime")) or 0):
+        m = {"kind": (r.get("strTimeline") or "").strip(), "home": yes(r.get("strHome"))}
+        for k, src in (("detail", "strTimelineDetail"), ("player", "strPlayer"), ("assist", "strAssist")):
+            v = (r.get(src) or "").strip()
+            if v:
+                m[k] = v
+        t = to_int(r.get("intTime"))
+        if t is not None:
+            m["min"] = str(t)
+        if m["kind"]:
+            moments.append(m)
+    if moments:
+        out["moments"] = moments
+    stats = [{"name": (r.get("strStat") or "").strip(), "home": str(r.get("intHome") or "0"), "away": str(r.get("intAway") or "0")}
+             for r in st if (r.get("strStat") or "").strip()]
+    if stats:
+        out["stats"] = stats
+    if lu:
+        sides = {"home": [], "away": []}
+        for r in lu:
+            name = (r.get("strPlayer") or "").strip()
+            if not name:
+                continue
+            p = {"name": name, "sub": yes(r.get("strSubstitute"))}
+            num = to_int(r.get("intSquadNumber"))
+            if num is not None:
+                p["num"] = str(num)
+            pos = (r.get("strPosition") or "").strip()
+            if pos:
+                p["pos"] = pos
+            sides["home" if yes(r.get("strHome")) else "away"].append(p)
+        if sides["home"] or sides["away"]:
+            out["lineups"] = sides
+    return out or None
+
+
+def update_game_details(full):
+    """Details files for games on now and games just finished (the app's game page reads them)."""
+    if FREE or CHECK:
+        return []
+    path = os.path.join(OUT_DIR, "index.json")
+    if not os.path.exists(path):
+        return []
+    with open(path, encoding="utf-8") as f:
+        index = json.load(f)
+    now = dt.datetime.utcnow()
+    back = dt.timedelta(days=TEAM_DAYS_BACK if full else 3)
+    live, done = [], []
+    for lg in index.get("leagues") or []:
+        if lg.get("kind") != "teams":
+            continue
+        p = os.path.join(OUT_DIR, "%s.json" % lg["id"])
+        if not os.path.exists(p):
+            continue
+        with open(p, encoding="utf-8") as f:
+            data = json.load(f)
+        for ev in data.get("events") or []:
+            try:
+                start = dt.datetime.strptime(ev["start"], "%Y-%m-%dT%H:%M:%SZ")
+            except (KeyError, ValueError):
+                continue
+            if not ev.get("id") or not str(ev["id"]).isdigit():
+                continue
+            if ev.get("state") == "in":
+                live.append((ev["id"], start, False))
+            elif ev.get("state") == "post" and now - back <= start <= now:
+                done.append((ev["id"], start, True))
+    os.makedirs(GAMES_DIR, exist_ok=True)
+    wanted = list(live)
+    for gid, start, _ in sorted(done, key=lambda x: x[1], reverse=True):
+        f = os.path.join(GAMES_DIR, "%s.json" % gid)
+        if os.path.exists(f):
+            try:
+                with open(f, encoding="utf-8") as fh:
+                    old = json.load(fh)
+            except ValueError:
+                old = {}
+            if old.get("final"):
+                continue
+            # Asked a short while ago and nothing yet: not again for a few hours.
+            tried = old.get("tried")
+            if tried and now - dt.datetime.strptime(tried, "%Y-%m-%dT%H:%M:%SZ") < dt.timedelta(hours=3):
+                continue
+        wanted.append((gid, start, True))
+    wanted = wanted[:len(live) + DETAIL_MAX_PER_RUN]
+    written = 0
+    for gid, start, finished in wanted:
+        if time_left() < 60:
+            break
+        d = game_details(gid) or {}
+        if finished:
+            settled = now - start > dt.timedelta(hours=DETAIL_RETRY_HOURS)
+            if settled or d.get("moments") or d.get("stats"):
+                d["final"] = True
+            else:
+                d["tried"] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+        elif not d:
+            continue
+        if write_if_changed(os.path.join(GAMES_DIR, "%s.json" % gid), d):
+            written += 1
+    line = "Game details: %d on now, %d finished to fill in, %d file(s) written." % (len(live), len(wanted) - len(live), written)
+    log(line)
+    return ["", line]
+
+
 # ------------------------------------------------------------------ files
 
 def write_if_changed(path, obj):
@@ -705,5 +833,7 @@ def write_summary(lines):
 
 if __name__ == "__main__":
     sys.stdout.reconfigure(line_buffering=True)
-    lines = scores_run() if "--scores" in sys.argv else full_run()
+    scores = "--scores" in sys.argv
+    lines = scores_run() if scores else full_run()
+    lines += update_game_details(full=not scores)
     write_summary(lines)

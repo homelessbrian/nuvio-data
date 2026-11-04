@@ -6,7 +6,8 @@ name: Nuvio data
 #  - Every day (and when you press Run workflow): the full update. Every league in leagues.txt
 #    (fixtures, results, events, teams, tables) from TheSportsDB, into the sportsdb folder.
 #    To add a sport or league, add a line to leagues.txt: nothing else needs changing.
-#  - Every 15 minutes: scores for games that are on. A run with no games on asks TheSportsDB
+#  - Every 5 minutes: scores for games that are on, and the details (goals, stats, line-ups) of
+#    games on now or just finished, into sportsdb/games. A run with no games on asks TheSportsDB
 #    nothing.
 #  - The old wrestling.json and football folder are still made for people on older versions of
 #    the app. Once everyone has the new version, the two "older app versions" steps can go.
@@ -16,7 +17,7 @@ on:
       - "nuvio-data.zip"
   schedule:
     - cron: "17 9 * * *"           # full update: 9:17 UTC every day
-    - cron: "*/15 * * * *"         # scores: every 15 minutes (a run with no games on does nothing)
+    - cron: "*/5 * * * *"          # scores: every 5 minutes (a run with no games on does almost nothing)
   workflow_dispatch:
 
 permissions:
