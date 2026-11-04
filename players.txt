@@ -1,0 +1,46 @@
+# Leagues whose teams' players the Nuvio + IPTV Sports page shows (a team's card has a Players button).
+#
+# Same rules as leagues.txt: a league's name as TheSportsDB writes it, or its TheSportsDB id, one per
+# line; put # in front of a line to take it out. Players are read once a week per team (the daily run
+# takes the teams that are missing or over a week old, as many as fit in its time, so a new league
+# fills in over a few days). The run's summary says what each line found.
+#
+# Only the leagues here have players. A team in the app is found by its name, whatever league the
+# app shows it under.
+
+# ---- American sports
+NFL
+NBA
+MLB
+NHL
+WNBA
+American Major League Soccer
+
+# ---- Football
+English Premier League
+English League Championship
+English League 1
+English League 2
+Spanish La Liga
+German Bundesliga
+Italian Serie A
+French Ligue 1
+Dutch Eredivisie
+Portuguese Primeira Liga
+Scottish Premier League
+Mexican Primera League
+Brazilian Serie A
+Argentinian Primera Division
+Australian A-League
+
+# ---- Rugby, cricket, Australian rules
+English Premiership Rugby
+French Top 14
+Australian National Rugby League
+Rugby League Super League
+Indian Premier League
+Australian Big Bash League
+Australian AFL
+
+# ---- Motorsport (drivers are listed with their teams)
+Formula 1

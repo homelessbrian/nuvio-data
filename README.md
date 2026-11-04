@@ -29,6 +29,9 @@ What the app reads:
   country to a game's own channels.
 - `sportsdb/games/<game id>.json`: a game's goals, team stats and line-ups (games on now and
   finished ones), for the game page.
+- `sportsdb/players/`: the players of every team in the leagues of `players.txt` (number, position,
+  country, birth date, height, photo, short bio), one file per team plus `index.json`. Filled a few
+  dozen teams at a time and refreshed weekly; the team page in the app shows them.
 
 ## wrestling.json and football/ (older app versions)
 

@@ -74,6 +74,18 @@ jobs:
           fi
           if [ "$MODE" = "scores" ]; then python scripts/sportsdb.py --scores; else python scripts/sportsdb.py; fi
 
+      - name: Players of the teams in players.txt, from TheSportsDB
+        if: env.MODE == 'full' && (github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true')
+        continue-on-error: true
+        env:
+          TSDB_KEY: ${{ secrets.TSDB_KEY }}
+        run: |
+          if [ ! -f scripts/players.py ]; then
+            echo "scripts/players.py is missing: upload nuvio-data.zip first."
+            exit 0
+          fi
+          python scripts/players.py
+
       - name: Older app versions - wrestling schedule
         if: env.MODE == 'full' && (github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true')
         env:
