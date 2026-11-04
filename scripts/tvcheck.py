@@ -89,6 +89,16 @@ def main():
         out.append("**No TSDB_KEY secret found: this used the free key, which has no TV listings.**")
         out.append("")
     leagues, games = our_leagues()
+    # The listings don't say which league a game is in: the comparison leagues' games are read
+    # from their seasons, so their listings can be counted by game.
+    lo = (dt.date.today() - dt.timedelta(days=DAYS_BACK)).isoformat()
+    hi = (dt.date.today() + dt.timedelta(days=DAYS_AHEAD)).isoformat()
+    for lid in COMPARE:
+        info = (S.rows_of(S.get("lookupleague.php?id=%s" % lid), "leagues") or [{}])[0]
+        rows, _ = S.season_events(lid, info, dt.date.today())
+        for r in rows:
+            if lo <= (r.get("dateEvent") or "") <= hi and r.get("idEvent"):
+                games[str(r["idEvent"])] = lid
     today = dt.date.today()
     days = [(today + dt.timedelta(days=i)).isoformat() for i in range(-DAYS_BACK, DAYS_AHEAD + 1)]
 
@@ -154,6 +164,17 @@ def main():
     for lid, name in COMPARE.items():
         out.append(row(lid, name))
 
+    sports = collections.Counter((r.get("strSport") or "?") for r in all_rows)
+    out += ["", "## Listings by sport", "", ", ".join("%s %d" % (c, n) for c, n in sports.most_common(20))]
+    for lid in ["4328", "4391", "4387"]:
+        b = by_league.get(lid)
+        if not b:
+            continue
+        parts = []
+        for c, _ in b["countries"].most_common(10):
+            chans = sorted({channel(r) for r in all_rows if country(r) == c and games.get(str(r.get("idEvent"))) == lid})
+            parts.append("%s: %s" % (c, ", ".join(chans[:6])))
+        out += ["", "**%s channels by country:** " % COMPARE[lid] + "; ".join(parts)]
     countries = collections.Counter(country(r) for r in all_rows)
     out += ["", "## Listings by country", "", ", ".join("%s %d" % (c, n) for c, n in countries.most_common(25)) or "none"]
 
