@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-02",
-  "to": "2026-11-17"
+  "from": "2026-11-03",
+  "to": "2026-11-18"
  },
  "leagues": [
   {
@@ -514,6 +514,17 @@
    "about": null
   },
   {
+   "id": "2620183",
+   "league": "aew",
+   "name": "Worlds End",
+   "start": "2026-12-19T23:00:00Z",
+   "hasTime": true,
+   "venue": "Target Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2619169",
    "league": "boxing",
    "name": "Jacob Bank vs Janibek Alimkhanuly",
@@ -525,5 +536,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-03T17:06:54Z"
+ "generated": "2026-11-04T17:19:03Z"
 }
