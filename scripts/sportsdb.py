@@ -811,6 +811,77 @@ def update_game_details(full):
     return ["", line]
 
 
+# ------------------------------------------------------------------ TV listings
+
+TV_FILE = os.path.join(OUT_DIR, "tv.json")
+TV_DAYS_BACK = 1
+TV_DAYS_AHEAD = 7
+TV_REFRESH_HOURS = 8
+
+
+def tv_start(r):
+    """A TV listing's start as an ISO time in UTC (TheSportsDB's timestamps are UTC), or None."""
+    ts = (r.get("strTimeStamp") or "").strip().replace(" ", "T")
+    if not ts and r.get("dateEvent"):
+        ts = "%sT%s" % (r["dateEvent"], (r.get("strTime") or "00:00:00").strip())
+    m = re.match(r"^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})(?::(\d{2}))?", ts)
+    if not m:
+        return None
+    return "%sT%s:%sZ" % (m.group(1), m.group(2), m.group(3) or "00")
+
+
+def update_tv_listings(full):
+    """
+    sportsdb/tv.json: every game with its TV channels, by country, for the next week (the app
+    adds the ones for your country to a game's channels, so foreign channels are found too).
+    Made by the daily update, and again when it's over a few hours old.
+    """
+    if FREE or CHECK:
+        return []
+    now = dt.datetime.utcnow()
+    if not full and os.path.exists(TV_FILE):
+        try:
+            with open(TV_FILE, encoding="utf-8") as f:
+                made = dt.datetime.strptime(json.load(f).get("made", ""), "%Y-%m-%dT%H:%M:%SZ")
+            if now - made < dt.timedelta(hours=TV_REFRESH_HOURS):
+                return []
+        except (OSError, ValueError):
+            pass
+    games = {}
+    days_read = 0
+    for i in range(-TV_DAYS_BACK, TV_DAYS_AHEAD + 1):
+        if time_left() < 60:
+            break
+        day = (now + dt.timedelta(days=i)).strftime("%Y-%m-%d")
+        data = get("filter/tv/day/%s" % day, v2=True, quiet404=True)
+        rows = rows_of(data, "tvevents", "tvevent", "filter", "lookup", "events", "tv")
+        if data is None:
+            continue
+        days_read += 1
+        for r in rows:
+            ch = (r.get("strChannel") or "").strip()
+            name = (r.get("strEvent") or "").strip()
+            country = (r.get("strCountry") or "").strip()
+            start = tv_start(r)
+            if not (ch and name and country and start):
+                continue
+            g = games.setdefault(str(r.get("idEvent") or "%s|%s" % (name, start)),
+                                 {"n": name, "t": start, "s": (r.get("strSport") or "").strip(), "c": {}})
+            lst = g["c"].setdefault(country, [])
+            if ch not in lst:
+                lst.append(ch)
+    line = "TV listings: %d game(s) from %d day(s)" % (len(games), days_read)
+    if not games or days_read < (TV_DAYS_BACK + TV_DAYS_AHEAD + 1) // 2:
+        # Too little to replace the last file with.
+        line += ": too little, kept the old file."
+        log(line)
+        return ["", line]
+    out = {"made": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "events": sorted(games.values(), key=lambda g: (g["t"], g["n"]))}
+    line += ", file %s." % ("written" if write_if_changed(TV_FILE, out) else "unchanged")
+    log(line)
+    return ["", line]
+
+
 # ------------------------------------------------------------------ files
 
 def write_if_changed(path, obj):
@@ -836,4 +907,5 @@ if __name__ == "__main__":
     scores = "--scores" in sys.argv
     lines = scores_run() if scores else full_run()
     lines += update_game_details(full=not scores)
+    lines += update_tv_listings(full=not scores)
     write_summary(lines)

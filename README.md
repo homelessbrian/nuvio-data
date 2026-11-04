@@ -24,6 +24,9 @@ What the app reads:
 - `sportsdb/<league id>.json`: its games (team sports, with scores and the table) or events
   (races, fight cards, wrestling shows), from a few weeks back to the end of the season.
 - Full update once a day; scores every 5 minutes, only for leagues with a game on.
+- `sportsdb/tv.json`: every game of the next week with its TV channels by country (from TheSportsDB's
+  TV listings), made daily and again when over 8 hours old. The app adds the channels for your
+  country to a game's own channels.
 - `sportsdb/games/<game id>.json`: a game's goals, team stats and line-ups (games on now and
   finished ones), for the game page.
 
