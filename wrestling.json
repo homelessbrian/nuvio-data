@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-05",
-  "to": "2026-11-20"
+  "from": "2026-11-06",
+  "to": "2026-11-21"
  },
  "leagues": [
   {
@@ -52,17 +52,6 @@
  ],
  "events": [
   {
-   "id": "2618994",
-   "league": "aew",
-   "name": "Dynamite #370 - Blood & Guts",
-   "start": "2026-11-05T00:30:00Z",
-   "hasTime": true,
-   "venue": "VyStar Veterans Memorial Arena",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2626476",
    "league": "boxing",
    "name": "Paul Gallen vs Nelson Asofa-Solomona",
@@ -74,25 +63,25 @@
    "about": null
   },
   {
-   "id": "2599795",
-   "league": "wwe",
-   "name": "Crown Jewel",
-   "start": "2026-11-07T00:00:00Z",
-   "hasTime": true,
-   "venue": null,
-   "city": null,
-   "country": "Saudi Arabia",
-   "about": null
-  },
-  {
    "id": "2624414",
    "league": "wwe",
    "name": "SmackDown #1420",
-   "start": "2026-11-07T00:00:00Z",
+   "start": "2026-11-07T01:00:00Z",
    "hasTime": true,
    "venue": "Barclays Center",
    "city": null,
    "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2599795",
+   "league": "wwe",
+   "name": "Crown Jewel",
+   "start": "2026-11-07T16:00:00Z",
+   "hasTime": true,
+   "venue": null,
+   "city": null,
+   "country": "Saudi Arabia",
    "about": null
   },
   {
@@ -120,8 +109,8 @@
   {
    "id": "2600288",
    "league": "aew",
-   "name": "Collision #169 - Chris Jericho's Rock N' Wrestling Rager",
-   "start": "2026-11-07T23:30:00Z",
+   "name": "Collision #169 Chris Jericho's Rock N' Wrestling Rager",
+   "start": "2026-11-08T01:00:00Z",
    "hasTime": true,
    "venue": null,
    "city": null,
@@ -151,10 +140,10 @@
    "about": null
   },
   {
-   "id": "2600290",
+   "id": "2620173",
    "league": "aew",
-   "name": "Collision #170",
-   "start": "2026-11-11T23:30:00Z",
+   "name": "Dynamite #371",
+   "start": "2026-11-12T01:00:00Z",
    "hasTime": true,
    "venue": "Maverik Center",
    "city": null,
@@ -162,14 +151,14 @@
    "about": null
   },
   {
-   "id": "2620173",
-   "league": "aew",
-   "name": "Dynamite #371",
-   "start": "2026-11-11T23:30:00Z",
+   "id": "2626477",
+   "league": "boxing",
+   "name": "Jhon Orobio vs Hendri Cedeno",
+   "start": "2026-11-12T23:30:00Z",
    "hasTime": true,
-   "venue": "Maverik Center",
+   "venue": "Montreal Casino",
    "city": null,
-   "country": "United States",
+   "country": "Canada",
    "about": null
   },
   {
@@ -195,17 +184,6 @@
    "about": null
   },
   {
-   "id": "2579124",
-   "league": "aew",
-   "name": "Full Gear",
-   "start": "2026-11-14T23:00:00Z",
-   "hasTime": true,
-   "venue": null,
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2606669",
    "league": "tna",
    "name": "TNA Destination X",
@@ -214,6 +192,28 @@
    "venue": "Edmonton Expo Centre",
    "city": null,
    "country": "Canada",
+   "about": null
+  },
+  {
+   "id": "2600290",
+   "league": "aew",
+   "name": "Collision #170",
+   "start": "2026-11-15T01:00:00Z",
+   "hasTime": true,
+   "venue": "Maverik Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2579124",
+   "league": "aew",
+   "name": "Full Gear",
+   "start": "2026-11-15T01:00:00Z",
+   "hasTime": true,
+   "venue": "Mortgage Matchup Center",
+   "city": null,
+   "country": "United States",
    "about": null
   },
   {
@@ -272,17 +272,6 @@
    "about": null
   },
   {
-   "id": "2620176",
-   "league": "aew",
-   "name": "Collision #172 - Thanksgiving",
-   "start": "2026-11-25T23:30:00Z",
-   "hasTime": true,
-   "venue": null,
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2620177",
    "league": "aew",
    "name": "Dynamite #373 - Thanksgiving Eve",
@@ -302,6 +291,17 @@
    "venue": "Ebara Wave Arena",
    "city": null,
    "country": "Japan",
+   "about": null
+  },
+  {
+   "id": "2620176",
+   "league": "aew",
+   "name": "Collision #172 Thanksgiving",
+   "start": "2026-11-26T01:00:00Z",
+   "hasTime": true,
+   "venue": "Liberty First Credit Union Arena",
+   "city": null,
+   "country": "United States",
    "about": null
   },
   {
@@ -341,7 +341,7 @@
    "id": "2619165",
    "league": "boxing",
    "name": "U-Next Boxing 7",
-   "start": "2026-11-29T00:00:00Z",
+   "start": "2026-11-29T08:00:00Z",
    "hasTime": true,
    "venue": null,
    "city": null,
@@ -525,5 +525,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-06T16:55:46Z"
+ "generated": "2026-11-07T15:51:47Z"
 }
