@@ -37,6 +37,62 @@ jobs:
       - name: Fetch ESPN's scoreboard for every listed league
         run: python scripts/espn.py
 
+      # Ready-made score files (espn/compact): the same games, already read by the app's own
+      # code, one small file per league plus an index, so each TV only downloads what changed.
+      # If anything here fails, the raw files above are still saved as before.
+      - name: Get the app's Sports code (NuvioPlusIPTV, dev)
+        id: appsrc
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          repository: homelessbrian/NuvioPlusIPTV
+          ref: dev
+          path: app-src
+          sparse-checkout: |
+            app/src/main/java/com/nuvio/tv/livetv/sports
+            app/src/main/java/com/nuvio/tv/livetv/model
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-java@v4
+        if: steps.appsrc.outcome == 'success'
+        continue-on-error: true
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Reuse the built score-file maker
+        id: maker
+        if: steps.appsrc.outcome == 'success'
+        continue-on-error: true
+        uses: actions/cache@v4
+        with:
+          path: maker
+          key: compact-maker-${{ hashFiles('app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsModels.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsCatalog.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsFeeds.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsEventCodec.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/model/LiveTvModels.kt', 'compact/**', 'check/stubs/**') }}
+
+      - name: Build the score-file maker
+        if: steps.appsrc.outcome == 'success' && steps.maker.outputs.cache-hit != 'true'
+        continue-on-error: true
+        run: |
+          curl -sSL -o kotlin.zip https://github.com/JetBrains/kotlin/releases/download/v2.0.21/kotlin-compiler-2.0.21.zip
+          unzip -q kotlin.zip
+          mkdir -p maker
+          curl -sSL -o maker/json.jar https://repo1.maven.org/maven2/org/json/json/20240303/json-20240303.jar
+          curl -sSL -o maker/coroutines.jar https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.8.1/kotlinx-coroutines-core-jvm-1.8.1.jar
+          cp kotlinc/lib/kotlin-stdlib.jar maker/
+          L=app-src/app/src/main/java/com/nuvio/tv/livetv
+          kotlinc/bin/kotlinc -nowarn -cp maker/json.jar:maker/coroutines.jar \
+            check/stubs/*.kt $L/model/LiveTvModels.kt \
+            $L/sports/SportsModels.kt $L/sports/SportsCatalog.kt $L/sports/SportsFeeds.kt $L/sports/SportsEventCodec.kt \
+            compact/Compact.kt -d maker/out
+          rm -rf kotlinc kotlin.zip
+
+      - name: Make the ready-made score files
+        if: steps.appsrc.outcome == 'success'
+        continue-on-error: true
+        run: |
+          test -d maker/out
+          java -cp maker/out:maker/json.jar:maker/coroutines.jar:maker/kotlin-stdlib.jar com.nuvio.tv.livetv.sports.CompactKt espn
+
       - name: Save what changed
         run: |
           git add -A espn

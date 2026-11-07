@@ -61,6 +61,11 @@ or a live game it needs sooner than the cache's own refresh.
   itself returns it (uninterpreted) - the app parses it exactly as it always has. Yesterday,
   today and tomorrow refresh every few minutes; the rest of the week-ahead window every few
   hours, which is plenty for a schedule that isn't a live score.
+- `espn/compact/`: the same games, already read by the app's own code (`compact/Compact.kt`,
+  built from NuvioPlusIPTV's `dev` branch in the same workflow) and saved in the app's short
+  form: `day/<league>.json` (yesterday to tomorrow), `week/<league>.json` (two days to a week
+  ahead), and `index.json` with a fingerprint and fetch times per league. Newer app versions read
+  the index and download only the leagues that changed; older ones keep reading `espn/<league>.json`.
 - This is new and additive: it changes nothing in `sportsdb/`, `wrestling.json` or `football/`,
   so an app version from before this existed keeps working exactly as it did.
 
