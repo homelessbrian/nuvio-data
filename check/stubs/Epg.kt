@@ -9,6 +9,18 @@ class EpgDatabase {
   fun scanListings(fromMs: Long, toMs: Long, minStopMs: Long, onRow: (ch: String, start: Long, stop: Long, title: String, descr: String?, cat: String?) -> Unit) {
       hits.forEach { (ch, p) -> if (p.startMs >= fromMs && p.startMs < toMs && p.stopMs > minStopMs) onRow(ch, p.startMs, p.stopMs, p.title, p.description, null) }
   }
+  fun revision(): Long = changes
+  class SportsRowsInfo(val stamp: String, val rev: Long, val fromMs: Long, val toMs: Long, val rows: Int)
+  fun sportsRowsInfo(): SportsRowsInfo? = null
+  fun sportsRowsWords(): Set<String> = emptySet()
+  inner class SportsRowsWriter {
+    var rows = 0
+    fun add(ch: String, start: Long, stop: Long, title: String, descr: String?, cat: String?, nt: String, nd: String) { rows++ }
+    fun finish(rev: Long, fromMs: Long, toMs: Long, words: Collection<String>): Boolean = false
+    fun abort() {}
+  }
+  fun startSportsRows(): SportsRowsWriter = SportsRowsWriter()
+  fun scanSportsRows(fromMs: Long, toMs: Long, minStopMs: Long, onRow: (ch: String, start: Long, stop: Long, title: String, descr: String?, cat: String?, nt: String, nd: String) -> Unit) {}
   fun range(fromMs: Long, toMs: Long, onlyChannel: String? = null, light: Boolean = false, channels: Collection<String>? = null): Map<String, List<EpgProgram>> =
       onAir.filterKeys { channels == null || it in channels }
 }
