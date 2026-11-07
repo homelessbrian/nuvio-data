@@ -11,7 +11,7 @@ import java.util.TimeZone
 
 /*
  * ESPN check for the Nuvio + IPTV Sports page. Runs the app's own Sports code (from the
- * Nuvio_Testing repo) against ESPN's live feeds for every league, and writes a report:
+ * NuvioPlusIPTV repo) against ESPN's live feeds for every league, and writes a report:
  * what each league's feed gives (games, scores, winners, colours, logos, TV networks, race
  * results, scoring plays, team schedules) and anything that looks wrong.
  *

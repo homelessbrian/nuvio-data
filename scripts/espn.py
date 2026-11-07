@@ -17,7 +17,7 @@ Files (each written only when its content changed):
     {"source": "ESPN (site.api.espn.com), unofficial", "id": "<league id>",
      "days": {"<yyyyMMdd>": {"fetchedAt": <epoch ms>, "raw": "<ESPN's scoreboard JSON, as text>"}}}
 
-Covers yesterday to a week ahead (nine days), for every league in espn-leagues.txt that goes
+Covers yesterday to a week ahead (nine days; older days are dropped), for every league in espn-leagues.txt that goes
 straight to ESPN's plain scoreboard endpoint. Yesterday/today/tomorrow refresh often (minutes);
 the four-day to week-ahead window refreshes every few hours — plenty for a week-ahead schedule,
 which doesn't move the way a live score does. Leagues the app routes through HockeyTech, the MLB
@@ -203,8 +203,11 @@ def run():
             skipped_budget += 1
             continue
         existing = load_existing(lg["id"])
-        out_days = dict(existing)
-        touched = False
+        # Only yesterday to a week ahead is ever read: older days are dropped so the files
+        # don't keep growing (some had reached over 10 MB, downloaded by every TV).
+        oldest = days[0][0]
+        out_days = {d: v for d, v in existing.items() if d >= oldest}
+        touched = len(out_days) != len(existing)
         for d, category in days:
             info = existing.get(d)
             if not due(info, category, now_ms):

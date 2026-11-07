@@ -42,7 +42,7 @@ version; then the two "Older app versions" steps in the workflow (and `scripts/w
 
 ## check/ (ESPN check)
 
-`.github/workflows/espn-check.yml` runs the app's Sports code (from Nuvio_Testing's dev branch)
+`.github/workflows/espn-check.yml` runs the app's Sports code (from NuvioPlusIPTV's dev branch)
 against ESPN's feeds for every league and writes a report in the run summary. Run it by hand
 from the Actions tab. It changes nothing.
 
