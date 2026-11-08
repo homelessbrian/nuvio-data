@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-06",
-  "to": "2026-11-21"
+  "from": "2026-11-07",
+  "to": "2026-11-22"
  },
  "leagues": [
   {
@@ -51,17 +51,6 @@
   }
  ],
  "events": [
-  {
-   "id": "2626476",
-   "league": "boxing",
-   "name": "Paul Gallen vs Nelson Asofa-Solomona",
-   "start": "2026-11-06T06:00:00Z",
-   "hasTime": true,
-   "venue": null,
-   "city": null,
-   "country": "Australia",
-   "about": null
-  },
   {
    "id": "2624414",
    "league": "wwe",
@@ -514,6 +503,28 @@
    "about": null
   },
   {
+   "id": "2620184",
+   "league": "aew",
+   "name": "Collision #176 - Holiday Bash",
+   "start": "2026-12-23T23:30:00Z",
+   "hasTime": true,
+   "venue": "Wintrust Arena",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2620185",
+   "league": "aew",
+   "name": "Dynamite #377 - Holiday Bash",
+   "start": "2026-12-23T23:30:00Z",
+   "hasTime": true,
+   "venue": "Wintrust Arena",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2619169",
    "league": "boxing",
    "name": "Jacob Bank vs Janibek Alimkhanuly",
@@ -525,5 +536,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-07T15:51:47Z"
+ "generated": "2026-11-08T16:05:57Z"
 }
