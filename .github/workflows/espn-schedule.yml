@@ -69,7 +69,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: maker
-          key: compact-maker-${{ hashFiles('app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsModels.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsCatalog.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsFeeds.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsEventCodec.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/model/LiveTvModels.kt', 'compact/**', 'check/stubs/**') }}
+          key: compact-maker-${{ hashFiles('app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsModels.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsCatalog.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsFeeds.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsFeedCache.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsEventCodec.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/model/LiveTvModels.kt', 'compact/**', 'check/stubs/**') }}
 
       - name: Build the score-file maker
         id: build
@@ -86,7 +86,7 @@ jobs:
           L=app-src/app/src/main/java/com/nuvio/tv/livetv
           kotlinc/bin/kotlinc -nowarn -cp maker/json.jar:maker/coroutines.jar \
             check/stubs/*.kt $L/model/LiveTvModels.kt \
-            $L/sports/SportsModels.kt $L/sports/SportsCatalog.kt $L/sports/SportsFeeds.kt $L/sports/SportsEventCodec.kt \
+            $L/sports/SportsModels.kt $L/sports/SportsCatalog.kt $L/sports/SportsFeeds.kt $L/sports/SportsFeedCache.kt $L/sports/SportsEventCodec.kt \
             compact/Compact.kt -d maker/out
           rm -rf kotlinc kotlin.zip
           test -f maker/out/com/nuvio/tv/livetv/sports/CompactKt.class

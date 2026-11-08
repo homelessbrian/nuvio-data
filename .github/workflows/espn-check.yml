@@ -51,7 +51,7 @@ jobs:
             check/stubs/*.kt \
             $L/model/LiveTvModels.kt $L/data/CatchupUrlBuilder.kt \
             $L/sports/SportsModels.kt $L/sports/SportsCatalog.kt $L/sports/SportsMatcher.kt \
-            $L/sports/SportsFeeds.kt $L/sports/SportsEventCodec.kt $L/sports/SportsRows.kt $L/sports/SportsExtras.kt $L/sports/SportsStandings.kt \
+            $L/sports/SportsFeeds.kt $L/sports/SportsFeedCache.kt $L/sports/SportsEventCodec.kt $L/sports/SportsRows.kt $L/sports/SportsExtras.kt $L/sports/SportsStandings.kt \
             check/Check.kt -d out
 
       - name: Run it
