@@ -28,7 +28,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      # Start from the newest saved files, not the copy from when this run was triggered: a run
+      # that waited behind a slow one would otherwise start from stale files and clash on saving.
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - uses: actions/setup-python@v5
         with:
@@ -116,5 +120,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -q -m "ESPN schedule cache"
-          git pull --rebase -q || true
+          # Every run rewrites these files from scratch, so if another run saved in the meantime,
+          # keep this run's (newer) copy instead of stopping on a clash.
+          git pull --rebase -X theirs -q || true
           git push
