@@ -60,19 +60,23 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+      # Restored here, and saved further down only once a build has worked: a failed build was
+      # saved before, and every later run reused that empty copy without building again.
       - name: Reuse the built score-file maker
         id: maker
         if: steps.appsrc.outcome == 'success'
         continue-on-error: true
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: maker
           key: compact-maker-${{ hashFiles('app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsModels.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsCatalog.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsFeeds.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/sports/SportsEventCodec.kt', 'app-src/app/src/main/java/com/nuvio/tv/livetv/model/LiveTvModels.kt', 'compact/**', 'check/stubs/**') }}
 
       - name: Build the score-file maker
-        if: steps.appsrc.outcome == 'success' && steps.maker.outputs.cache-hit != 'true'
+        id: build
+        if: steps.appsrc.outcome == 'success' && (steps.maker.outputs.cache-hit != 'true' || hashFiles('maker/out/**') == '')
         continue-on-error: true
         run: |
+          rm -rf maker
           curl -sSL -o kotlin.zip https://github.com/JetBrains/kotlin/releases/download/v2.0.21/kotlin-compiler-2.0.21.zip
           unzip -q kotlin.zip
           mkdir -p maker
@@ -85,6 +89,15 @@ jobs:
             $L/sports/SportsModels.kt $L/sports/SportsCatalog.kt $L/sports/SportsFeeds.kt $L/sports/SportsEventCodec.kt \
             compact/Compact.kt -d maker/out
           rm -rf kotlinc kotlin.zip
+          test -f maker/out/com/nuvio/tv/livetv/sports/CompactKt.class
+
+      - name: Keep the built score-file maker for the next runs
+        if: steps.build.outcome == 'success'
+        continue-on-error: true
+        uses: actions/cache/save@v4
+        with:
+          path: maker
+          key: ${{ steps.maker.outputs.cache-primary-key }}
 
       - name: Make the ready-made score files
         if: steps.appsrc.outcome == 'success'
