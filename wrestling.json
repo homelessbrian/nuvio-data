@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-07",
-  "to": "2026-11-22"
+  "from": "2026-11-08",
+  "to": "2026-11-23"
  },
  "leagues": [
   {
@@ -52,50 +52,6 @@
  ],
  "events": [
   {
-   "id": "2624414",
-   "league": "wwe",
-   "name": "SmackDown #1420",
-   "start": "2026-11-07T01:00:00Z",
-   "hasTime": true,
-   "venue": "Barclays Center",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2599795",
-   "league": "wwe",
-   "name": "Crown Jewel",
-   "start": "2026-11-07T16:00:00Z",
-   "hasTime": true,
-   "venue": null,
-   "city": null,
-   "country": "Saudi Arabia",
-   "about": null
-  },
-  {
-   "id": "2607375",
-   "league": "boxing",
-   "name": "Joshua Buatsi vs Willy Hutchinson 2",
-   "start": "2026-11-07T16:20:00Z",
-   "hasTime": true,
-   "venue": "AO Arena",
-   "city": null,
-   "country": "United Kingdom",
-   "about": null
-  },
-  {
-   "id": "2619161",
-   "league": "boxing",
-   "name": "Zuffa Boxing 12 Billam-Smith vs Clarke",
-   "start": "2026-11-07T17:00:00Z",
-   "hasTime": true,
-   "venue": "Copper Box Arena",
-   "city": null,
-   "country": "United Kingdom",
-   "about": null
-  },
-  {
    "id": "2600288",
    "league": "aew",
    "name": "Collision #169 Chris Jericho's Rock N' Wrestling Rager",
@@ -113,6 +69,17 @@
    "start": "2026-11-08T22:15:00Z",
    "hasTime": true,
    "venue": "College Park Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2626988",
+   "league": "wwe",
+   "name": "NXT #863",
+   "start": "2026-11-10T00:00:00Z",
+   "hasTime": true,
+   "venue": "WWE Performance Center",
    "city": null,
    "country": "United States",
    "about": null
@@ -173,6 +140,17 @@
    "about": null
   },
   {
+   "id": "2626990",
+   "league": "aew",
+   "name": "Collision #170",
+   "start": "2026-11-14T00:00:00Z",
+   "hasTime": true,
+   "venue": "Maverik Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2606669",
    "league": "tna",
    "name": "TNA Destination X",
@@ -181,17 +159,6 @@
    "venue": "Edmonton Expo Centre",
    "city": null,
    "country": "Canada",
-   "about": null
-  },
-  {
-   "id": "2600290",
-   "league": "aew",
-   "name": "Collision #170",
-   "start": "2026-11-15T01:00:00Z",
-   "hasTime": true,
-   "venue": "Maverik Center",
-   "city": null,
-   "country": "United States",
    "about": null
   },
   {
@@ -481,6 +448,17 @@
    "about": null
   },
   {
+   "id": "2626996",
+   "league": "wwe",
+   "name": "Worlds Collide Doomsday",
+   "start": "2026-12-15T00:00:00Z",
+   "hasTime": true,
+   "venue": "ESPN Wide World of Sports Complex",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2607373",
    "league": "boxing",
    "name": "Anthony Cacace vs Nick Ball",
@@ -536,5 +514,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-08T16:05:57Z"
+ "generated": "2026-11-09T19:54:05Z"
 }
