@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-08",
-  "to": "2026-11-23"
+  "from": "2026-11-09",
+  "to": "2026-11-24"
  },
  "leagues": [
   {
@@ -52,23 +52,12 @@
  ],
  "events": [
   {
-   "id": "2600288",
-   "league": "aew",
-   "name": "Collision #169 Chris Jericho's Rock N' Wrestling Rager",
-   "start": "2026-11-08T01:00:00Z",
+   "id": "2624416",
+   "league": "wwe",
+   "name": "RAW #1746",
+   "start": "2026-11-10T01:00:00Z",
    "hasTime": true,
-   "venue": null,
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2607376",
-   "league": "boxing",
-   "name": "MVPW 07 Turhan vs Baumgardner",
-   "start": "2026-11-08T22:15:00Z",
-   "hasTime": true,
-   "venue": "College Park Center",
+   "venue": "Bon Secours Wellness Arena",
    "city": null,
    "country": "United States",
    "about": null
@@ -77,20 +66,9 @@
    "id": "2626988",
    "league": "wwe",
    "name": "NXT #863",
-   "start": "2026-11-10T00:00:00Z",
+   "start": "2026-11-11T01:00:00Z",
    "hasTime": true,
    "venue": "WWE Performance Center",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2624416",
-   "league": "wwe",
-   "name": "RAW #1746",
-   "start": "2026-11-10T00:00:00Z",
-   "hasTime": true,
-   "venue": "Bon Secours Wellness Arena",
    "city": null,
    "country": "United States",
    "about": null
@@ -100,6 +78,17 @@
    "league": "aew",
    "name": "Dynamite #371",
    "start": "2026-11-12T01:00:00Z",
+   "hasTime": true,
+   "venue": "Maverik Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2600290",
+   "league": "aew",
+   "name": "Collision #170",
+   "start": "2026-11-12T03:00:00Z",
    "hasTime": true,
    "venue": "Maverik Center",
    "city": null,
@@ -135,17 +124,6 @@
    "start": "2026-11-13T00:00:00Z",
    "hasTime": true,
    "venue": "Amerant Bank Arena",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2626990",
-   "league": "aew",
-   "name": "Collision #170",
-   "start": "2026-11-14T00:00:00Z",
-   "hasTime": true,
-   "venue": "Maverik Center",
    "city": null,
    "country": "United States",
    "about": null
@@ -255,7 +233,7 @@
    "name": "Collision #172 Thanksgiving",
    "start": "2026-11-26T01:00:00Z",
    "hasTime": true,
-   "venue": "Liberty First Credit Union Arena",
+   "venue": null,
    "city": null,
    "country": "United States",
    "about": null
@@ -514,5 +492,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-09T19:54:05Z"
+ "generated": "2026-11-10T17:13:07Z"
 }
