@@ -104,3 +104,11 @@ Elite One Championship | sport=Rugby | regions=UK, OTHER | words=Elite One Champ
 # ---- More US soccer below the USL (the USL Championship and USL League One come from ESPN)
 USL League Two | regions=US | words=USL League Two, USL2 | minutes=115
 NISA | regions=US | words=NISA, National Independent Soccer Association | minutes=115
+
+# ---- Requested on Discord (2026-11-09): Egypt, Portugal's league cup, Romania, Nepal, EuroLeague
+# (the Africa Cup of Nations and Taça de Portugal come from ESPN in the app)
+4829 | regions=OTHER | words=Egyptian Premier League, Egypt Premier League, Ora League | minutes=115
+4509 | regions=OTHER | words=Taça da Liga, Taca da Liga, Allianz Cup | minutes=115
+4691 | regions=OTHER | words=Liga 1, Liga I, SuperLiga, Superliga Romania | minutes=115
+5533 | words=Nepal Premier League, NPL | minutes=210
+4546 | regions=everywhere | words=EuroLeague, Euroleague Basketball | minutes=135
