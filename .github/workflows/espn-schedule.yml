@@ -41,6 +41,12 @@ jobs:
       - name: Fetch ESPN's scoreboard for every listed league
         run: python scripts/espn.py
 
+      # EuroLeague's live scores from the league's own feed (TheSportsDB's live feed doesn't
+      # cover it). Asks nothing when no game is near; a failure leaves the file as it was.
+      - name: EuroLeague live scores
+        continue-on-error: true
+        run: python scripts/euroleague.py
+
       # Ready-made score files (espn/compact): the same games, already read by the app's own
       # code, one small file per league plus an index, so each TV only downloads what changed.
       # If anything here fails, the raw files above are still saved as before.
@@ -112,7 +118,7 @@ jobs:
 
       - name: Save what changed
         run: |
-          git add -A espn
+          git add -A espn sportsdb/4546.json
           if git diff --cached --quiet; then
             echo "No changes to save."
             exit 0
