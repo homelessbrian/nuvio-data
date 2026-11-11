@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-09",
-  "to": "2026-11-24"
+  "from": "2026-11-10",
+  "to": "2026-11-25"
  },
  "leagues": [
   {
@@ -121,7 +121,7 @@
    "id": "2624417",
    "league": "wwe",
    "name": "SmackDown #1421",
-   "start": "2026-11-13T00:00:00Z",
+   "start": "2026-11-14T01:00:00Z",
    "hasTime": true,
    "venue": "Amerant Bank Arena",
    "city": null,
@@ -492,5 +492,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-10T17:13:07Z"
+ "generated": "2026-11-11T17:14:11Z"
 }
