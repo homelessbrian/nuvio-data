@@ -39,3 +39,21 @@ for code in (1, 90, 95, 100):
         print("parsed:", e.live_score(season, code))
     except Exception as x:
         print("failed:", x)
+
+# End to end on a copy of the league file, with the clock set to last night's games.
+import shutil, tempfile
+tmp = os.path.join(tempfile.mkdtemp(), "4546.json")
+shutil.copy(e.LEAGUE_FILE, tmp)
+before = {x["id"]: dict(x) for x in json.load(open(tmp))["events"]}
+e.LEAGUE_FILE = tmp
+class _D(dt.datetime):
+    @classmethod
+    def now(cls, tz=None):
+        return dt.datetime(2026, 11, 11, 21, 30, tzinfo=tz)
+e.dt.datetime = _D
+print("=== end to end, clock set to 2026-11-11 21:30 UTC")
+e.main()
+for x in json.load(open(tmp))["events"]:
+    if before[x["id"]] != x:
+        print("BEFORE", {k: before[x["id"]].get(k) for k in ("home", "away", "state", "hs", "as", "status")})
+        print("AFTER ", {k: x.get(k) for k in ("home", "away", "state", "hs", "as", "status")})

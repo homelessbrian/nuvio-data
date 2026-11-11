@@ -83,51 +83,24 @@ def lower_keys(d):
     return {str(k).lower(): v for k, v in d.items()}
 
 
-def name_of(v):
-    if isinstance(v, dict):
-        v = lower_keys(v)
-        return v.get("name") or v.get("clubname") or v.get("teamname") or v.get("code")
-    return v
-
-
-def score_of(v):
-    if isinstance(v, dict):
-        v = lower_keys(v).get("score")
-    return to_int(v)
-
-
 def schedule_games(season):
-    """Games from the schedule feeds: [{home, away, hs, as, played, code}]. Tries both versions."""
+    """Games from the official v2 schedule: [{home, away, hs, as, played, code, start}]."""
+    url = "%s/v2/competitions/E/seasons/%s/games" % (API, season)
+    try:
+        rows = json.loads(get(url, 30)).get("data") or []
+    except Exception as e:
+        log("schedule: %s" % e)
+        return []
     out = []
-    for url in ("%s/v2/competitions/E/seasons/%s/games" % (API, season),
-                "%s/v1/schedules?seasonCode=%s" % (API, season)):
+    for g in rows:
         try:
-            data = json.loads(get(url))
-        except Exception as e:  # not JSON, blocked, or down: try the next one
-            log("schedule %s: %s" % (url.split("/api")[-1][:60], e))
+            home, away = g["local"]["club"]["name"], g["road"]["club"]["name"]
+        except (KeyError, TypeError):
             continue
-        n = 0
-        for d in walk(data):
-            k = lower_keys(d)
-            home = name_of(k.get("home") or k.get("hometeam") or k.get("local"))
-            away = name_of(k.get("away") or k.get("awayteam") or k.get("road"))
-            if not home or not away or isinstance(home, (dict, list)) or isinstance(away, (dict, list)):
-                continue
-            hs = score_of(k.get("home")) if isinstance(k.get("home"), dict) else to_int(k.get("homescore"))
-            a_s = score_of(k.get("away")) if isinstance(k.get("away"), dict) else to_int(k.get("awayscore"))
-            status = str(k.get("status") or "").lower()
-            played = k.get("played")
-            if isinstance(played, str):
-                played = played.strip().lower() == "true"
-            if played is None:
-                played = status in ("result", "played", "finished", "final", "ft")
-            code = to_int(k.get("gamecode") or k.get("gamenumber") or k.get("code") or k.get("game"))
-            out.append({"home": home, "away": away, "hs": hs, "as": a_s, "played": bool(played),
-                        "code": code, "date": str(k.get("date") or k.get("utcdate") or "")})
-            n += 1
-        log("schedule: %d games from %s" % (n, url.split("euroleague.net")[-1][:50]))
-        if n:
-            break
+        out.append({"home": home, "away": away, "hs": to_int(g["local"].get("score")),
+                    "as": to_int(g["road"].get("score")), "played": bool(g.get("played")),
+                    "code": to_int(g.get("gameCode")), "start": g.get("utcDate")})
+    log("schedule: %d games" % len(out))
     return out
 
 
@@ -148,7 +121,8 @@ def live_score(season, code):
                 last, quarter = (a, b), max(quarter, q)
     if not last:
         return None
-    return last[0], last[1], quarter
+    ended = any(p.get("PLAYTYPE") == "EG" for k, _ in keys for p in (data.get(k) or []))
+    return last[0], last[1], quarter, bool(data.get("Live")), ended
 
 
 def main():
@@ -203,9 +177,13 @@ def main():
         else:
             live = live_score(season, g["code"]) if g["code"] and now >= st - dt.timedelta(minutes=10) else None
             if live:
-                hs, a_s, q = live
-                new.update(state="in", hs=hs, status=("Q%d" % q if q <= 4 else "OT") if q else "LIVE", **{"as": a_s})
-            elif g["hs"] is not None and g["as"] is not None and (g["hs"] or g["as"]):
+                hs, a_s, q, on, ended = live
+                if ended and not on:
+                    new.update(state="post", hs=hs, **{"as": a_s})
+                    new.pop("status", None)
+                else:
+                    new.update(state="in", hs=hs, status="Q%d" % q if q <= 4 else "OT", **{"as": a_s})
+            elif g["hs"] and g["as"]:
                 new.update(state="in", hs=g["hs"], status="LIVE", **{"as": g["as"]})
         if new != ev:
             ev.clear()
