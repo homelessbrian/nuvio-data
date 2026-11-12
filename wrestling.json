@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-10",
-  "to": "2026-11-25"
+  "from": "2026-11-11",
+  "to": "2026-11-26"
  },
  "leagues": [
   {
@@ -52,23 +52,23 @@
  ],
  "events": [
   {
-   "id": "2624416",
-   "league": "wwe",
-   "name": "RAW #1746",
-   "start": "2026-11-10T01:00:00Z",
-   "hasTime": true,
-   "venue": "Bon Secours Wellness Arena",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2626988",
    "league": "wwe",
    "name": "NXT #863",
    "start": "2026-11-11T01:00:00Z",
    "hasTime": true,
    "venue": "WWE Performance Center",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2628132",
+   "league": "tna",
+   "name": "TNA iMPACT #1165",
+   "start": "2026-11-12T00:00:00Z",
+   "hasTime": true,
+   "venue": null,
    "city": null,
    "country": "United States",
    "about": null
@@ -165,7 +165,7 @@
    "id": "2620174",
    "league": "aew",
    "name": "Dynamite #372",
-   "start": "2026-11-18T23:30:00Z",
+   "start": "2026-11-19T01:00:00Z",
    "hasTime": true,
    "venue": "Mission Ballroom",
    "city": null,
@@ -187,7 +187,7 @@
    "id": "2620175",
    "league": "aew",
    "name": "Collision #171",
-   "start": "2026-11-21T23:30:00Z",
+   "start": "2026-11-22T01:00:00Z",
    "hasTime": true,
    "venue": "Resch Center",
    "city": null,
@@ -201,17 +201,6 @@
    "start": "2026-11-24T00:00:00Z",
    "hasTime": true,
    "venue": "Intrust Bank Arena",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2620177",
-   "league": "aew",
-   "name": "Dynamite #373 - Thanksgiving Eve",
-   "start": "2026-11-25T23:30:00Z",
-   "hasTime": true,
-   "venue": null,
    "city": null,
    "country": "United States",
    "about": null
@@ -231,6 +220,17 @@
    "id": "2620176",
    "league": "aew",
    "name": "Collision #172 Thanksgiving",
+   "start": "2026-11-26T01:00:00Z",
+   "hasTime": true,
+   "venue": null,
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2620177",
+   "league": "aew",
+   "name": "Dynamite #373 - Thanksgiving Eve",
    "start": "2026-11-26T01:00:00Z",
    "hasTime": true,
    "venue": null,
@@ -297,7 +297,7 @@
    "id": "2620178",
    "league": "aew",
    "name": "Dynamite #374",
-   "start": "2026-12-02T23:30:00Z",
+   "start": "2026-12-03T01:00:00Z",
    "hasTime": true,
    "venue": "Sames Auto Arena",
    "city": null,
@@ -341,7 +341,7 @@
    "id": "2620179",
    "league": "aew",
    "name": "Collision #174 - Winter is Coming",
-   "start": "2026-12-09T00:00:00Z",
+   "start": "2026-12-10T01:00:00Z",
    "hasTime": true,
    "venue": "Arena Monterrey",
    "city": null,
@@ -352,7 +352,7 @@
    "id": "2620181",
    "league": "aew",
    "name": "Dynamite #375 - Winter is Coming",
-   "start": "2026-12-09T23:30:00Z",
+   "start": "2026-12-10T01:00:00Z",
    "hasTime": true,
    "venue": "Arena Monterrey",
    "city": null,
@@ -451,7 +451,7 @@
    "id": "2620183",
    "league": "aew",
    "name": "Worlds End",
-   "start": "2026-12-19T23:00:00Z",
+   "start": "2026-12-20T01:00:00Z",
    "hasTime": true,
    "venue": "Target Center",
    "city": null,
@@ -462,7 +462,7 @@
    "id": "2620184",
    "league": "aew",
    "name": "Collision #176 - Holiday Bash",
-   "start": "2026-12-23T23:30:00Z",
+   "start": "2026-12-24T01:00:00Z",
    "hasTime": true,
    "venue": "Wintrust Arena",
    "city": null,
@@ -473,7 +473,7 @@
    "id": "2620185",
    "league": "aew",
    "name": "Dynamite #377 - Holiday Bash",
-   "start": "2026-12-23T23:30:00Z",
+   "start": "2026-12-24T01:00:00Z",
    "hasTime": true,
    "venue": "Wintrust Arena",
    "city": null,
@@ -492,5 +492,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-11T17:14:11Z"
+ "generated": "2026-11-12T17:47:42Z"
 }
