@@ -31,6 +31,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+import zuffa
+
 KEY = (os.environ.get("TSDB_KEY") or "").strip() or "123"
 FREE = KEY == "123"
 BASE = "https://www.thesportsdb.com/api/v1/json/%s/" % KEY
@@ -523,6 +525,15 @@ def full_run():
                 seen[k] = (when, ev)
                 unique.append(ev)
             events = unique
+        if item.get("app") == "guide/boxing":
+            # Zuffa Boxing's cards, which TheSportsDB lists late and without their fights.
+            try:
+                with open(os.path.join(OUT_DIR, "%s.json" % lid), encoding="utf-8") as f:
+                    old_events = json.load(f).get("events") or []
+            except (OSError, ValueError):
+                old_events = []
+            events, zuffa_note = zuffa.merge(events, today, keep_from[:10], keep_to[:10], old_events, log)
+            summary.append("Zuffa Boxing (from Wikipedia): %s." % zuffa_note)
         use_logos = bool(item.get("logos"))
         teams = {}
         badges = {}

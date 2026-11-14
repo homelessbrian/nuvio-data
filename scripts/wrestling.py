@@ -26,6 +26,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+import zuffa
+
 KEY = (os.environ.get("TSDB_KEY") or "").strip() or "123"
 FREE = KEY == "123"
 BASE = "https://www.thesportsdb.com/api/v1/json/%s/" % KEY
@@ -298,6 +300,18 @@ def main():
                 old = json.load(f)
         except ValueError:
             old = None
+
+    # Zuffa Boxing's cards (TheSportsDB lists them late and without their fights).
+    if "boxing" in leagues:
+        boxing = [e for e in unique if e["league"] == "boxing"]
+        old_boxing = [e for e in (old or {}).get("events") or [] if e.get("league") == "boxing"]
+        last_b = today + dt.timedelta(days=DAYS_AHEAD if FREE else AHEAD_PAID.get("boxing", AHEAD_PAID_DEFAULT))
+        boxing, zuffa_note = zuffa.merge(boxing, today, first.isoformat(), last_b.isoformat(), old_boxing)
+        for e in boxing:
+            e["league"] = "boxing"
+        unique = sorted([e for e in unique if e["league"] != "boxing"] + boxing, key=lambda x: (x["start"], x["league"], x["name"]))
+        summary.append("")
+        summary.append("Zuffa Boxing (from Wikipedia): %s." % zuffa_note)
 
     # Nothing at all this time, but there was a schedule before: TheSportsDB is probably having
     # trouble. Keep the old file rather than wiping the schedule.
