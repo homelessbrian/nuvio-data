@@ -123,12 +123,19 @@ jobs:
 
       - name: Save what changed
         if: github.event_name != 'push' || steps.unpack.outputs.unpacked == 'true'
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET: ${{ vars.R2_BUCKET }}
         run: |
           for p in sportsdb wrestling.json football; do if [ -e "$p" ]; then git add -A "$p"; fi; done
           if git diff --cached --quiet; then
             echo "No changes to save."
             exit 0
           fi
+          # Also copy the changed files to the R2 bucket our apps read them from.
+          bash scripts/r2-upload.sh changed
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [ "$MODE" = "scores" ]; then git commit -q -m "Scores"; else git commit -q -m "Schedule update"; fi

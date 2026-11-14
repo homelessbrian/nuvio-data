@@ -117,12 +117,19 @@ jobs:
           java -cp maker/out:maker/json.jar:maker/coroutines.jar:maker/kotlin-stdlib.jar com.nuvio.tv.livetv.sports.CompactKt espn
 
       - name: Save what changed
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET: ${{ vars.R2_BUCKET }}
         run: |
           git add -A espn sportsdb/4546.json
           if git diff --cached --quiet; then
             echo "No changes to save."
             exit 0
           fi
+          # Also copy the changed files to the R2 bucket our apps read them from.
+          bash scripts/r2-upload.sh changed
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -q -m "ESPN schedule cache"

@@ -33,6 +33,14 @@ What the app reads:
   country, birth date, height, photo, short bio), one file per team plus `index.json`. Filled a few
   dozen teams at a time and refreshed weekly; the team page in the app shows them.
 
+## R2 copy (what our apps read)
+
+Our apps read the `sportsdb/`, `espn/` and `football/` files from the Cloudflare R2 bucket
+`nuvio-sports`, through the livetv-cloud Worker (app key only), not from this repo. The two jobs copy
+each file they change there (`scripts/r2-upload.sh`). **Copy all sports files to R2** (Actions tab)
+copies everything, for the first fill or a repair. Secrets: `R2_ACCESS_KEY_ID`,
+`R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT`; without them nothing is copied and the jobs work as before.
+
 ## wrestling.json and football/ (older app versions)
 
 The files older versions of the app read. They're still made until everyone has the new
