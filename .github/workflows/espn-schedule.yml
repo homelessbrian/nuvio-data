@@ -3,9 +3,11 @@ name: ESPN shared schedule cache
 # A new, separate job from nuvio-data.yml: it never touches TheSportsDB or the files that job
 # writes, so it can't break anything the existing job (or an older app version) depends on.
 #
-# Every 5 minutes, scripts/espn.py asks ESPN for yesterday/today/tomorrow's scoreboard for every
-# league in espn-leagues.txt and writes the raw answers to espn/*.json, shared by every installed
-# copy of the app. The app reads these files first and only asks ESPN directly itself for a
+# Every 5 minutes, the livetv-cloud Worker asks ESPN for yesterday-to-a-week-ahead's scoreboard for
+# every league in espn-leagues.txt, saves the raw answers to the R2 bucket (espn/*.json), then
+# starts this job. This job gets those files, makes the ready-made ones and keeps a copy here for
+# older apps. If the Worker's last round is missing, old or went badly, this job asks ESPN itself
+# (scripts/espn.py), as it always did. The files are shared by every installed copy of the app. The app reads these files first and only asks ESPN directly itself for a
 # league this cache doesn't have yet, or a live game it needs sooner than this cache refreshes.
 #
 # To add a league: add a line to espn-leagues.txt ("<app league id>|<ESPN path>|<extra query
@@ -38,7 +40,17 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Get the scores the Worker saved
+        id: r2
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET: ${{ vars.R2_BUCKET }}
+        run: bash scripts/r2-espn-get.sh
+
       - name: Fetch ESPN's scoreboard for every listed league
+        if: steps.r2.outputs.worker != 'true'
         run: python scripts/espn.py
 
       # EuroLeague's live scores from the league's own feed (TheSportsDB's live feed doesn't
@@ -122,6 +134,9 @@ jobs:
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_BUCKET: ${{ vars.R2_BUCKET }}
+          # When the Worker saved the league files to R2 itself, only the ready-made files and
+          # EuroLeague's go up from here.
+          R2_WANTED: ${{ steps.r2.outputs.worker == 'true' && '^(espn/compact|sportsdb)/.*\.json$' || '' }}
         run: |
           git add -A espn sportsdb/4546.json
           if git diff --cached --quiet; then

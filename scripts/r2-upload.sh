@@ -7,6 +7,7 @@
 #
 # Needs the secrets R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY and R2_ENDPOINT. Without them it does
 # nothing, so the job keeps working as before. Optional variable R2_BUCKET (default nuvio-sports).
+# Optional R2_WANTED: which files to copy (a pattern; default every sportsdb/espn/football file).
 # A failure here never stops the job: the files are still saved in this repo.
 set -uo pipefail
 
@@ -21,7 +22,7 @@ export AWS_DEFAULT_REGION=auto AWS_EC2_METADATA_DISABLED=true
 # R2 doesn't take every checksum newer AWS tools add by default.
 export AWS_REQUEST_CHECKSUM_CALCULATION=when_required AWS_RESPONSE_CHECKSUM_VALIDATION=when_required
 S3="aws s3 --endpoint-url ${R2_ENDPOINT%/} --only-show-errors"
-WANTED='^(sportsdb|espn|football)/.*\.json$'
+WANTED="${R2_WANTED:-^(sportsdb|espn|football)/.*\.json$}"
 
 stage=$(mktemp -d)
 removed=$(mktemp)
