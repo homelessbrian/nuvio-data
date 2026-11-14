@@ -13,6 +13,7 @@ class OkHttpClient {
     fun followRedirects(b: Boolean) = this
     fun followSslRedirects(b: Boolean) = this
     fun retryOnConnectionFailure(b: Boolean) = this
+    fun addInterceptor(i: Any) = this
     fun build() = OkHttpClient()
   }
 }
