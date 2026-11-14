@@ -8,7 +8,8 @@ name: Nuvio data
 #    To add a sport or league, add a line to leagues.txt: nothing else needs changing.
 #  - Every 5 minutes: scores for games that are on, and the details (goals, stats, line-ups) of
 #    games on now or just finished, into sportsdb/games. A run with no games on asks TheSportsDB
-#    nothing.
+#    nothing. The livetv-cloud Worker starts this every 5 minutes (Run workflow with mode
+#    "scores"), because GitHub's own 5-minute schedule is often skipped for hours.
 #  - The old wrestling.json and football folder are still made for people on older versions of
 #    the app. Once everyone has the new version, the two "older app versions" steps can go.
 on:
@@ -19,6 +20,12 @@ on:
     - cron: "17 9 * * *"           # full update: 9:17 UTC every day
     - cron: "*/5 * * * *"          # scores: every 5 minutes (a run with no games on does almost nothing)
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "full = everything; scores = only games on now"
+        type: choice
+        options: [full, scores]
+        default: full
 
 permissions:
   contents: write
@@ -33,7 +40,7 @@ jobs:
     timeout-minutes: 45
     env:
       # Scheduled runs other than the daily one only update scores.
-      MODE: ${{ (github.event_name == 'schedule' && github.event.schedule != '17 9 * * *') && 'scores' || 'full' }}
+      MODE: ${{ (inputs.mode == 'scores' || (github.event_name == 'schedule' && github.event.schedule != '17 9 * * *')) && 'scores' || 'full' }}
     steps:
       - uses: actions/checkout@v4
 
