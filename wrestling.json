@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-12",
-  "to": "2026-11-27"
+  "from": "2026-11-13",
+  "to": "2026-11-28"
  },
  "leagues": [
   {
@@ -52,50 +52,6 @@
  ],
  "events": [
   {
-   "id": "2628132",
-   "league": "tna",
-   "name": "TNA iMPACT #1165",
-   "start": "2026-11-12T00:00:00Z",
-   "hasTime": true,
-   "venue": null,
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2620173",
-   "league": "aew",
-   "name": "Dynamite #371",
-   "start": "2026-11-12T01:00:00Z",
-   "hasTime": true,
-   "venue": "Maverik Center",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2600290",
-   "league": "aew",
-   "name": "Collision #170",
-   "start": "2026-11-12T03:00:00Z",
-   "hasTime": true,
-   "venue": "Maverik Center",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2626477",
-   "league": "boxing",
-   "name": "Jhon Orobio vs Hendri Cedeno",
-   "start": "2026-11-12T23:30:00Z",
-   "hasTime": true,
-   "venue": "Montreal Casino",
-   "city": null,
-   "country": "Canada",
-   "about": null
-  },
-  {
    "id": "2619162",
    "league": "boxing",
    "name": "Bryan Flores vs Jose Nunez",
@@ -116,6 +72,65 @@
    "city": null,
    "country": "United States",
    "about": null
+  },
+  {
+   "id": "2628481",
+   "league": "boxing",
+   "name": "Zuffa Boxing 13: Adames vs Warburton",
+   "start": "2026-11-14T12:15:00Z",
+   "hasTime": true,
+   "venue": "The Venue",
+   "city": "Riyadh",
+   "country": "Saudi Arabia",
+   "about": null,
+   "results": [
+    {
+     "pos": "",
+     "name": "Carlos Adames v Gerome Warburton",
+     "detail": "Super Middleweight, 10 rds"
+    },
+    {
+     "pos": "",
+     "name": "Jason Moloney v Andres Teran",
+     "detail": "Bantamweight, 10 rds"
+    },
+    {
+     "pos": "",
+     "name": "Bruno Surace v Kamil Bednarek",
+     "detail": "Super Middleweight, 10 rds"
+    },
+    {
+     "pos": "",
+     "name": "Rayan Awaji def. Sudais Lubega",
+     "detail": "TKO R3 2:15"
+    },
+    {
+     "pos": "",
+     "name": "Jakhongir Zokirov def. Brandon Colantonio",
+     "detail": "RTD R1 3:00"
+    },
+    {
+     "pos": "",
+     "name": "Alexander Castro def. Radzhab Butaev",
+     "detail": "MD (10)"
+    },
+    {
+     "pos": "",
+     "name": "Abdulaziz Alotaibi def. Ezra Ssaili",
+     "detail": "UD (4)"
+    },
+    {
+     "pos": "",
+     "name": "Dariial Kuchmenov def. Ivan Ortiz",
+     "detail": "SD (8)"
+    },
+    {
+     "pos": "",
+     "name": "Rakhmatullo Boymatov def. Moro Kanla",
+     "detail": "KO R1 1:29"
+    }
+   ],
+   "zuffa": true
   },
   {
    "id": "2606669",
@@ -492,5 +507,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-13T17:17:47Z"
+ "generated": "2026-11-14T15:55:07Z"
 }
