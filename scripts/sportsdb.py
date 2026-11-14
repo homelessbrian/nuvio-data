@@ -16,6 +16,8 @@ Files (written only when something changed):
                              teams (team sports), and which of the app's leagues it fills (app=).
   sportsdb/<league id>.json  Its games (team sports) or events (racing, fighting...), from a few
                              weeks back to the end of the season, and its table when there is one.
+  sportsdb/colors.json       Team colours for every team-sport league in the list (each league
+                             re-read once a week), so the app never has to guess them.
 
 Settings: only the TSDB_KEY secret (your paid TheSportsDB key).
 
@@ -585,7 +587,7 @@ def full_run():
     elif index:
         write_if_changed(os.path.join(OUT_DIR, "index.json"), {"source": "TheSportsDB (thesportsdb.com)", "format": 2, "leagues": index})
         # Files of leagues no longer in the list go.
-        keep = {"index.json"} | {"%s.json" % e["id"] for e in index}
+        keep = {"index.json", COLORS_FILE} | {"%s.json" % e["id"] for e in index}
         for f in os.listdir(OUT_DIR):
             if f.endswith(".json") and f not in keep:
                 os.remove(os.path.join(OUT_DIR, f))
@@ -893,6 +895,84 @@ def update_tv_listings(full):
     return ["", line]
 
 
+# ------------------------------------------------------------------ team colours
+
+COLORS_FILE = "colors.json"
+COLORS_EVERY_DAYS = 7
+
+
+def hex_colour(v):
+    """"#EF0107", "ef0107", "#fff" -> "EF0107"; anything else (blank, "None") -> None."""
+    h = (v or "").strip().lstrip("#").upper()
+    if re.fullmatch(r"[0-9A-F]{3}", h):
+        h = "".join(c * 2 for c in h)
+    return h if re.fullmatch(r"[0-9A-F]{6}", h) else None
+
+
+def update_team_colors(full):
+    """Every team-sport league's team colours (TheSportsDB's "Primary Colours"), into colors.json."""
+    if FREE or CHECK or not full:
+        return []
+    path = os.path.join(OUT_DIR, "index.json")
+    if not os.path.exists(path):
+        return []
+    with open(path, encoding="utf-8") as f:
+        leagues = [lg for lg in (json.load(f).get("leagues") or []) if lg.get("kind") == "teams"]
+    out = os.path.join(OUT_DIR, COLORS_FILE)
+    try:
+        with open(out, encoding="utf-8") as f:
+            old = json.load(f).get("leagues") or {}
+    except (OSError, ValueError):
+        old = {}
+    today = dt.datetime.utcnow().date()
+    stale_before = (today - dt.timedelta(days=COLORS_EVERY_DAYS)).isoformat()
+    result, read, teams_with = {}, 0, 0
+    for lg in leagues:
+        lid = str(lg["id"])
+        had = old.get(lid)
+        if had and (had.get("updated") or "") > stale_before:
+            result[lid] = had
+            continue
+        if time_left() < 60:
+            if had:
+                result[lid] = had
+            continue
+        rows = rows_of(get("lookup_all_teams.php?id=%s" % lid, quiet404=True), "teams")
+        if not rows:
+            if had:
+                result[lid] = had
+            continue
+        read += 1
+        teams = []
+        for t in rows:
+            tid = str(t.get("idTeam") or "").strip()
+            name = (t.get("strTeam") or "").strip()
+            c1 = hex_colour(t.get("strColour1"))
+            c2 = hex_colour(t.get("strColour2"))
+            if not tid or not name or not (c1 or c2):
+                continue
+            row = {"id": tid, "name": name}
+            alt = [a for a in split_list(t.get("strTeamAlternate")) if a and a != name]
+            short = (t.get("strTeamShort") or "").strip()
+            if alt:
+                row["alt"] = alt[:4]
+            if short:
+                row["short"] = short
+            if c1:
+                row["c"] = c1
+            if c2:
+                row["c2"] = c2
+            teams.append(row)
+        teams_with += len(teams)
+        result[lid] = {"updated": today.isoformat(), "teams": sorted(teams, key=lambda x: x["name"].lower())}
+    if not result:
+        return []
+    write_if_changed(out, {"source": "TheSportsDB (thesportsdb.com)", "format": 1, "leagues": result})
+    total = sum(len(v.get("teams") or []) for v in result.values())
+    return ["", "Team colours: %d leagues, %d teams (%d leagues read again today, %d teams in those)." % (
+        len(result), total, read, teams_with)]
+
+
 # ------------------------------------------------------------------ files
 
 def write_if_changed(path, obj):
@@ -919,4 +999,5 @@ if __name__ == "__main__":
     lines = scores_run() if scores else full_run()
     lines += update_game_details(full=not scores)
     lines += update_tv_listings(full=not scores)
+    lines += update_team_colors(full=not scores)
     write_summary(lines)

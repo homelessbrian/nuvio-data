@@ -27,6 +27,8 @@ What the app reads:
 - `sportsdb/tv.json`: every game of the next week with its TV channels by country (from TheSportsDB's
   TV listings), made daily and again when over 8 hours old. The app adds the channels for your
   country to a game's own channels.
+- `sportsdb/colors.json`: team colours for every team-sport league in `leagues.txt` (TheSportsDB's
+  "Primary Colours"), each league re-read once a week. The app uses them when ESPN gives none.
 - `sportsdb/games/<game id>.json`: a game's goals, team stats and line-ups (games on now and
   finished ones), for the game page.
 - `sportsdb/players/`: the players of every team in the leagues of `players.txt` (number, position,
