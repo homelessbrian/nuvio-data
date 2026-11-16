@@ -79,8 +79,10 @@ NHRA | regions=US, CA | words=NHRA, Drag Racing | minutes=180
 PDC World Darts Championship | sport=Darts | regions=UK, IE | words=PDC World Championship, World Darts Championship | minutes=180
 Premier League Darts | sport=Darts | regions=UK, IE | words=Premier League Darts | minutes=150
 PDC World Matchplay | sport=Darts | regions=UK, IE | words=World Matchplay | minutes=180
-World Snooker Championship | sport=Snooker | regions=UK, IE | words=World Snooker Championship | minutes=300
-UK Championship | sport=Snooker | regions=UK, IE | words=UK Championship | minutes=240
+# Snooker: TheSportsDB has one league for the whole tour ("World Snooker"); the tournaments
+# (World Championship, UK Championship, Champion of Champions...) are its events. It fills the
+# app's own Snooker league (its other schedule feed has been empty).
+4555 | app=guide/snooker
 
 # ---- Cycling (previously only a catch-all TV-guide search for a handful of named tours). No
 # sport= override needed: the app has no sport of its own for cycling, and TheSportsDB's own
