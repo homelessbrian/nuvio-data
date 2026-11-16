@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-14",
-  "to": "2026-11-29"
+  "from": "2026-11-15",
+  "to": "2026-11-30"
  },
  "leagues": [
   {
@@ -51,87 +51,6 @@
   }
  ],
  "events": [
-  {
-   "id": "2619162",
-   "league": "boxing",
-   "name": "Bryan Flores vs Jose Nunez",
-   "start": "2026-11-14T01:00:00Z",
-   "hasTime": true,
-   "venue": null,
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2624417",
-   "league": "wwe",
-   "name": "SmackDown #1421",
-   "start": "2026-11-14T01:00:00Z",
-   "hasTime": true,
-   "venue": "Amerant Bank Arena",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2628481",
-   "league": "boxing",
-   "name": "Zuffa Boxing 13: Adames vs Warburton",
-   "start": "2026-11-14T12:15:00Z",
-   "hasTime": true,
-   "venue": "The Venue",
-   "city": "Riyadh",
-   "country": "Saudi Arabia",
-   "about": null,
-   "results": [
-    {
-     "pos": "",
-     "name": "Carlos Adames def. Gerome Warburton",
-     "detail": "UD (10)"
-    },
-    {
-     "pos": "",
-     "name": "Jason Moloney def. Andres Teran",
-     "detail": "UD (10)"
-    },
-    {
-     "pos": "",
-     "name": "Bruno Surace def. Kamil Bednarek",
-     "detail": "UD (10)"
-    },
-    {
-     "pos": "",
-     "name": "Rayan Awaji def. Sudais Lubega",
-     "detail": "TKO R3 2:15"
-    },
-    {
-     "pos": "",
-     "name": "Jakhongir Zokirov def. Brandon Colantonio",
-     "detail": "RTD R1 3:00"
-    },
-    {
-     "pos": "",
-     "name": "Alexander Castro def. Radzhab Butaev",
-     "detail": "MD (10)"
-    },
-    {
-     "pos": "",
-     "name": "Abdulaziz Alotaibi def. Ezra Ssaili",
-     "detail": "UD (4)"
-    },
-    {
-     "pos": "",
-     "name": "Dariial Kuchmenov def. Ivan Ortiz",
-     "detail": "SD (8)"
-    },
-    {
-     "pos": "",
-     "name": "Rakhmatullo Boymatov def. Moro Kanla",
-     "detail": "KO R1 1:29"
-    }
-   ],
-   "zuffa": true
-  },
   {
    "id": "2606669",
    "league": "tna",
@@ -518,5 +437,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-15T16:27:10Z"
+ "generated": "2026-11-16T19:42:18Z"
 }
