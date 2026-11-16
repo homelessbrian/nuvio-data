@@ -43,6 +43,23 @@ each file they change there (`scripts/r2-upload.sh`). **Copy all sports files to
 copies everything, for the first fill or a repair. Secrets: `R2_ACCESS_KEY_ID`,
 `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT`; without them nothing is copied and the jobs work as before.
 
+## Keeping the files out of this repo (`PUBLIC_FILES`)
+
+This repo is public, so anyone can read the sports files saved in it. The repo variable
+`PUBLIC_FILES` (Settings > Secrets and variables > Actions > Variables) decides where they live:
+
+- **Not set (or `on`)**: the files are saved in this repo, as always.
+- **`off`**: the `sportsdb/`, `espn/` and `football/` files are taken out of this repo. Each job keeps
+  its files between runs in one packed file in the R2 bucket (`_state/espn.tar.gz`,
+  `_state/tsdb.tar.gz`; the Worker never hands these out) and still copies every changed file to R2
+  for our apps. Older app versions and other builds, which read this repo, stop getting updates.
+  `wrestling.json` stays here either way (the app still asks this repo for it now and then).
+
+To undo, delete the variable (or set it to `on`): each job puts its files back in this repo on its
+next run. All of it is in `scripts/state.sh`. If the packed file is ever missing or broken, the job
+rebuilds from the separate files in R2; if R2 can't be reached at all, the run stops without
+changing anything and the next one tries again.
+
 ## wrestling.json and football/ (older app versions)
 
 The files older versions of the app read. They're still made until everyone has the new

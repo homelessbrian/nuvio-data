@@ -40,6 +40,18 @@ jobs:
         with:
           python-version: "3.12"
 
+      # Where the files are kept between runs (scripts/state.sh): in this repo, or, when the repo
+      # variable PUBLIC_FILES is "off", only in the R2 bucket. Does nothing while they are here.
+      - name: Get the saved files
+        id: state
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET: ${{ vars.R2_BUCKET }}
+          PUBLIC_FILES: ${{ vars.PUBLIC_FILES }}
+        run: bash scripts/state.sh get espn
+
       - name: Get the scores the Worker saved
         id: r2
         env:
@@ -137,7 +149,13 @@ jobs:
           # When the Worker saved the league files to R2 itself, only the ready-made files and
           # EuroLeague's go up from here.
           R2_WANTED: ${{ steps.r2.outputs.worker == 'true' && '^(espn/compact|sportsdb)/.*\.json$' || '' }}
+          PUBLIC_FILES: ${{ vars.PUBLIC_FILES }}
         run: |
+          # PUBLIC_FILES off: nothing is saved in this repo (scripts/state.sh).
+          if [ "${{ steps.state.outputs.private }}" = "true" ]; then
+            bash scripts/state.sh put espn
+            exit 0
+          fi
           git add -A espn sportsdb/4546.json
           if git diff --cached --quiet; then
             echo "No changes to save."
