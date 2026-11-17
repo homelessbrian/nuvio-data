@@ -973,6 +973,80 @@ def update_team_colors(full):
         len(result), total, read, teams_with)]
 
 
+# ------------------------------------------------------------------ highlight videos
+
+HL_FILE = os.path.join(OUT_DIR, "highlights.json")
+HL_DAYS = 7                 # days kept
+HL_RECENT_MINUTES = 30      # today and yesterday are asked again this often
+HL_OLDER_HOURS = 6          # the two days before that
+
+
+def update_highlights(full):
+    """The YouTube highlights TheSportsDB lists for each of the last days' games (the app's game page plays them)."""
+    if FREE or CHECK:
+        return []
+    old = {}
+    if os.path.exists(HL_FILE):
+        try:
+            with open(HL_FILE, encoding="utf-8") as f:
+                old = json.load(f)
+        except ValueError:
+            old = {}
+    days = old.get("days") or {}
+    asked_at = old.get("at") or {}
+    now = dt.datetime.utcnow()
+    wanted = [(now.date() - dt.timedelta(days=i)).isoformat() for i in range(HL_DAYS)]
+    asked = 0
+    for i, day in enumerate(wanted):
+        if time_left() < 45:
+            break
+        last = asked_at.get(day)
+        if last:
+            try:
+                age = now - dt.datetime.strptime(last, "%Y-%m-%dT%H:%M:%SZ")
+            except ValueError:
+                age = dt.timedelta(days=99)
+            if i < 2:
+                due = full or age >= dt.timedelta(minutes=HL_RECENT_MINUTES)
+            elif i < 4:
+                due = age >= dt.timedelta(hours=HL_OLDER_HOURS)
+            else:
+                due = False
+            if not due:
+                continue
+        data = get("eventshighlights.php?d=%s" % day, quiet404=True)
+        if data is None:
+            continue
+        asked += 1
+        rows = []
+        seen = set()
+        for r in rows_of(data, "tvhighlights", "highlights", "events"):
+            video = (r.get("strVideo") or "").strip()
+            if "youtu" not in video or video in seen:
+                continue
+            seen.add(video)
+            row = {"id": str(r.get("idEvent") or ""), "event": (r.get("strEvent") or "").strip(), "video": video}
+            for k, src in (("sport", "strSport"), ("league", "strLeague"), ("thumb", "strThumb")):
+                v = (r.get(src) or "").strip()
+                if v:
+                    row[k] = v
+            rows.append(row)
+        # A day that came back empty keeps what it had (a bad answer shouldn't wipe a day's videos).
+        if rows or day not in days:
+            days[day] = rows
+        asked_at[day] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+    out = {"v": 1,
+           "at": {d: asked_at[d] for d in wanted if d in asked_at},
+           "days": {d: days[d] for d in wanted if d in days}}
+    changed = False
+    if asked:
+        changed = write_if_changed(HL_FILE, out)
+    line = "Highlight videos: %d day(s) asked, %d video(s) listed%s." % (
+        asked, sum(len(v) for v in out["days"].values()), ", file written" if changed else "")
+    log(line)
+    return ["", line]
+
+
 # ------------------------------------------------------------------ files
 
 def write_if_changed(path, obj):
@@ -1000,4 +1074,5 @@ if __name__ == "__main__":
     lines += update_game_details(full=not scores)
     lines += update_tv_listings(full=not scores)
     lines += update_team_colors(full=not scores)
+    lines += update_highlights(full=not scores)
     write_summary(lines)
