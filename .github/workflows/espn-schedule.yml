@@ -166,7 +166,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -q -m "ESPN schedule cache"
-          # Every run rewrites these files from scratch, so if another run saved in the meantime,
-          # keep this run's (newer) copy instead of stopping on a clash.
-          git pull --rebase -X theirs -q || true
-          git push
+          # Both jobs save to this repo every few minutes and both write sportsdb/4546.json
+          # (EuroLeague), so if another run saved in the meantime, keep this run's (newer) copy
+          # instead of stopping on a clash, and try again if the other run got its save in first.
+          for try in 1 2 3 4 5; do
+            git pull --rebase -X theirs -q || { git rebase --abort 2>/dev/null || true; }
+            if git push -q; then exit 0; fi
+            sleep $((try * 4))
+          done
+          echo "::error::Could not save after 5 tries."
+          exit 1
