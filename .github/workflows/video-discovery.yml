@@ -69,6 +69,8 @@ jobs:
             --site "$SITE" \
             --max-pages "$MAX_PAGES" \
             --checkpoint-every 25 \
+            --max-validations 100 \
+            --validation-age-hours 24 \
             --state-file "$RUNNER_TEMP/video-state.json" \
             --output-dir "$RUNNER_TEMP/video-output"
 
