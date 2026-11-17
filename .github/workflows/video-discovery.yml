@@ -1,7 +1,6 @@
 name: Video discovery (prototype)
 
 on:
-  # Select video-discovery-prototype in the Run workflow branch dropdown.
   workflow_dispatch:
     inputs:
       site:
@@ -10,9 +9,9 @@ on:
         options: [all, nfl, nba, mlb, rugby]
         default: nfl
       max_pages:
-        description: Maximum pages to inspect per site
+        description: Maximum new pages to inspect in this batch
         type: number
-        default: 3000
+        default: 250
 
 permissions:
   contents: read
@@ -24,33 +23,66 @@ concurrency:
 jobs:
   discover:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: video-discovery-prototype
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
+      - name: Install AWS CLI
+        run: |
+          if ! command -v aws >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y awscli
+          fi
+
       - name: Install crawler dependencies
         run: pip install -r requirements-video.txt
 
-      - name: Discover event pages and player destinations
-        env:
-          SITE: ${{ inputs.site }}
-          MAX_PAGES: ${{ inputs.max_pages }}
-        run: python scripts/video_discovery.py --site "$SITE" --max-pages "$MAX_PAGES" --output-dir "$RUNNER_TEMP/video-output"
-
-      - name: Upload private JSON files to R2
+      - name: Restore discovery checkpoint from R2
         env:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_BUCKET: ${{ vars.R2_BUCKET }}
         run: |
-          if [ -z "$R2_ACCESS_KEY_ID" ] || [ -z "$R2_SECRET_ACCESS_KEY" ] || [ -z "$R2_ENDPOINT" ]; then
-            echo "::error::R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY and R2_ENDPOINT are required."
-            exit 1
+          export AWS_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID"
+          export AWS_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY"
+          export AWS_DEFAULT_REGION=auto
+          export AWS_EC2_METADATA_DISABLED=true
+          export AWS_REQUEST_CHECKSUM_CALCULATION=when_required
+          export AWS_RESPONSE_CHECKSUM_VALIDATION=when_required
+          BUCKET="${R2_BUCKET:-nuvio-sports}"
+          mkdir -p "$RUNNER_TEMP/video-output"
+          aws s3 cp "s3://$BUCKET/videos/state.json" "$RUNNER_TEMP/video-state.json" --endpoint-url "${R2_ENDPOINT%/}" --only-show-errors || echo "No saved checkpoint yet; starting a fresh crawl."
+
+      - name: Discover next batch
+        env:
+          SITE: ${{ inputs.site || 'nfl' }}
+          MAX_PAGES: ${{ inputs.max_pages || '250' }}
+        run: |
+          python scripts/video_discovery.py \
+            --site "$SITE" \
+            --max-pages "$MAX_PAGES" \
+            --checkpoint-every 25 \
+            --state-file "$RUNNER_TEMP/video-state.json" \
+            --output-dir "$RUNNER_TEMP/video-output"
+
+      - name: Upload checkpoint and catalog to R2
+        if: always()
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET: ${{ vars.R2_BUCKET }}
+        run: |
+          if [ ! -f "$RUNNER_TEMP/video-state.json" ]; then
+            echo "No checkpoint was produced; skipping upload."
+            exit 0
           fi
           export AWS_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID"
           export AWS_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY"
@@ -59,9 +91,10 @@ jobs:
           export AWS_REQUEST_CHECKSUM_CALCULATION=when_required
           export AWS_RESPONSE_CHECKSUM_VALIDATION=when_required
           BUCKET="${R2_BUCKET:-nuvio-sports}"
+          aws s3 cp "$RUNNER_TEMP/video-state.json" "s3://$BUCKET/videos/state.json" --endpoint-url "${R2_ENDPOINT%/}" --content-type "application/json" --cache-control "no-cache" --only-show-errors
           aws s3 cp "$RUNNER_TEMP/video-output/" "s3://$BUCKET/videos/" --recursive --endpoint-url "${R2_ENDPOINT%/}" --content-type "application/json; charset=utf-8" --cache-control "no-cache" --only-show-errors
 
-      - name: Report scan summary
+      - name: Report batch summary
         if: always()
         run: |
           if [ -f "$RUNNER_TEMP/video-output/index.json" ]; then
