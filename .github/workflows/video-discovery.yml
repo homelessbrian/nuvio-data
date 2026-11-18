@@ -17,9 +17,9 @@ on:
         type: boolean
         default: false
       max_validations:
-        description: Maximum player destinations to validate per sport
+        description: Maximum player destinations to validate per sport (browser checks included)
         type: number
-        default: 10
+        default: 25
 
 permissions:
   contents: read
@@ -56,8 +56,7 @@ jobs:
           python -m py_compile scripts/video_discovery.py
           python -m unittest discover -s tests -v
 
-      - name: Install Chromium for NBA dynamic-player validation
-        if: ${{ inputs.site == 'all' || inputs.site == 'nba' }}
+      - name: Install Chromium for dynamic-player validation
         run: |
           pip install playwright
           playwright install --with-deps chromium
