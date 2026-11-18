@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-15",
-  "to": "2026-11-30"
+  "from": "2026-11-17",
+  "to": "2026-12-02"
  },
  "leagues": [
   {
@@ -52,32 +52,10 @@
  ],
  "events": [
   {
-   "id": "2606669",
-   "league": "tna",
-   "name": "TNA Destination X",
-   "start": "2026-11-15T00:00:00Z",
-   "hasTime": true,
-   "venue": "Edmonton Expo Centre",
-   "city": null,
-   "country": "Canada",
-   "about": null
-  },
-  {
-   "id": "2579124",
-   "league": "aew",
-   "name": "Full Gear",
-   "start": "2026-11-15T01:00:00Z",
-   "hasTime": true,
-   "venue": "Mortgage Matchup Center",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2624418",
    "league": "wwe",
    "name": "RAW #1747",
-   "start": "2026-11-17T00:00:00Z",
+   "start": "2026-11-17T01:00:00Z",
    "hasTime": true,
    "venue": "Lenovo Center",
    "city": null,
@@ -237,6 +215,64 @@
    "city": null,
    "country": "United States",
    "about": null
+  },
+  {
+   "id": "zuffa:2026-12-04:zuffa-boxing-14",
+   "name": "Zuffa Boxing 14: McKenna vs Aleksejevs",
+   "start": "2026-12-04T00:00:00Z",
+   "hasTime": false,
+   "zuffa": true,
+   "venue": "The Venue",
+   "city": "Riyadh",
+   "country": "Saudi Arabia",
+   "results": [
+    {
+     "pos": "",
+     "name": "Aaron McKenna v Jevgenijs Aleksejevs",
+     "detail": "Middleweight, 12 rds"
+    },
+    {
+     "pos": "",
+     "name": "Jack Massey v Andrew Tabiti",
+     "detail": "Cruiserweight, 10 rds"
+    },
+    {
+     "pos": "",
+     "name": "Zak Chelli v Jesse Hart",
+     "detail": "Light Heavyweight, 10 rds"
+    },
+    {
+     "pos": "",
+     "name": "Ryan Rozicki v Gaetan Ntambwe",
+     "detail": "Cruiserweight, 10 rds"
+    },
+    {
+     "pos": "",
+     "name": "Vladyslav Sirenko v Charles Martin",
+     "detail": "Heavyweight, 10 rds"
+    },
+    {
+     "pos": "",
+     "name": "Artjom Kasparian v Suray Mahmutovic",
+     "detail": "Light Heavyweight, 8 rds"
+    },
+    {
+     "pos": "",
+     "name": "Jamar Talley v Sherif Musah",
+     "detail": "Cruiserweight, 8 rds"
+    },
+    {
+     "pos": "",
+     "name": "Alex MacMillan v TBA",
+     "detail": "Welterweight, 6 rds"
+    },
+    {
+     "pos": "",
+     "name": "Raheem Animashaun v TBA",
+     "detail": "Welterweight, 6 rds"
+    }
+   ],
+   "league": "boxing"
   },
   {
    "id": "2624423",
@@ -426,6 +462,28 @@
    "about": null
   },
   {
+   "id": "2624427",
+   "league": "wwe",
+   "name": "SmackDown #1428",
+   "start": "2027-01-01T00:00:00Z",
+   "hasTime": true,
+   "venue": "Benchmark International Arena",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2600291",
+   "league": "aew",
+   "name": "Dynamite #378 New Year's Smash",
+   "start": "2027-01-02T01:00:00Z",
+   "hasTime": true,
+   "venue": "Gateway Center Arena",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2619169",
    "league": "boxing",
    "name": "Jacob Bank vs Janibek Alimkhanuly",
@@ -437,5 +495,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-16T19:42:18Z"
+ "generated": "2026-11-18T18:10:17Z"
 }
