@@ -20,6 +20,10 @@ on:
         description: Maximum player destinations to validate per sport
         type: number
         default: 10
+      browser_probe:
+        description: Run a non-interactive Chromium access diagnostic for MLB/Rugby
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -55,6 +59,22 @@ jobs:
         run: |
           python -m py_compile scripts/video_discovery.py
           python -m unittest discover -s tests -v
+
+      - name: Install Playwright Chromium
+        if: ${{ inputs.browser_probe && (inputs.site == 'all' || inputs.site == 'mlb' || inputs.site == 'rugby') }}
+        run: |
+          pip install playwright
+          python -m py_compile scripts/browser_access_probe.py
+          playwright install --with-deps chromium
+
+      - name: Probe MLB/Rugby in Chromium
+        if: ${{ inputs.browser_probe && (inputs.site == 'all' || inputs.site == 'mlb' || inputs.site == 'rugby') }}
+        env:
+          SITE: ${{ inputs.site || 'all' }}
+        run: |
+          python scripts/browser_access_probe.py \
+            --site "$SITE" \
+            --output "$RUNNER_TEMP/video-output/access-probe.json"
 
       - name: Restore discovery checkpoint from R2
         env:
