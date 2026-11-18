@@ -92,6 +92,7 @@ soccer/bra.copa_do_brazil|soccer/bra.copa_do_brazil|
 soccer/caf.champions|soccer/caf.champions|
 soccer/caf.confed|soccer/caf.confed|
 soccer/caf.nations|soccer/caf.nations|
+soccer/caf.nations_qual|soccer/caf.nations_qual|
 soccer/can.w.nsl|soccer/can.w.nsl|
 soccer/chi.1|soccer/chi.1|
 soccer/chi.copa_chi|soccer/chi.copa_chi|
