@@ -6,7 +6,7 @@ on:
       site:
         description: Site to scan
         type: choice
-        options: [all, nfl, nba, mlb, rugby]
+        options: [all, nfl, nba]
         default: all
       max_pages:
         description: Maximum new pages per sport in this test batch
@@ -20,10 +20,6 @@ on:
         description: Maximum player destinations to validate per sport
         type: number
         default: 10
-      browser_probe:
-        description: Run a non-interactive Chromium access diagnostic for MLB/Rugby
-        type: boolean
-        default: false
 
 permissions:
   contents: read
@@ -60,22 +56,11 @@ jobs:
           python -m py_compile scripts/video_discovery.py
           python -m unittest discover -s tests -v
 
-      - name: Install Playwright Chromium
-        if: ${{ inputs.browser_probe && (inputs.site == 'all' || inputs.site == 'mlb' || inputs.site == 'rugby') }}
+      - name: Install Chromium for NBA dynamic-player validation
+        if: ${{ inputs.site == 'all' || inputs.site == 'nba' }}
         run: |
           pip install playwright
-          python -m py_compile scripts/browser_access_probe.py
           playwright install --with-deps chromium
-
-      - name: Probe MLB/Rugby in Chromium
-        if: ${{ inputs.browser_probe && (inputs.site == 'all' || inputs.site == 'mlb' || inputs.site == 'rugby') }}
-        env:
-          SITE: ${{ inputs.site || 'all' }}
-        run: |
-          python scripts/browser_access_probe.py \
-            --site "$SITE" \
-            --output "$RUNNER_TEMP/video-output/access-probe.json"
-
       - name: Restore discovery checkpoint from R2
         env:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -95,7 +80,7 @@ jobs:
           if [ "$RESET_DISCOVERY" = "true" ]; then
             STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
             aws s3 cp "s3://$BUCKET/videos/state.json" "s3://$BUCKET/videos/archive/state-$STAMP.json" --endpoint-url "${R2_ENDPOINT%/}" --only-show-errors || echo "No prior checkpoint to archive."
-            for FILE in index.json nfl.json nba.json mlb.json rugby.json; do
+            for FILE in index.json nfl.json nba.json; do
               aws s3 cp "s3://$BUCKET/videos/$FILE" "s3://$BUCKET/videos/archive/$STAMP/$FILE" --endpoint-url "${R2_ENDPOINT%/}" --only-show-errors || echo "No prior $FILE to archive."
             done
             rm -f "$RUNNER_TEMP/video-state.json"
@@ -115,6 +100,7 @@ jobs:
             --checkpoint-every 10 \
             --max-validations "$MAX_VALIDATIONS" \
             --validation-age-hours 24 \
+            --browser-validation \
             --state-file "$RUNNER_TEMP/video-state.json" \
             --output-dir "$RUNNER_TEMP/video-output"
 
