@@ -9,9 +9,9 @@ on:
         options: [all, nfl, nba]
         default: all
       max_pages:
-        description: Maximum new pages per sport in this test batch
+        description: Small discovery batch for diagnostics (checkpoint is preserved)
         type: number
-        default: 50
+        default: 1
       reset_discovery:
         description: Archive existing checkpoint/catalogs and restart selected sports
         type: boolean
@@ -90,8 +90,8 @@ jobs:
       - name: Discover next batch
         env:
           SITE: ${{ inputs.site || 'all' }}
-          MAX_PAGES: ${{ inputs.max_pages || '25' }}
-          MAX_VALIDATIONS: ${{ inputs.max_validations || '10' }}
+          MAX_PAGES: ${{ inputs.max_pages || '1' }}
+          MAX_VALIDATIONS: ${{ inputs.max_validations || '25' }}
         run: |
           python scripts/video_discovery.py \
             --site "$SITE" \
