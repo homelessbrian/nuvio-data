@@ -73,8 +73,8 @@ jobs:
           python scripts/video_discovery.py \
             --site "$SITE" \
             --max-pages "$MAX_PAGES" \
-            --checkpoint-every 25 \
-            --max-validations 100 \
+            --checkpoint-every 10 \
+            --max-validations "$MAX_VALIDATIONS" \
             --validation-age-hours 24 \
             --state-file "$RUNNER_TEMP/video-state.json" \
             --output-dir "$RUNNER_TEMP/video-output"
