@@ -98,7 +98,7 @@ jobs:
             --max-pages "$MAX_PAGES" \
             --checkpoint-every 10 \
             --max-validations "$MAX_VALIDATIONS" \
-            --validation-age-hours 24 \
+            --validation-age-hours 0 \
             --browser-validation \
             --state-file "$RUNNER_TEMP/video-state.json" \
             --output-dir "$RUNNER_TEMP/video-output"
