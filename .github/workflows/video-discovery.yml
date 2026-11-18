@@ -11,7 +11,11 @@ on:
       max_pages:
         description: Maximum new pages per sport in this test batch
         type: number
-        default: 25
+        default: 50
+      reset_discovery:
+        description: Archive existing checkpoint/catalogs and restart selected sports
+        type: boolean
+        default: false
       max_validations:
         description: Maximum player destinations to validate per sport
         type: number
@@ -58,6 +62,7 @@ jobs:
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_BUCKET: ${{ vars.R2_BUCKET }}
+          RESET_DISCOVERY: ${{ inputs.reset_discovery || 'false' }}
         run: |
           export AWS_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID"
           export AWS_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY"
@@ -67,7 +72,16 @@ jobs:
           export AWS_RESPONSE_CHECKSUM_VALIDATION=when_required
           BUCKET="${R2_BUCKET:-nuvio-sports}"
           mkdir -p "$RUNNER_TEMP/video-output"
-          aws s3 cp "s3://$BUCKET/videos/state.json" "$RUNNER_TEMP/video-state.json" --endpoint-url "${R2_ENDPOINT%/}" --only-show-errors || echo "No saved checkpoint yet; starting a fresh crawl."
+          if [ "$RESET_DISCOVERY" = "true" ]; then
+            STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+            aws s3 cp "s3://$BUCKET/videos/state.json" "s3://$BUCKET/videos/archive/state-$STAMP.json" --endpoint-url "${R2_ENDPOINT%/}" --only-show-errors || echo "No prior checkpoint to archive."
+            for FILE in index.json nfl.json nba.json mlb.json rugby.json; do
+              aws s3 cp "s3://$BUCKET/videos/$FILE" "s3://$BUCKET/videos/archive/$STAMP/$FILE" --endpoint-url "${R2_ENDPOINT%/}" --only-show-errors || echo "No prior $FILE to archive."
+            done
+            rm -f "$RUNNER_TEMP/video-state.json"
+          else
+            aws s3 cp "s3://$BUCKET/videos/state.json" "$RUNNER_TEMP/video-state.json" --endpoint-url "${R2_ENDPOINT%/}" --only-show-errors || echo "No saved checkpoint yet; starting a fresh crawl."
+          fi
 
       - name: Discover next batch
         env:
