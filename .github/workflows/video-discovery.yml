@@ -37,11 +37,6 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Check crawler syntax and tests
-        run: |
-          python -m py_compile scripts/video_discovery.py
-          python -m unittest discover -s tests -v
-
       - name: Install AWS CLI
         run: |
           if ! command -v aws >/dev/null 2>&1; then
@@ -51,6 +46,11 @@ jobs:
 
       - name: Install crawler dependencies
         run: pip install -r requirements-video.txt
+
+      - name: Check crawler syntax and tests
+        run: |
+          python -m py_compile scripts/video_discovery.py
+          python -m unittest discover -s tests -v
 
       - name: Restore discovery checkpoint from R2
         env:
