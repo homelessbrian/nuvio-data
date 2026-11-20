@@ -34,6 +34,7 @@ import urllib.parse
 import urllib.request
 
 import zuffa
+import channels
 
 KEY = (os.environ.get("TSDB_KEY") or "").strip() or "123"
 FREE = KEY == "123"
@@ -47,7 +48,7 @@ BUDGET_SECONDS = 15 * 60
 STARTED = time.time()
 EVERYWHERE = ["US", "UK", "IE", "CA", "AU", "OTHER"]
 TEAM_DAYS_BACK = 45
-EVENT_DAYS_BACK = 4
+EVENT_DAYS_BACK = 7
 DAYS_AHEAD_MAX = 200
 
 # TheSportsDB's sport -> the app's sport, and a game's or session's usual length.
@@ -983,7 +984,7 @@ HL_OLDER_HOURS = 6          # the two days before that
 
 def update_highlights(full):
     """The YouTube highlights TheSportsDB lists for each of the last days' games (the app's game page plays them)."""
-    if FREE or CHECK:
+    if CHECK:
         return []
     old = {}
     if os.path.exists(HL_FILE):
@@ -998,6 +999,8 @@ def update_highlights(full):
     wanted = [(now.date() - dt.timedelta(days=i)).isoformat() for i in range(HL_DAYS)]
     asked = 0
     for i, day in enumerate(wanted):
+        if FREE:
+            break  # TheSportsDB's list needs the paid key (the free one only gives 2 videos)
         if time_left() < 45:
             break
         last = asked_at.get(day)
@@ -1035,14 +1038,17 @@ def update_highlights(full):
         if rows or day not in days:
             days[day] = rows
         asked_at[day] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+    # The sports' own YouTube channels (UFC, Formula 1, the boxing promoters...): scripts/channels.py.
+    yt, yt_at, read = channels.update(old, now, time_left, log)
     out = {"v": 1,
            "at": {d: asked_at[d] for d in wanted if d in asked_at},
-           "days": {d: days[d] for d in wanted if d in days}}
+           "days": {d: days[d] for d in wanted if d in days},
+           "yt": yt, "ytat": yt_at}
     changed = False
-    if asked:
+    if asked or read:
         changed = write_if_changed(HL_FILE, out)
-    line = "Highlight videos: %d day(s) asked, %d video(s) listed%s." % (
-        asked, sum(len(v) for v in out["days"].values()), ", file written" if changed else "")
+    line = "Highlight videos: %d day(s) asked, %d video(s) listed; %d channel(s) read, %d channel video(s) kept%s." % (
+        asked, sum(len(v) for v in out["days"].values()), read, len(yt), ", file written" if changed else "")
     log(line)
     return ["", line]
 
