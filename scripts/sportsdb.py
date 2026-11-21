@@ -977,9 +977,134 @@ def update_team_colors(full):
 # ------------------------------------------------------------------ highlight videos
 
 HL_FILE = os.path.join(OUT_DIR, "highlights.json")
-HL_DAYS = 7                 # days kept
+HL_DAYS = 7                 # days kept in highlights.json (the file every game page reads)
 HL_RECENT_MINUTES = 30      # today and yesterday are asked again this often
 HL_OLDER_HOURS = 6          # the two days before that
+# Older games: every day's videos are also kept by month in sportsdb/highlights/<yyyy-mm>.json,
+# which the apps read only for a game older than the last few days. Days before the archive
+# started are asked for a few at a time (newest first) until a whole season and more is there.
+HL_ARCHIVE_DIR = os.path.join(OUT_DIR, "highlights")
+HL_ARCHIVE_DAYS = 400       # how far back the archive reaches
+HL_BACKFILL_PER_RUN = 12    # older days asked per run
+
+
+def _hl_month_path(month):
+    return os.path.join(HL_ARCHIVE_DIR, month + ".json")
+
+
+def _hl_read(path):
+    if not os.path.exists(path):
+        return {}
+    try:
+        with open(path, encoding="utf-8") as f:
+            d = json.load(f)
+        return d if isinstance(d, dict) else {}
+    except ValueError:
+        return {}
+
+
+def _hl_rows(data):
+    """TheSportsDB's answer for one day, as the rows we keep."""
+    rows = []
+    seen = set()
+    for r in rows_of(data, "tvhighlights", "highlights", "events"):
+        video = (r.get("strVideo") or "").strip()
+        if "youtu" not in video or video in seen:
+            continue
+        seen.add(video)
+        row = {"id": str(r.get("idEvent") or ""), "event": (r.get("strEvent") or "").strip(), "video": video}
+        for k, src in (("sport", "strSport"), ("league", "strLeague"), ("thumb", "strThumb")):
+            v = (r.get(src) or "").strip()
+            if v:
+                row[k] = v
+        rows.append(row)
+    return rows
+
+
+def update_highlight_archive(days, asked_at, yt_rows, now):
+    """Keeps every day's videos (TheSportsDB's and the channels') by month, and fills in older days."""
+    cutoff = now.date() - dt.timedelta(days=HL_ARCHIVE_DAYS - 1)
+    months = {}
+
+    def month(m):
+        if m not in months:
+            d = _hl_read(_hl_month_path(m))
+            months[m] = {"at": dict(d.get("at") or {}), "days": dict(d.get("days") or {}), "yt": list(d.get("yt") or [])}
+        return months[m]
+
+    # This run's days (and any just leaving highlights.json).
+    for day, rows in days.items():
+        try:
+            if dt.date.fromisoformat(day) < cutoff:
+                continue
+        except ValueError:
+            continue
+        a = month(day[:7])
+        # An empty answer doesn't replace videos the day already had.
+        if rows or day not in a["days"]:
+            a["days"][day] = rows
+        if asked_at.get(day):
+            a["at"][day] = asked_at[day]
+    # The channels' videos, by the month they were put up (the channel feeds only hold the last
+    # 15 uploads, so these can't be filled in afterwards: kept from now on).
+    for r in yt_rows:
+        if not isinstance(r, dict) or not r.get("v"):
+            continue
+        try:
+            put_up = dt.datetime.fromtimestamp(int(r.get("at") or 0), dt.timezone.utc).date()
+        except (ValueError, OverflowError, OSError):
+            continue
+        if put_up < cutoff:
+            continue
+        a = month(put_up.isoformat()[:7])
+        if all(x.get("v") != r["v"] for x in a["yt"]):
+            a["yt"].append(r)
+
+    # Older days nobody has asked TheSportsDB for yet, newest first.
+    filled = 0
+    if not FREE:
+        for i in range(HL_DAYS, HL_ARCHIVE_DAYS):
+            if filled >= HL_BACKFILL_PER_RUN or time_left() < 60:
+                break
+            day = (now.date() - dt.timedelta(days=i)).isoformat()
+            a = month(day[:7])
+            if day in a["at"]:
+                continue
+            # No answer (TheSportsDB has nothing for that day, or kept failing after its retries)
+            # counts as an empty day, so one bad day can't stop the rest being filled in.
+            data = get("eventshighlights.php?d=%s" % day, quiet404=True)
+            filled += 1
+            rows = _hl_rows(data) if data is not None else []
+            if rows or day not in a["days"]:
+                a["days"][day] = rows
+            a["at"][day] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    written = 0
+    for m, a in months.items():
+        out = {"v": 1,
+               "at": {d: a["at"][d] for d in sorted(a["at"])},
+               "days": {d: a["days"][d] for d in sorted(a["days"])},
+               "yt": sorted(a["yt"], key=lambda x: int(x.get("at") or 0))}
+        if not out["days"] and not out["yt"] and not os.path.exists(_hl_month_path(m)):
+            continue
+        os.makedirs(HL_ARCHIVE_DIR, exist_ok=True)
+        if write_if_changed(_hl_month_path(m), out):
+            written += 1
+    # Months older than the archive reaches.
+    removed = 0
+    if os.path.isdir(HL_ARCHIVE_DIR):
+        oldest = cutoff.isoformat()[:7]
+        for name in os.listdir(HL_ARCHIVE_DIR):
+            if name.endswith(".json") and name[:-5] < oldest:
+                os.remove(os.path.join(HL_ARCHIVE_DIR, name))
+                removed += 1
+    total = 0
+    if os.path.isdir(HL_ARCHIVE_DIR):
+        for name in os.listdir(HL_ARCHIVE_DIR):
+            if name.endswith(".json"):
+                total += len(_hl_read(os.path.join(HL_ARCHIVE_DIR, name)).get("at") or {})
+    return "Highlight archive: %d older day(s) asked, %d day(s) kept in all, %d month file(s) written%s." % (
+        filled, total, written, ", %d removed" % removed if removed else "")
 
 
 def update_highlights(full):
@@ -1021,19 +1146,7 @@ def update_highlights(full):
         if data is None:
             continue
         asked += 1
-        rows = []
-        seen = set()
-        for r in rows_of(data, "tvhighlights", "highlights", "events"):
-            video = (r.get("strVideo") or "").strip()
-            if "youtu" not in video or video in seen:
-                continue
-            seen.add(video)
-            row = {"id": str(r.get("idEvent") or ""), "event": (r.get("strEvent") or "").strip(), "video": video}
-            for k, src in (("sport", "strSport"), ("league", "strLeague"), ("thumb", "strThumb")):
-                v = (r.get(src) or "").strip()
-                if v:
-                    row[k] = v
-            rows.append(row)
+        rows = _hl_rows(data)
         # A day that came back empty keeps what it had (a bad answer shouldn't wipe a day's videos).
         if rows or day not in days:
             days[day] = rows
@@ -1050,7 +1163,11 @@ def update_highlights(full):
     line = "Highlight videos: %d day(s) asked, %d video(s) listed; %d channel(s) read, %d channel video(s) kept%s." % (
         asked, sum(len(v) for v in out["days"].values()), read, len(yt), ", file written" if changed else "")
     log(line)
-    return ["", line]
+    # Kept by month for older games too (the videos leaving highlights.json included).
+    old_yt = [r for r in (old.get("yt") or []) if isinstance(r, dict)]
+    arch = update_highlight_archive(days, asked_at, old_yt + list(yt), now)
+    log(arch)
+    return ["", line, arch]
 
 
 # ------------------------------------------------------------------ files
