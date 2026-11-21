@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-19",
-  "to": "2026-12-04"
+  "from": "2026-11-20",
+  "to": "2026-12-05"
  },
  "leagues": [
   {
@@ -51,17 +51,6 @@
   }
  ],
  "events": [
-  {
-   "id": "2620174",
-   "league": "aew",
-   "name": "Dynamite #372",
-   "start": "2026-11-19T01:00:00Z",
-   "hasTime": true,
-   "venue": "Mission Ballroom",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
   {
    "id": "2629133",
    "league": "boxing",
@@ -154,9 +143,9 @@
    "id": "2619164",
    "league": "boxing",
    "name": "Agit Kabayel vs Nelson Hysa",
-   "start": "2026-11-28T00:00:00Z",
+   "start": "2026-11-28T18:00:00Z",
    "hasTime": true,
-   "venue": "Merkur Speil Arena",
+   "venue": null,
    "city": null,
    "country": "Germany",
    "about": null
@@ -192,6 +181,17 @@
    "venue": "Simmons Bank Arena",
    "city": null,
    "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2630444",
+   "league": "tna",
+   "name": "TNA iMPACT #1167",
+   "start": "2026-12-03T00:00:00Z",
+   "hasTime": true,
+   "venue": "WinSport Event Centre",
+   "city": null,
+   "country": "Canada",
    "about": null
   },
   {
@@ -495,5 +495,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-20T18:00:47Z"
+ "generated": "2026-11-21T16:57:16Z"
 }
