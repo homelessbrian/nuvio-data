@@ -60,11 +60,13 @@ SPORTS = {
     "basketball": ("BASKETBALL", 150), "american football": ("AMERICAN_FOOTBALL", 200),
     "baseball": ("BASEBALL", 180), "australian football": ("AUSSIE_RULES", 150),
     "volleyball": ("VOLLEYBALL", 120), "cycling": ("OTHER", 300), "lacrosse": ("LACROSSE", 120),
+    # Handball: two 30-minute halves, a 10-15 minute break and time-outs; about 1 h 40 on TV.
+    "handball": ("HANDBALL", 100),
 }
 APP_SPORTS = {v[0] for v in SPORTS.values()} | {"WRESTLING", "OTHER"}
 # Lists searched when a league is given by name and TheSportsDB's search doesn't find it.
 SEARCH_SPORTS = ["Motorsport", "Fighting", "Rugby", "Cricket", "Ice Hockey", "Netball", "Darts", "Snooker",
-                 "Golf", "Tennis", "Cycling", "Basketball", "American Football", "Baseball", "Australian Football", "Soccer"]
+                 "Golf", "Tennis", "Cycling", "Handball", "Basketball", "American Football", "Baseball", "Australian Football", "Soccer"]
 
 _last = [0.0]
 
@@ -410,6 +412,9 @@ def read_table(lid, season, use_logos):
         note = (r.get("strDescription") or "").strip()
         if note:
             row["note"] = note
+        group = (r.get("strGroup") or "").strip()
+        if group:
+            row["group"] = re.sub(r"^group\s+", "", group, flags=re.I)
         badge = (r.get("strBadge") or "").strip()
         if use_logos and badge.startswith("https://"):
             row["badge"] = badge

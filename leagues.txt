@@ -124,3 +124,15 @@ NISA | regions=US | words=NISA, National Independent Soccer Association | minute
 4672 | regions=OTHER | words=Slovak First Football League, Nike Liga, Niké Liga, Fortuna liga | minutes=115
 4954 | words=Czech National Football League, Chance Narodni Liga, Chance národní liga, FNL | minutes=115
 5314 | words=Slovakian 2 Liga, 2. Liga, MONACObet Liga, Slovak Second League | minutes=115
+
+# ---- Handball (requested on Discord, 2026-11-22). Matches: two 30-minute halves, about 1 h 40 on TV.
+# Big four shown by default outside the US/UK/IE/CA/AU; the other national leagues only for people who follow them.
+4533 | regions=OTHER | words=Handball-Bundesliga, Handball Bundesliga, HBL, Daikin HBL, Liqui Moly HBL | minutes=100
+4536 | regions=OTHER | words=Starligue, Liqui Moly StarLigue, Lidl Starligue, LNH, LNH Division 1 | minutes=100
+4980 | regions=OTHER | words=EHF Champions League, Machineseeker EHF Champions League, EHF CL | minutes=100
+5275 | regions=OTHER | words=EHF European League, EHF EL | minutes=100
+4894 | regions=OTHER | words=EHF EURO, European Handball Championship, Men's EHF EURO | minutes=100
+5135 | words=Herreligaen, Danish Handball League, Handbold | minutes=100
+4534 | words=Liga ASOBAL, ASOBAL | minutes=100
+4535 | words=Nemzeti Bajnoksag, Hungarian Handball | minutes=100
+4537 | words=Orlen Superliga, Polish Handball Superliga | minutes=100

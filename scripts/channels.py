@@ -55,6 +55,7 @@ CHANNELS = [
     ("Serie A", "UCBJeMCIeLQos7wacox4hmLQ", "FOOTBALL", "hl"),
     ("Ligue 1", "UCQsH5XtIc9hONE1BQjucM0g", "FOOTBALL", "hl"),
     ("MLS", "UCSZbXT5TLLW_i-5W8FZpFsg", "FOOTBALL", "hl"),
+    ("EHF Home of Handball", "UC5F7T3y7PF_1A3JvHfgm5rQ", "HANDBALL", "hl"),
 ]
 
 WANTED = re.compile(r"highlight|full fight|full match|full card|full race|extended|condensed|sintesi|resumen|"
