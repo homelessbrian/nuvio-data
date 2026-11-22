@@ -114,3 +114,13 @@ NISA | regions=US | words=NISA, National Independent Soccer Association | minute
 4691 | regions=OTHER | words=Liga 1, Liga I, SuperLiga, Superliga Romania | minutes=115
 5533 | words=Nepal Premier League, NPL | minutes=210
 4546 | regions=everywhere | words=EuroLeague, Euroleague Basketball | minutes=135
+
+# ---- Requested on Discord (2026-11-22): Czech and Slovak hockey and football
+# Top leagues shown by default outside the US/UK/IE/CA/AU; second tiers only for people who follow them.
+4923 | regions=OTHER | words=Czech Extraliga, Extraliga, Tipsport Extraliga, Extraliga ledniho hokeje | minutes=150
+4932 | regions=OTHER | words=Slovak Extraliga, Tipsport Liga, Tipos Extraliga | minutes=150
+4929 | words=Slovak Hockey League, Slovenska hokejova liga, SHL | minutes=150
+4631 | regions=OTHER | words=Czech First League, Chance Liga, Fortuna Liga, Gambrinus Liga | minutes=115
+4672 | regions=OTHER | words=Slovak First Football League, Nike Liga, Niké Liga, Fortuna liga | minutes=115
+4954 | words=Czech National Football League, Chance Narodni Liga, Chance národní liga, FNL | minutes=115
+5314 | words=Slovakian 2 Liga, 2. Liga, MONACObet Liga, Slovak Second League | minutes=115
