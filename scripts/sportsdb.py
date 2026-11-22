@@ -1172,6 +1172,67 @@ def update_highlights(full):
 
 # ------------------------------------------------------------------ files
 
+# ------------------------------------------------------------------ live rugby
+
+RUGBY_LIVE_FILE = os.path.join(OUT_DIR, "rugby-live.json")
+
+
+def update_rugby_live():
+    """
+    Every rugby game TheSportsDB has on right now (union and league, any competition): its score,
+    the match minute and the half. ESPN's rugby feed leaves the match minute at 1' all game, so the
+    app shows TheSportsDB's minute for the same game instead (matched by teams and kick-off).
+    One request a run. Each game also keeps what TheSportsDB sent as it was ("raw"), so what the
+    live feed gives for rugby can be checked in the file.
+    """
+    summary = ["", "## Live rugby", ""]
+    if FREE:
+        summary.append("No TSDB_KEY secret: skipped.")
+        return summary
+    live = get("livescore/rugby", v2=True, quiet404=True)
+    if live is None:
+        summary.append("TheSportsDB's live rugby feed couldn't be read.")
+        return summary
+    now = dt.datetime.utcnow()
+    games = []
+    for e in rows_of(live, "livescore", "events"):
+        home, away = (e.get("strHomeTeam") or "").strip(), (e.get("strAwayTeam") or "").strip()
+        start, _ = start_of(e)
+        if not home or not away or start is None:
+            continue
+        g = {
+            "id": str(e.get("idEvent") or ""),
+            "league": (e.get("strLeague") or "").strip(), "leagueId": str(e.get("idLeague") or ""),
+            "home": home, "away": away, "start": start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "status": (e.get("strStatus") or "").strip(), "progress": (e.get("strProgress") or "").strip(),
+        }
+        hs, as_ = to_int(e.get("intHomeScore")), to_int(e.get("intAwayScore"))
+        if hs is not None and as_ is not None:
+            g["hs"], g["as"] = hs, as_
+        g["raw"] = {k: v for k, v in e.items()
+                    if v not in (None, "", "null") and not re.search(r"(?i)badge|logo|thumb|banner", k)}
+        games.append(g)
+    old_games = None
+    if os.path.exists(RUGBY_LIVE_FILE):
+        try:
+            with open(RUGBY_LIVE_FILE, encoding="utf-8") as f:
+                old_games = json.load(f).get("games")
+        except (OSError, ValueError):
+            pass
+    # Nothing on and nothing on last time: leave the file alone (no change to save every 5 minutes).
+    if not games and old_games == []:
+        summary.append("No rugby on right now.")
+        return summary
+    os.makedirs(OUT_DIR, exist_ok=True)
+    write_if_changed(RUGBY_LIVE_FILE, {"at": int(time.time()), "games": games})
+    with_minute = sum(1 for g in games if g["progress"])
+    summary.append("%d rugby game(s) on; %d with a match minute." % (len(games), with_minute))
+    for g in games[:20]:
+        summary.append("- %s v %s (%s): status %r, minute %r" % (g["home"], g["away"], g["league"], g["status"], g["progress"]))
+    log("\n".join(summary[3:]))
+    return summary
+
+
 def write_if_changed(path, obj):
     text = json.dumps(obj, ensure_ascii=False, separators=(",", ":")) + "\n"
     if os.path.exists(path):
@@ -1198,4 +1259,5 @@ if __name__ == "__main__":
     lines += update_tv_listings(full=not scores)
     lines += update_team_colors(full=not scores)
     lines += update_highlights(full=not scores)
+    lines += update_rugby_live()
     write_summary(lines)
