@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-21",
-  "to": "2026-12-06"
+  "from": "2026-11-22",
+  "to": "2026-12-07"
  },
  "leagues": [
   {
@@ -51,17 +51,6 @@
   }
  ],
  "events": [
-  {
-   "id": "2624419",
-   "league": "wwe",
-   "name": "SmackDown #1422",
-   "start": "2026-11-21T01:00:00Z",
-   "hasTime": true,
-   "venue": null,
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
   {
    "id": "2620175",
    "league": "aew",
@@ -484,5 +473,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-22T17:15:09Z"
+ "generated": "2026-11-23T21:37:38Z"
 }
