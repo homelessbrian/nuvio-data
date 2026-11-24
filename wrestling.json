@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-22",
-  "to": "2026-12-07"
+  "from": "2026-11-23",
+  "to": "2026-12-08"
  },
  "leagues": [
   {
@@ -52,36 +52,14 @@
  ],
  "events": [
   {
-   "id": "2620175",
-   "league": "aew",
-   "name": "Collision #171",
-   "start": "2026-11-22T01:00:00Z",
-   "hasTime": true,
-   "venue": "Resch Center",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2624421",
    "league": "wwe",
    "name": "RAW #1748",
-   "start": "2026-11-24T00:00:00Z",
+   "start": "2026-11-23T23:00:00Z",
    "hasTime": true,
    "venue": "Intrust Bank Arena",
    "city": null,
    "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2619163",
-   "league": "boxing",
-   "name": "Masamichi Yabuki vs Miel Fajardo",
-   "start": "2026-11-26T00:00:00Z",
-   "hasTime": true,
-   "venue": "Ebara Wave Arena",
-   "city": null,
-   "country": "Japan",
    "about": null
   },
   {
@@ -104,6 +82,17 @@
    "venue": null,
    "city": null,
    "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2619163",
+   "league": "boxing",
+   "name": "Masamichi Yabuki vs Miel Fajardo",
+   "start": "2026-11-26T06:30:00Z",
+   "hasTime": true,
+   "venue": null,
+   "city": null,
+   "country": "Japan",
    "about": null
   },
   {
@@ -473,5 +462,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-23T21:37:38Z"
+ "generated": "2026-11-24T20:22:24Z"
 }
