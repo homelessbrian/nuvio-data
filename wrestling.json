@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-23",
-  "to": "2026-12-08"
+  "from": "2026-11-24",
+  "to": "2026-12-09"
  },
  "leagues": [
   {
@@ -52,12 +52,12 @@
  ],
  "events": [
   {
-   "id": "2624421",
+   "id": "2631290",
    "league": "wwe",
-   "name": "RAW #1748",
-   "start": "2026-11-23T23:00:00Z",
+   "name": "NXT #865",
+   "start": "2026-11-25T01:00:00Z",
    "hasTime": true,
-   "venue": "Intrust Bank Arena",
+   "venue": "WWE Performance Center",
    "city": null,
    "country": "United States",
    "about": null
@@ -462,5 +462,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-24T20:22:24Z"
+ "generated": "2026-11-25T19:23:47Z"
 }
