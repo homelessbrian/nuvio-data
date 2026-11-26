@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-24",
-  "to": "2026-12-09"
+  "from": "2026-11-25",
+  "to": "2026-12-10"
  },
  "leagues": [
   {
@@ -63,17 +63,6 @@
    "about": null
   },
   {
-   "id": "2620176",
-   "league": "aew",
-   "name": "Collision #172 Thanksgiving",
-   "start": "2026-11-26T01:00:00Z",
-   "hasTime": true,
-   "venue": null,
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2620177",
    "league": "aew",
    "name": "Dynamite #373 - Thanksgiving Eve",
@@ -102,6 +91,17 @@
    "start": "2026-11-27T00:00:00Z",
    "hasTime": true,
    "venue": "Intrust Bank Arena",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2620176",
+   "league": "aew",
+   "name": "Collision #172 Thanksgiving",
+   "start": "2026-11-27T01:00:00Z",
+   "hasTime": true,
+   "venue": null,
    "city": null,
    "country": "United States",
    "about": null
@@ -462,5 +462,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-25T19:23:47Z"
+ "generated": "2026-11-26T19:09:20Z"
 }
