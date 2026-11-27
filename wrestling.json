@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-25",
-  "to": "2026-12-10"
+  "from": "2026-11-26",
+  "to": "2026-12-11"
  },
  "leagues": [
   {
@@ -52,23 +52,12 @@
  ],
  "events": [
   {
-   "id": "2631290",
-   "league": "wwe",
-   "name": "NXT #865",
-   "start": "2026-11-25T01:00:00Z",
-   "hasTime": true,
-   "venue": "WWE Performance Center",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2620177",
    "league": "aew",
-   "name": "Dynamite #373 - Thanksgiving Eve",
+   "name": "Dynamite #373 Thanksgiving Eve",
    "start": "2026-11-26T01:00:00Z",
    "hasTime": true,
-   "venue": null,
+   "venue": "Liberty First Credit Union Arena",
    "city": null,
    "country": "United States",
    "about": null
@@ -85,23 +74,23 @@
    "about": null
   },
   {
-   "id": "2624420",
-   "league": "wwe",
-   "name": "SmackDown #1423",
-   "start": "2026-11-27T00:00:00Z",
-   "hasTime": true,
-   "venue": "Intrust Bank Arena",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
    "id": "2620176",
    "league": "aew",
    "name": "Collision #172 Thanksgiving",
    "start": "2026-11-27T01:00:00Z",
    "hasTime": true,
-   "venue": null,
+   "venue": "Liberty First Credit Union Arena",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
+   "id": "2624420",
+   "league": "wwe",
+   "name": "SmackDown #1423",
+   "start": "2026-11-27T01:00:00Z",
+   "hasTime": true,
+   "venue": "Intrust Bank Arena",
    "city": null,
    "country": "United States",
    "about": null
@@ -137,6 +126,17 @@
    "venue": null,
    "city": null,
    "country": "Japan",
+   "about": null
+  },
+  {
+   "id": "2632488",
+   "league": "wwe",
+   "name": "NXT #866",
+   "start": "2026-12-01T00:00:00Z",
+   "hasTime": true,
+   "venue": "WWE Performance Center",
+   "city": null,
+   "country": "United States",
    "about": null
   },
   {
@@ -242,6 +242,17 @@
    "about": null
   },
   {
+   "id": "2632490",
+   "league": "aew",
+   "name": "Collision #173",
+   "start": "2026-12-05T00:00:00Z",
+   "hasTime": true,
+   "venue": "Boeing Center at Tech Port",
+   "city": null,
+   "country": "United States",
+   "about": null
+  },
+  {
    "id": "2619166",
    "league": "boxing",
    "name": "Conah Walker vs Alexis Rocha",
@@ -266,7 +277,7 @@
   {
    "id": "2620179",
    "league": "aew",
-   "name": "Collision #174 - Winter is Coming",
+   "name": "Collision #174 Winter is Coming",
    "start": "2026-12-10T01:00:00Z",
    "hasTime": true,
    "venue": "Arena Monterrey",
@@ -277,7 +288,7 @@
   {
    "id": "2620181",
    "league": "aew",
-   "name": "Dynamite #375 - Winter is Coming",
+   "name": "Dynamite #375 Winter is Coming",
    "start": "2026-12-10T01:00:00Z",
    "hasTime": true,
    "venue": "Arena Monterrey",
@@ -387,7 +398,7 @@
   {
    "id": "2620184",
    "league": "aew",
-   "name": "Collision #176 - Holiday Bash",
+   "name": "Collision #176 Holiday Bash",
    "start": "2026-12-24T01:00:00Z",
    "hasTime": true,
    "venue": "Wintrust Arena",
@@ -398,7 +409,7 @@
   {
    "id": "2620185",
    "league": "aew",
-   "name": "Dynamite #377 - Holiday Bash",
+   "name": "Dynamite #377 Holiday Bash",
    "start": "2026-12-24T01:00:00Z",
    "hasTime": true,
    "venue": "Wintrust Arena",
@@ -462,5 +473,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-26T19:09:20Z"
+ "generated": "2026-11-27T19:12:41Z"
 }
