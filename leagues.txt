@@ -125,6 +125,9 @@ NISA | regions=US | words=NISA, National Independent Soccer Association | minute
 4954 | words=Czech National Football League, Chance Narodni Liga, Chance národní liga, FNL | minutes=115
 5314 | words=Slovakian 2 Liga, 2. Liga, MONACObet Liga, Slovak Second League | minutes=115
 
+# ---- Requested on Discord (2026-11-28): Cyprus football (top league shown by default outside the US/UK/IE/CA/AU)
+4630 | regions=OTHER | words=Cypriot First Division, Cyprus First Division, Cyprus League, Cyprus League by Stoiximan, Protathlima Cyta | minutes=115
+
 # ---- Handball (requested on Discord, 2026-11-22). Matches: two 30-minute halves, about 1 h 40 on TV.
 # Big four shown by default outside the US/UK/IE/CA/AU; the other national leagues only for people who follow them.
 4533 | regions=OTHER | words=Handball-Bundesliga, Handball Bundesliga, HBL, Daikin HBL, Liqui Moly HBL | minutes=100
