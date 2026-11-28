@@ -1,8 +1,8 @@
 {
  "source": "TheSportsDB (thesportsdb.com)",
  "window": {
-  "from": "2026-11-26",
-  "to": "2026-12-11"
+  "from": "2026-11-27",
+  "to": "2026-12-12"
  },
  "leagues": [
   {
@@ -51,28 +51,6 @@
   }
  ],
  "events": [
-  {
-   "id": "2620177",
-   "league": "aew",
-   "name": "Dynamite #373 Thanksgiving Eve",
-   "start": "2026-11-26T01:00:00Z",
-   "hasTime": true,
-   "venue": "Liberty First Credit Union Arena",
-   "city": null,
-   "country": "United States",
-   "about": null
-  },
-  {
-   "id": "2619163",
-   "league": "boxing",
-   "name": "Masamichi Yabuki vs Miel Fajardo",
-   "start": "2026-11-26T06:30:00Z",
-   "hasTime": true,
-   "venue": null,
-   "city": null,
-   "country": "Japan",
-   "about": null
-  },
   {
    "id": "2620176",
    "league": "aew",
@@ -473,5 +451,5 @@
    "about": null
   }
  ],
- "generated": "2026-11-27T19:12:41Z"
+ "generated": "2026-11-28T14:27:09Z"
 }
